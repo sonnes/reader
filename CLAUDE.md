@@ -4,7 +4,8 @@ Single-executable React application built with Vite and compiled to a standalone
 
 ## Tech Stack
 
-- React 18 + TypeScript + Vite
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4 + shadcn/ui for styling and components
 - react-router-dom for client-side routing
 - Bun for compilation to single executable
 
@@ -15,6 +16,7 @@ src/
   main.tsx          # React entry point
   App.tsx           # Root component with routes
   components/       # Shared components
+    ui/             # shadcn/ui components (add via: bunx shadcn@latest add <component>)
   pages/            # Route page components
 server.ts           # Production HTTP server (embedded in binary)
 build-executable.ts # Build script for compilation
