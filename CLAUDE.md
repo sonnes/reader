@@ -6,7 +6,6 @@ Single-executable React application built with Vite and compiled to a standalone
 
 - React 19 + TypeScript + Vite
 - Tailwind CSS v4 + shadcn/ui for styling and components
-- react-router-dom for client-side routing
 - Bun for compilation to single executable
 
 ## Project Structure
