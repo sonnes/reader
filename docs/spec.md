@@ -29,3 +29,15 @@ When complete:
 - Looks similar to classic Google Reader
 - No console errors
 - Output: DONE"
+
+---
+
+/ralph-loop:ralph-loop --completion-promise DONE "Implement the backend using bun sqlite3 and SSR for rendering the app.
+
+when complete:
+
+- The app is rendered via SSR
+- The database is used to store the data
+- The data is fetched from the database and rendered in the app
+- The app is responsive and works on all devices
+  "

@@ -3,9 +3,10 @@ import type { Entry } from "./Layout";
 
 interface ReadingPaneProps {
   entry: Entry | null;
+  onToggleStar?: (entryId: string) => void;
 }
 
-export function ReadingPane({ entry }: ReadingPaneProps) {
+export function ReadingPane({ entry, onToggleStar }: ReadingPaneProps) {
   if (!entry) {
     return (
       <div className="flex-1 bg-white flex items-center justify-center">
@@ -42,6 +43,7 @@ export function ReadingPane({ entry }: ReadingPaneProps) {
           {/* Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
+              onClick={() => onToggleStar?.(entry.id)}
               className={`p-2 rounded hover:bg-gray-100 transition-colors ${
                 entry.isStarred ? "text-yellow-500" : "text-gray-400"
               }`}
