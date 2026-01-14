@@ -1,7 +1,14 @@
-import { ComponentExample } from "@/components/component-example";
+import { Routes, Route } from "react-router-dom";
+import { HomePage } from "@/pages/HomePage";
+import { SettingsPage } from "@/pages/SettingsPage";
 
 export function App() {
-return <ComponentExample />;
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/settings" element={<SettingsPage />} />
+    </Routes>
+  );
 }
 
 export default App;
