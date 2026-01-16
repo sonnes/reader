@@ -33,7 +33,7 @@ function ReadPage() {
 
     // Server update
     try {
-      await toggleArticleRead({ data: { articleId, isRead } } as unknown as void)
+      await toggleArticleRead({ articleId, isRead })
     } catch (error) {
       // Revert on error
       console.error('Failed to update read status:', error)
@@ -52,7 +52,7 @@ function ReadPage() {
 
     // Server update
     try {
-      await toggleArticleStar({ data: { articleId, isStarred } } as unknown as void)
+      await toggleArticleStar({ articleId, isStarred })
     } catch (error) {
       // Revert on error
       console.error('Failed to update star status:', error)

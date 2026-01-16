@@ -49,7 +49,7 @@ export function FolderSidebar({
 
   // Calculate total unread from feeds if not provided via props
   const totalUnread = unreadCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
-  const totalArticles = totalArticleCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
+  const totalArticles = totalArticleCount ?? 0
   const totalStarred = starredCount ?? 0
 
   return (
