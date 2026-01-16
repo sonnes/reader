@@ -1,0 +1,266 @@
+{
+  "_meta": {
+    "models": {
+      "folders": "A container for organizing feeds by topic. Users create folders to group related feeds together.",
+      "feeds": "An RSS or Atom feed source that the user subscribes to. Represents a single blog, news site, or publication.",
+      "articles": "An individual post or item from a feed. Contains title, content, publication date, and read/unread status.",
+      "starredArticles": "References to articles the user has saved for later reading."
+    },
+    "relationships": [
+      "Each Folder contains zero or more Feeds",
+      "Each Feed belongs to one Folder (or no folder if uncategorized)",
+      "Each Feed contains many Articles",
+      "Each Article belongs to one Feed",
+      "StarredArticles reference specific Articles by ID"
+    ]
+  },
+  "folders": [
+    {
+      "id": "folder-1",
+      "name": "Tech Blogs",
+      "feedIds": ["feed-1"],
+      "unreadCount": 8
+    },
+    {
+      "id": "folder-2",
+      "name": "News",
+      "feedIds": ["feed-2"],
+      "unreadCount": 12
+    }
+  ],
+  "feeds": [
+    {
+      "id": "feed-1",
+      "title": "Ravi Atluri",
+      "url": "https://raviatluri.in/rss.xml",
+      "siteUrl": "https://raviatluri.in",
+      "favicon": "https://raviatluri.in/favicon.ico",
+      "folderId": "folder-1",
+      "unreadCount": 8,
+      "lastFetched": "2026-01-15T08:30:00Z"
+    },
+    {
+      "id": "feed-2",
+      "title": "Hacker News",
+      "url": "https://news.ycombinator.com/rss",
+      "siteUrl": "https://news.ycombinator.com",
+      "favicon": "https://news.ycombinator.com/favicon.ico",
+      "folderId": "folder-2",
+      "unreadCount": 12,
+      "lastFetched": "2026-01-15T09:15:00Z"
+    },
+    {
+      "id": "feed-3",
+      "title": "The Pragmatic Engineer",
+      "url": "https://pragmaticengineer.com/rss",
+      "siteUrl": "https://pragmaticengineer.com",
+      "favicon": "https://pragmaticengineer.com/favicon.ico",
+      "folderId": null,
+      "unreadCount": 3,
+      "lastFetched": "2026-01-14T22:00:00Z"
+    },
+    {
+      "id": "feed-4",
+      "title": "Julia Evans",
+      "url": "https://jvns.ca/atom.xml",
+      "siteUrl": "https://jvns.ca",
+      "favicon": "https://jvns.ca/favicon.ico",
+      "folderId": null,
+      "unreadCount": 0,
+      "lastFetched": "2026-01-15T07:45:00Z"
+    }
+  ],
+  "articles": [
+    {
+      "id": "article-1",
+      "feedId": "feed-1",
+      "title": "Introducing xapi - Type-Safe HTTP APIs in Go",
+      "url": "https://raviatluri.in/articles/introducing-xapi",
+      "publishedAt": "2025-10-15T10:00:00Z",
+      "preview": "xapi is a lightweight Go library that brings type safety and simplicity to building HTTP APIs. It leverages Go generics to provide compile-time guarantees...",
+      "content": "<p>xapi is a lightweight Go library that brings type safety and simplicity to building HTTP APIs. It leverages Go generics to provide compile-time guarantees for your request and response types.</p><h2>Why xapi?</h2><p>Traditional HTTP handlers in Go require manual parsing and validation. With xapi, you define your types once and the library handles the rest.</p><pre><code>func CreateUser(ctx context.Context, req CreateUserRequest) (*User, error) {\n  // Your logic here\n}</code></pre>",
+      "isRead": true,
+      "isStarred": true
+    },
+    {
+      "id": "article-2",
+      "feedId": "feed-1",
+      "title": "Building September - A Communication Assistant",
+      "url": "https://raviatluri.in/articles/building-september",
+      "publishedAt": "2025-09-09T14:00:00Z",
+      "preview": "A communication assistant for people living with neurodegenerative conditions like ALS, MND, or other speech & motor difficulties.",
+      "content": "<p>September is a communication assistant designed for people living with neurodegenerative conditions like ALS, MND, or other speech and motor difficulties.</p><p>The app uses eye-tracking and predictive text to help users communicate effectively despite physical limitations.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-3",
+      "feedId": "feed-1",
+      "title": "Handling Errors in Go - Beyond the Basics",
+      "url": "https://raviatluri.in/articles/handling-go-errors",
+      "publishedAt": "2025-05-27T09:00:00Z",
+      "preview": "Go's error handling philosophy is straightforward, though sophisticated applications require custom error types and structured metadata for maintainability.",
+      "content": "<p>Go's error handling philosophy is straightforward: errors are values. But as your application grows, you'll need more than <code>if err != nil</code>.</p><h2>Custom Error Types</h2><p>Create custom error types to carry context about what went wrong and where.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-4",
+      "feedId": "feed-1",
+      "title": "Introducing xkafka - Kafka, but Simpler (for Go)",
+      "url": "https://raviatluri.in/articles/introducing-xkafka",
+      "publishedAt": "2025-05-07T11:00:00Z",
+      "preview": "xkafka is a Go library that brings HTTP-like abstractions to Apache Kafka, making it easier to build event-driven applications.",
+      "content": "<p>xkafka is a Go library that brings HTTP-like abstractions to Apache Kafka. Instead of dealing with low-level consumer groups and partition assignments, you define handlers that process messages.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-5",
+      "feedId": "feed-1",
+      "title": "Career Growth - Beyond IC vs Manager",
+      "url": "https://raviatluri.in/articles/career-growth",
+      "publishedAt": "2025-04-30T08:00:00Z",
+      "preview": "Career advancement involves expanding skills, tackling complex problems, and building influence across multiple dimensions.",
+      "content": "<p>The IC vs Manager dichotomy is a false choice. Career advancement is about expanding your skills, tackling increasingly complex problems, and building influence—regardless of your title.</p>",
+      "isRead": false,
+      "isStarred": true
+    },
+    {
+      "id": "article-6",
+      "feedId": "feed-1",
+      "title": "The ALS Story",
+      "url": "https://raviatluri.in/articles/the-als-story",
+      "publishedAt": "2021-12-23T10:00:00Z",
+      "preview": "Personal narrative detailing an ALS diagnosis journey and its impact on daily life.",
+      "content": "<p>In early 2021, I noticed my left hand getting weaker. What followed was a journey through diagnosis, acceptance, and adaptation that changed everything about how I work and live.</p>",
+      "isRead": true,
+      "isStarred": true
+    },
+    {
+      "id": "article-7",
+      "feedId": "feed-2",
+      "title": "Scaling long-running autonomous coding",
+      "url": "https://cursor.com/blog/scaling-agents",
+      "publishedAt": "2026-01-14T22:18:04Z",
+      "preview": "How Cursor approaches scaling autonomous coding agents for long-running tasks across large codebases.",
+      "content": "<p>As AI coding assistants become more capable, the challenge shifts from single-turn completions to managing long-running autonomous tasks.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-8",
+      "feedId": "feed-2",
+      "title": "New Safari developer tools provide insight into CSS Grid Lanes",
+      "url": "https://webkit.org/blog/17746/new-safari-developer-tools-provide-insight-into-css-grid-lanes/",
+      "publishedAt": "2026-01-15T00:34:59Z",
+      "preview": "Safari's latest developer tools update brings powerful visualization for CSS Grid layouts.",
+      "content": "<p>The latest Safari Technology Preview introduces new developer tools for inspecting CSS Grid layouts, making it easier to understand and debug complex grid structures.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-9",
+      "feedId": "feed-2",
+      "title": "Is Rust faster than C?",
+      "url": "https://steveklabnik.com/writing/is-rust-faster-than-c/",
+      "publishedAt": "2026-01-10T19:37:36Z",
+      "preview": "A nuanced look at performance comparisons between Rust and C, and why the question itself might be misleading.",
+      "content": "<p>The question 'Is Rust faster than C?' comes up constantly. The short answer is: it depends. The longer answer requires understanding what we mean by 'faster' and how both languages approach optimization.</p>",
+      "isRead": true,
+      "isStarred": false
+    },
+    {
+      "id": "article-10",
+      "feedId": "feed-2",
+      "title": "Generate QR Codes with Pure SQL in PostgreSQL",
+      "url": "https://tanelpoder.com/posts/generate-qr-code-with-pure-sql-in-postgres/",
+      "publishedAt": "2026-01-10T16:19:42Z",
+      "preview": "A deep dive into generating QR codes using nothing but PostgreSQL SQL queries.",
+      "content": "<p>Yes, you can generate QR codes entirely in SQL. Here's how to do it in PostgreSQL using recursive CTEs and binary operations.</p>",
+      "isRead": false,
+      "isStarred": true
+    },
+    {
+      "id": "article-11",
+      "feedId": "feed-2",
+      "title": "Crafting Interpreters",
+      "url": "https://craftinginterpreters.com/",
+      "publishedAt": "2026-01-14T22:26:17Z",
+      "preview": "A handbook for making programming languages. Contains everything you need to implement a full-featured, efficient scripting language.",
+      "content": "<p>This book contains everything you need to implement a full-featured, efficient scripting language. You'll learn both high-level concepts and gritty details from scanning and parsing through bytecode and garbage collection.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-12",
+      "feedId": "feed-2",
+      "title": "Ask HN: Share your personal website",
+      "url": "https://news.ycombinator.com/item?id=46618714",
+      "publishedAt": "2026-01-14T17:07:42Z",
+      "preview": "A community thread where Hacker News users share and discuss their personal websites and portfolios.",
+      "content": "<p>Share your personal website! I'm always looking for inspiration and curious what tools/frameworks people are using these days.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-13",
+      "feedId": "feed-2",
+      "title": "Furiosa: 3.5x efficiency over H100s",
+      "url": "https://furiosa.ai/blog/introducing-rngd-server-efficient-ai-inference-at-data-center-scale",
+      "publishedAt": "2026-01-15T00:53:21Z",
+      "preview": "Furiosa announces their RNGD server claiming 3.5x better efficiency than NVIDIA H100s for AI inference workloads.",
+      "content": "<p>Today we're introducing the RNGD server, our answer to efficient AI inference at data center scale. Our benchmarks show 3.5x better efficiency compared to NVIDIA H100s.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-14",
+      "feedId": "feed-3",
+      "title": "The Trimodal Nature of Tech Compensation",
+      "url": "https://pragmaticengineer.com/blog/trimodal-compensation",
+      "publishedAt": "2026-01-12T10:00:00Z",
+      "preview": "Why tech compensation isn't a single bell curve, but three distinct distributions based on company type.",
+      "content": "<p>Tech compensation follows a trimodal distribution. Traditional companies, competitive tech companies, and top-tier tech companies each have their own compensation bands that barely overlap.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-15",
+      "feedId": "feed-3",
+      "title": "What TPMs Do and Why You Need Them",
+      "url": "https://pragmaticengineer.com/blog/tpms",
+      "publishedAt": "2026-01-08T09:00:00Z",
+      "preview": "Technical Program Managers are often misunderstood. Here's what they actually do and when you should hire one.",
+      "content": "<p>Technical Program Managers (TPMs) are one of the most misunderstood roles in tech. They're not project managers, not product managers, and not engineers—but they work closely with all three.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "article-16",
+      "feedId": "feed-3",
+      "title": "Inside Stripe's Engineering Culture",
+      "url": "https://pragmaticengineer.com/blog/stripe-engineering",
+      "publishedAt": "2026-01-02T11:00:00Z",
+      "preview": "A deep dive into how Stripe builds software, based on interviews with current and former engineers.",
+      "content": "<p>Stripe has one of the most respected engineering cultures in tech. I talked with a dozen current and former Stripe engineers to understand what makes it tick.</p>",
+      "isRead": true,
+      "isStarred": false
+    }
+  ],
+  "starredArticles": [
+    { "id": "starred-1", "articleId": "article-1" },
+    { "id": "starred-2", "articleId": "article-5" },
+    { "id": "starred-3", "articleId": "article-6" },
+    { "id": "starred-4", "articleId": "article-10" }
+  ],
+  "uiState": {
+    "sidebarCollapsed": false,
+    "focusMode": false,
+    "viewMode": "list",
+    "readerView": true,
+    "selectedFolderId": null,
+    "selectedFeedId": "feed-1",
+    "selectedArticleId": "article-1"
+  }
+}

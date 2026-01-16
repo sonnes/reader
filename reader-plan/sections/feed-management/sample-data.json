@@ -1,0 +1,140 @@
+{
+  "_meta": {
+    "models": {
+      "folders": "A container for organizing feeds by topic. Users create folders to group related feeds together.",
+      "feeds": "An RSS or Atom feed source that the user subscribes to. Represents a single blog, news site, or publication."
+    },
+    "relationships": [
+      "Each Folder contains zero or more Feeds",
+      "Each Feed belongs to one Folder (or no folder if uncategorized)"
+    ]
+  },
+  "folders": [
+    {
+      "id": "folder-1",
+      "name": "Tech Blogs",
+      "feedIds": ["feed-1", "feed-4", "feed-5", "feed-6"],
+      "unreadCount": 14
+    },
+    {
+      "id": "folder-2",
+      "name": "News",
+      "feedIds": ["feed-2", "feed-7"],
+      "unreadCount": 18
+    },
+    {
+      "id": "folder-3",
+      "name": "Design",
+      "feedIds": ["feed-8", "feed-9"],
+      "unreadCount": 5
+    },
+    {
+      "id": "folder-4",
+      "name": "Podcasts",
+      "feedIds": [],
+      "unreadCount": 0
+    }
+  ],
+  "feeds": [
+    {
+      "id": "feed-1",
+      "title": "Ravi Atluri",
+      "url": "https://raviatluri.in/rss.xml",
+      "siteUrl": "https://raviatluri.in",
+      "favicon": "https://raviatluri.in/favicon.ico",
+      "folderId": "folder-1",
+      "unreadCount": 8,
+      "lastFetched": "2026-01-15T08:30:00Z"
+    },
+    {
+      "id": "feed-2",
+      "title": "Hacker News",
+      "url": "https://news.ycombinator.com/rss",
+      "siteUrl": "https://news.ycombinator.com",
+      "favicon": "https://news.ycombinator.com/favicon.ico",
+      "folderId": "folder-2",
+      "unreadCount": 12,
+      "lastFetched": "2026-01-15T09:15:00Z"
+    },
+    {
+      "id": "feed-3",
+      "title": "The Pragmatic Engineer",
+      "url": "https://pragmaticengineer.com/rss",
+      "siteUrl": "https://pragmaticengineer.com",
+      "favicon": "https://pragmaticengineer.com/favicon.ico",
+      "folderId": null,
+      "unreadCount": 3,
+      "lastFetched": "2026-01-14T22:00:00Z"
+    },
+    {
+      "id": "feed-4",
+      "title": "Julia Evans",
+      "url": "https://jvns.ca/atom.xml",
+      "siteUrl": "https://jvns.ca",
+      "favicon": "https://jvns.ca/favicon.ico",
+      "folderId": "folder-1",
+      "unreadCount": 0,
+      "lastFetched": "2026-01-15T07:45:00Z"
+    },
+    {
+      "id": "feed-5",
+      "title": "Dan Abramov",
+      "url": "https://overreacted.io/rss.xml",
+      "siteUrl": "https://overreacted.io",
+      "favicon": "https://overreacted.io/favicon.ico",
+      "folderId": "folder-1",
+      "unreadCount": 2,
+      "lastFetched": "2026-01-15T06:00:00Z"
+    },
+    {
+      "id": "feed-6",
+      "title": "Xe Iaso",
+      "url": "https://xeiaso.net/blog.rss",
+      "siteUrl": "https://xeiaso.net",
+      "favicon": "https://xeiaso.net/favicon.ico",
+      "folderId": "folder-1",
+      "unreadCount": 4,
+      "lastFetched": "2026-01-15T05:30:00Z"
+    },
+    {
+      "id": "feed-7",
+      "title": "Ars Technica",
+      "url": "https://arstechnica.com/feed/",
+      "siteUrl": "https://arstechnica.com",
+      "favicon": "https://arstechnica.com/favicon.ico",
+      "folderId": "folder-2",
+      "unreadCount": 6,
+      "lastFetched": "2026-01-15T09:00:00Z"
+    },
+    {
+      "id": "feed-8",
+      "title": "Refactoring UI",
+      "url": "https://refactoringui.com/rss.xml",
+      "siteUrl": "https://refactoringui.com",
+      "favicon": "https://refactoringui.com/favicon.ico",
+      "folderId": "folder-3",
+      "unreadCount": 1,
+      "lastFetched": "2026-01-14T18:00:00Z"
+    },
+    {
+      "id": "feed-9",
+      "title": "CSS Tricks",
+      "url": "https://css-tricks.com/feed/",
+      "siteUrl": "https://css-tricks.com",
+      "favicon": "https://css-tricks.com/favicon.ico",
+      "folderId": "folder-3",
+      "unreadCount": 4,
+      "lastFetched": "2026-01-15T08:00:00Z"
+    },
+    {
+      "id": "feed-10",
+      "title": "Seth Godin",
+      "url": "https://seths.blog/feed/",
+      "siteUrl": "https://seths.blog",
+      "favicon": "https://seths.blog/favicon.ico",
+      "folderId": null,
+      "unreadCount": 7,
+      "lastFetched": "2026-01-15T04:00:00Z"
+    }
+  ]
+}
