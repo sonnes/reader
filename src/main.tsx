@@ -1,31 +1,14 @@
 import { StrictMode } from "react";
-import { createRoot, hydrateRoot } from "react-dom/client";
-import App from "@/App";
+import { hydrateRoot } from "react-dom/client";
+import { StartClient } from "@tanstack/react-start/client";
 import "./index.css";
-import type { AppState } from "@/types";
+import { getRouter } from "./router";
 
-// Extend Window interface for initial data
-declare global {
-  interface Window {
-    __INITIAL_DATA__?: AppState;
-  }
-}
+const router = getRouter();
 
-const container = document.getElementById("root")!;
-const initialData = window.__INITIAL_DATA__;
-
-// Use hydration if we have initial data from SSR, otherwise create fresh root
-if (initialData) {
-  hydrateRoot(
-    container,
-    <StrictMode>
-      <App initialData={initialData} />
-    </StrictMode>
-  );
-} else {
-  createRoot(container).render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
-}
+hydrateRoot(
+  document,
+  <StrictMode>
+    <StartClient router={router} />
+  </StrictMode>
+);
