@@ -35,7 +35,7 @@ interface ArticleRow {
 
 export function getAllFolders(): Folder[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT f.id, f.name
     FROM folders f
     ORDER BY f.name
@@ -43,12 +43,12 @@ export function getAllFolders(): Folder[] {
 
   return rows.map((row) => {
     // Get feed IDs for this folder
-    const feedIds = db.prepare(`
+    const feedIds = db.query(`
       SELECT id FROM feeds WHERE folder_id = ?
     `).all(row.id) as { id: string }[]
 
     // Calculate unread count
-    const unreadResult = db.prepare(`
+    const unreadResult = db.query(`
       SELECT COUNT(*) as count
       FROM articles a
       JOIN feeds f ON a.feed_id = f.id
@@ -66,7 +66,7 @@ export function getAllFolders(): Folder[] {
 
 export function createFolder(id: string, name: string): Folder {
   const db = getDb()
-  db.prepare(`
+  db.query(`
     INSERT INTO folders (id, name) VALUES (?, ?)
   `).run(id, name)
 
@@ -79,7 +79,7 @@ export function createFolder(id: string, name: string): Folder {
 
 export function getAllFeeds(): Feed[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT id, title, url, site_url, favicon, folder_id, last_fetched
     FROM feeds
     ORDER BY title
@@ -87,7 +87,7 @@ export function getAllFeeds(): Feed[] {
 
   return rows.map((row) => {
     // Calculate unread count for this feed
-    const unreadResult = db.prepare(`
+    const unreadResult = db.query(`
       SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0
     `).get(row.id) as { count: number }
 
@@ -106,7 +106,7 @@ export function getAllFeeds(): Feed[] {
 
 export function createFeed(feed: Omit<Feed, 'unreadCount'>): Feed {
   const db = getDb()
-  db.prepare(`
+  db.query(`
     INSERT INTO feeds (id, title, url, site_url, favicon, folder_id, last_fetched)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(
@@ -128,7 +128,7 @@ export function createFeed(feed: Omit<Feed, 'unreadCount'>): Feed {
 
 export function getAllArticles(): Article[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
     FROM articles
     ORDER BY published_at DESC
@@ -139,7 +139,7 @@ export function getAllArticles(): Article[] {
 
 export function getArticlesByFeed(feedId: string): Article[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
     FROM articles
     WHERE feed_id = ?
@@ -151,7 +151,7 @@ export function getArticlesByFeed(feedId: string): Article[] {
 
 export function getArticlesByFolder(folderId: string): Article[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.preview, a.content, a.is_read, a.is_starred
     FROM articles a
     JOIN feeds f ON a.feed_id = f.id
@@ -164,7 +164,7 @@ export function getArticlesByFolder(folderId: string): Article[] {
 
 export function getUnreadArticles(): Article[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
     FROM articles
     WHERE is_read = 0
@@ -176,7 +176,7 @@ export function getUnreadArticles(): Article[] {
 
 export function getStarredArticles(): Article[] {
   const db = getDb()
-  const rows = db.prepare(`
+  const rows = db.query(`
     SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
     FROM articles
     WHERE is_starred = 1
@@ -188,7 +188,7 @@ export function getStarredArticles(): Article[] {
 
 export function getArticleById(id: string): Article | null {
   const db = getDb()
-  const row = db.prepare(`
+  const row = db.query(`
     SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
     FROM articles
     WHERE id = ?
@@ -199,7 +199,7 @@ export function getArticleById(id: string): Article | null {
 
 export function createArticle(article: Article): Article {
   const db = getDb()
-  db.prepare(`
+  db.query(`
     INSERT INTO articles (id, feed_id, title, url, published_at, preview, content, is_read, is_starred)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(feed_id, url) DO UPDATE SET
@@ -224,14 +224,14 @@ export function createArticle(article: Article): Article {
 
 export function updateArticleReadStatus(id: string, isRead: boolean): void {
   const db = getDb()
-  db.prepare(`
+  db.query(`
     UPDATE articles SET is_read = ?, updated_at = datetime('now') WHERE id = ?
   `).run(isRead ? 1 : 0, id)
 }
 
 export function updateArticleStarStatus(id: string, isStarred: boolean): void {
   const db = getDb()
-  db.prepare(`
+  db.query(`
     UPDATE articles SET is_starred = ?, updated_at = datetime('now') WHERE id = ?
   `).run(isStarred ? 1 : 0, id)
 }
@@ -240,17 +240,17 @@ export function markAllAsRead(feedId?: string, folderId?: string): void {
   const db = getDb()
 
   if (feedId) {
-    db.prepare(`
+    db.query(`
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
       WHERE feed_id = ?
     `).run(feedId)
   } else if (folderId) {
-    db.prepare(`
+    db.query(`
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
       WHERE feed_id IN (SELECT id FROM feeds WHERE folder_id = ?)
     `).run(folderId)
   } else {
-    db.prepare(`
+    db.query(`
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
     `).run()
   }
@@ -263,9 +263,9 @@ export function markAllAsRead(feedId?: string, folderId?: string): void {
 export function getStats() {
   const db = getDb()
 
-  const totalResult = db.prepare(`SELECT COUNT(*) as count FROM articles`).get() as { count: number }
-  const unreadResult = db.prepare(`SELECT COUNT(*) as count FROM articles WHERE is_read = 0`).get() as { count: number }
-  const starredResult = db.prepare(`SELECT COUNT(*) as count FROM articles WHERE is_starred = 1`).get() as { count: number }
+  const totalResult = db.query(`SELECT COUNT(*) as count FROM articles`).get() as { count: number }
+  const unreadResult = db.query(`SELECT COUNT(*) as count FROM articles WHERE is_read = 0`).get() as { count: number }
+  const starredResult = db.query(`SELECT COUNT(*) as count FROM articles WHERE is_starred = 1`).get() as { count: number }
 
   return {
     totalArticles: totalResult.count,

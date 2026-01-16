@@ -1,22 +1,22 @@
-import Database from 'better-sqlite3'
+import { Database } from 'bun:sqlite'
 import { readFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-let db: Database.Database | null = null
+let db: Database | null = null
 
-export function getDb(): Database.Database {
+export function getDb(): Database {
   if (!db) {
     const dbPath = process.env.DATABASE_PATH || join(process.cwd(), 'reader.db')
-    db = new Database(dbPath)
-    db.pragma('journal_mode = WAL')
-    db.pragma('foreign_keys = ON')
+    db = new Database(dbPath, { create: true })
+    db.run('PRAGMA journal_mode = WAL')
+    db.run('PRAGMA foreign_keys = ON')
 
     // Initialize schema
     const schema = readFileSync(join(__dirname, 'schema.sql'), 'utf-8')
-    db.exec(schema)
+    db.run(schema)
   }
   return db
 }
