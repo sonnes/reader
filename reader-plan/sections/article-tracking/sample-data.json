@@ -1,0 +1,223 @@
+{
+  "_meta": {
+    "models": {
+      "folders": "A container for organizing feeds by topic. Users create folders to group related feeds together.",
+      "feeds": "An RSS or Atom feed source that the user subscribes to. Represents a single blog, news site, or publication.",
+      "articles": "Each article is an individual post from one of your subscribed feeds. Articles track whether you've read them or starred them for later."
+    },
+    "relationships": [
+      "Each Folder contains zero or more Feeds",
+      "Each Feed belongs to one Folder (or no folder if uncategorized)",
+      "Each Article belongs to a Feed (referenced by feedId)",
+      "Articles can be starred to save them independently of their feed"
+    ]
+  },
+  "folders": [
+    {
+      "id": "folder-frontend",
+      "name": "Frontend",
+      "feedIds": ["feed-css-tricks", "feed-react", "feed-smashing"],
+      "unreadCount": 3
+    },
+    {
+      "id": "folder-backend",
+      "name": "Backend",
+      "feedIds": ["feed-node", "feed-typescript"],
+      "unreadCount": 1
+    }
+  ],
+  "feeds": [
+    {
+      "id": "feed-css-tricks",
+      "title": "CSS-Tricks",
+      "url": "https://css-tricks.com/feed/",
+      "siteUrl": "https://css-tricks.com",
+      "favicon": "https://css-tricks.com/favicon.ico",
+      "folderId": "folder-frontend",
+      "unreadCount": 1,
+      "lastFetched": "2024-01-15T08:00:00Z"
+    },
+    {
+      "id": "feed-react",
+      "title": "React Blog",
+      "url": "https://react.dev/rss.xml",
+      "siteUrl": "https://react.dev",
+      "favicon": "https://react.dev/favicon.ico",
+      "folderId": "folder-frontend",
+      "unreadCount": 0,
+      "lastFetched": "2024-01-15T07:30:00Z"
+    },
+    {
+      "id": "feed-smashing",
+      "title": "Smashing Magazine",
+      "url": "https://smashingmagazine.com/feed/",
+      "siteUrl": "https://smashingmagazine.com",
+      "favicon": "https://smashingmagazine.com/favicon.ico",
+      "folderId": "folder-frontend",
+      "unreadCount": 1,
+      "lastFetched": "2024-01-15T06:00:00Z"
+    },
+    {
+      "id": "feed-node",
+      "title": "Node Weekly",
+      "url": "https://nodeweekly.com/rss",
+      "siteUrl": "https://nodeweekly.com",
+      "favicon": "https://nodeweekly.com/favicon.ico",
+      "folderId": "folder-backend",
+      "unreadCount": 0,
+      "lastFetched": "2024-01-15T05:00:00Z"
+    },
+    {
+      "id": "feed-typescript",
+      "title": "TypeScript Blog",
+      "url": "https://devblogs.microsoft.com/typescript/feed/",
+      "siteUrl": "https://devblogs.microsoft.com/typescript",
+      "favicon": "https://devblogs.microsoft.com/favicon.ico",
+      "folderId": "folder-backend",
+      "unreadCount": 0,
+      "lastFetched": "2024-01-15T04:30:00Z"
+    },
+    {
+      "id": "feed-devto",
+      "title": "DEV Community",
+      "url": "https://dev.to/feed",
+      "siteUrl": "https://dev.to",
+      "favicon": "https://dev.to/favicon.ico",
+      "folderId": null,
+      "unreadCount": 2,
+      "lastFetched": "2024-01-15T09:00:00Z"
+    },
+    {
+      "id": "feed-jsweekly",
+      "title": "JavaScript Weekly",
+      "url": "https://javascriptweekly.com/rss",
+      "siteUrl": "https://javascriptweekly.com",
+      "favicon": "https://javascriptweekly.com/favicon.ico",
+      "folderId": null,
+      "unreadCount": 1,
+      "lastFetched": "2024-01-15T03:00:00Z"
+    },
+    {
+      "id": "feed-hn",
+      "title": "Hacker News",
+      "url": "https://news.ycombinator.com/rss",
+      "siteUrl": "https://news.ycombinator.com",
+      "favicon": "https://news.ycombinator.com/favicon.ico",
+      "folderId": null,
+      "unreadCount": 0,
+      "lastFetched": "2024-01-15T08:45:00Z"
+    }
+  ],
+  "articles": [
+    {
+      "id": "art-001",
+      "feedId": "feed-css-tricks",
+      "title": "The Future of Web Components in 2024",
+      "url": "https://css-tricks.com/future-web-components-2024",
+      "publishedAt": "2024-01-15T09:30:00Z",
+      "preview": "Web components have come a long way since their introduction. With recent browser updates and framework adoption, they're finally ready for mainstream use. Here's what you need to know about building with native web components today.",
+      "content": "<p>Web components have come a long way since their introduction. With recent browser updates and framework adoption, they're finally ready for mainstream use.</p><p>Here's what you need to know about building with native web components today.</p>",
+      "isRead": false,
+      "isStarred": true
+    },
+    {
+      "id": "art-002",
+      "feedId": "feed-react",
+      "title": "Understanding React Server Components",
+      "url": "https://react.dev/blog/server-components",
+      "publishedAt": "2024-01-14T14:00:00Z",
+      "preview": "Server components represent a fundamental shift in how we think about React applications. This guide breaks down the mental model and shows practical examples.",
+      "content": "<p>Server components represent a fundamental shift in how we think about React applications.</p><p>This guide breaks down the mental model and shows practical examples.</p>",
+      "isRead": true,
+      "isStarred": false
+    },
+    {
+      "id": "art-003",
+      "feedId": "feed-devto",
+      "title": "Why I Switched from VS Code to Zed",
+      "url": "https://dev.to/switching-to-zed",
+      "publishedAt": "2024-01-14T11:45:00Z",
+      "preview": "After five years with VS Code, I made the jump to Zed. Here's my honest take after three months of daily use.",
+      "content": "<p>After five years with VS Code, I made the jump to Zed. Here's my honest take after three months of daily use.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "art-004",
+      "feedId": "feed-typescript",
+      "title": "A Deep Dive into TypeScript 5.4",
+      "url": "https://devblogs.microsoft.com/typescript/typescript-5-4",
+      "publishedAt": "2024-01-13T16:20:00Z",
+      "preview": "TypeScript 5.4 brings several quality-of-life improvements including better type narrowing in closures, the new NoInfer utility type, and improved support for require() calls. Let's explore each feature with practical examples that show how they'll improve your daily development workflow.",
+      "content": "<p>TypeScript 5.4 brings several quality-of-life improvements including better type narrowing in closures, the new NoInfer utility type, and improved support for require() calls.</p><p>Let's explore each feature with practical examples.</p>",
+      "isRead": true,
+      "isStarred": true
+    },
+    {
+      "id": "art-005",
+      "feedId": "feed-smashing",
+      "title": "Building a Design System from Scratch",
+      "url": "https://smashingmagazine.com/design-system-scratch",
+      "publishedAt": "2024-01-12T08:00:00Z",
+      "preview": "Lessons learned from creating a design system for a 50-person engineering team.",
+      "content": "<p>Lessons learned from creating a design system for a 50-person engineering team.</p>",
+      "isRead": false,
+      "isStarred": false
+    },
+    {
+      "id": "art-006",
+      "feedId": "feed-css-tricks",
+      "title": "The State of CSS 2024 Survey Results",
+      "url": "https://css-tricks.com/state-of-css-2024",
+      "publishedAt": "2024-01-11T10:30:00Z",
+      "preview": "Over 10,000 developers shared their CSS habits and preferences. Container queries and :has() are finally seeing real adoption.",
+      "content": "<p>Over 10,000 developers shared their CSS habits and preferences. Container queries and :has() are finally seeing real adoption.</p>",
+      "isRead": true,
+      "isStarred": false
+    },
+    {
+      "id": "art-007",
+      "feedId": "feed-node",
+      "title": "Optimizing Node.js Performance",
+      "url": "https://nodeweekly.com/optimizing-performance",
+      "publishedAt": "2024-01-10T13:15:00Z",
+      "preview": "Practical tips for improving your Node.js application's throughput and reducing latency.",
+      "content": "<p>Practical tips for improving your Node.js application's throughput and reducing latency.</p>",
+      "isRead": true,
+      "isStarred": false
+    },
+    {
+      "id": "art-008",
+      "feedId": "feed-jsweekly",
+      "title": "Introduction to Bun 1.0",
+      "url": "https://javascriptweekly.com/bun-1-0",
+      "publishedAt": "2024-01-09T09:00:00Z",
+      "preview": "Bun has reached 1.0 and promises to be an all-in-one JavaScript runtime. We put it through its paces.",
+      "content": "<p>Bun has reached 1.0 and promises to be an all-in-one JavaScript runtime. We put it through its paces.</p>",
+      "isRead": false,
+      "isStarred": true
+    },
+    {
+      "id": "art-009",
+      "feedId": "feed-hn",
+      "title": "SQLite is All You Need",
+      "url": "https://news.ycombinator.com/sqlite-all-you-need",
+      "publishedAt": "2024-01-08T17:45:00Z",
+      "preview": "For most applications, SQLite provides everything you need without the operational complexity of a database server. Here's when and how to use it effectively.",
+      "content": "<p>For most applications, SQLite provides everything you need without the operational complexity of a database server.</p><p>Here's when and how to use it effectively.</p>",
+      "isRead": true,
+      "isStarred": true
+    },
+    {
+      "id": "art-010",
+      "feedId": "feed-devto",
+      "title": "Accessibility Testing with Playwright",
+      "url": "https://dev.to/a11y-playwright",
+      "publishedAt": "2024-01-07T12:00:00Z",
+      "preview": "How to integrate automated accessibility testing into your CI/CD pipeline using Playwright and axe-core.",
+      "content": "<p>How to integrate automated accessibility testing into your CI/CD pipeline using Playwright and axe-core.</p>",
+      "isRead": false,
+      "isStarred": false
+    }
+  ]
+}
