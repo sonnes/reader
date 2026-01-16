@@ -94,18 +94,19 @@ reader-plan/
 
 ## Design System
 
-| Token | Value |
-|-------|-------|
-| Primary color | Sky (Tailwind) |
+| Token           | Value            |
+| --------------- | ---------------- |
+| Primary color   | Sky (Tailwind)   |
 | Secondary color | Amber (Tailwind) |
-| Neutral color | Slate (Tailwind) |
-| Heading font | Noto Sans |
-| Body font | Noto Sans |
-| Monospace font | JetBrains Mono |
+| Neutral color   | Slate (Tailwind) |
+| Heading font    | Noto Sans        |
+| Body font       | Noto Sans        |
+| Monospace font  | JetBrains Mono   |
 
 ## Test-Driven Development
 
 Each section includes a `tests.md` file with:
+
 - User flow tests (happy path scenarios)
 - Empty state tests
 - Component interaction tests

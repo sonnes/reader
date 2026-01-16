@@ -17,14 +17,17 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 #### Success Path
 
 **Setup:**
+
 - Multiple articles exist from different feeds
 - Mix of read and unread articles
 
 **Steps:**
+
 1. User navigates to "All Articles" view
 2. User scrolls through the list
 
 **Expected Results:**
+
 - [ ] All articles are displayed regardless of read status
 - [ ] Articles show title, source/feed name, publication date
 - [ ] Unread articles have visual distinction (bold title, dot indicator)
@@ -38,13 +41,16 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User filters to see only unread articles
 
 **Setup:**
+
 - Articles exist with mixed read/unread status
 
 **Steps:**
+
 1. User clicks "Unread" filter button
 2. User views filtered list
 
 **Expected Results:**
+
 - [ ] Only unread articles are displayed
 - [ ] Read articles are hidden from view
 - [ ] Filter button shows active state
@@ -58,13 +64,16 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User switches between list and card views
 
 **Setup:**
+
 - Articles exist in list view (default)
 
 **Steps:**
+
 1. User clicks card view toggle
 2. User clicks list view toggle
 
 **Expected Results:**
+
 - [ ] Card view shows article preview text
 - [ ] Card view displays larger article cards with more info
 - [ ] List view shows compact rows
@@ -78,13 +87,16 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User toggles read status
 
 **Setup:**
+
 - Article "Test Article" is unread (isRead: false)
 
 **Steps:**
+
 1. User clicks the read status button on "Test Article"
 2. User clicks the button again
 
 **Expected Results:**
+
 - [ ] First click: Article changes to read status
 - [ ] First click: Unread indicator (dot) disappears
 - [ ] First click: Title styling changes to normal weight
@@ -99,12 +111,15 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User stars an article for later
 
 **Setup:**
+
 - Article "Important Post" exists, not starred
 
 **Steps:**
+
 1. User clicks star button on "Important Post"
 
 **Expected Results:**
+
 - [ ] Star icon fills with color (amber)
 - [ ] Article appears when filtering to "Starred"
 - [ ] Starred count increments
@@ -117,12 +132,15 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User archives an article
 
 **Setup:**
+
 - Article "Old News" exists in the list
 
 **Steps:**
+
 1. User clicks archive button on "Old News"
 
 **Expected Results:**
+
 - [ ] Article is removed from current view
 - [ ] Confirmation message appears (optional)
 - [ ] Article is moved to archive (not deleted)
@@ -135,13 +153,16 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User permanently deletes an article
 
 **Setup:**
+
 - Article "Spam Article" exists in the list
 
 **Steps:**
+
 1. User clicks delete button on "Spam Article"
 2. User confirms deletion (if confirmation dialog shown)
 
 **Expected Results:**
+
 - [ ] Confirmation dialog appears (recommended)
 - [ ] Article is permanently removed from all views
 - [ ] Article cannot be retrieved
@@ -154,14 +175,17 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User changes sort order
 
 **Setup:**
+
 - Multiple articles exist with different dates
 
 **Steps:**
+
 1. User clicks sort dropdown
 2. User selects "Oldest first"
 3. User selects "Newest first"
 
 **Expected Results:**
+
 - [ ] "Oldest first": Articles sorted oldest to newest
 - [ ] "Newest first": Articles sorted newest to oldest
 - [ ] Sort preference persists during session
@@ -174,13 +198,16 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User clicks article to read
 
 **Setup:**
+
 - Articles exist in list
 - Reading pane is visible
 
 **Steps:**
+
 1. User clicks on article row/card
 
 **Expected Results:**
+
 - [ ] Article is highlighted/selected in list
 - [ ] Reading pane displays article content
 - [ ] Article is automatically marked as read
@@ -193,12 +220,15 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User opens original article
 
 **Setup:**
+
 - Article with external URL exists
 
 **Steps:**
+
 1. User clicks "Open in new tab" button (or uses keyboard shortcut)
 
 **Expected Results:**
+
 - [ ] New browser tab opens with article URL
 - [ ] Original tab remains on article list
 - [ ] Article is marked as read
@@ -212,9 +242,11 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User has no articles (new account or all deleted)
 
 **Setup:**
+
 - `articles` array is empty (`[]`)
 
 **Expected Results:**
+
 - [ ] Empty state illustration/icon shown
 - [ ] Message: "No articles yet"
 - [ ] Helpful text: "Subscribe to feeds to see articles here"
@@ -225,10 +257,12 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User has filtered to unread but all are read
 
 **Setup:**
+
 - All articles have `isRead: true`
 - Filter set to "unread"
 
 **Expected Results:**
+
 - [ ] Empty state shown
 - [ ] Message: "All caught up!"
 - [ ] Helpful text: "You've read all your articles"
@@ -239,10 +273,12 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 **Scenario:** User views starred but hasn't starred any
 
 **Setup:**
+
 - No articles have `isStarred: true`
 - Filter set to "starred"
 
 **Expected Results:**
+
 - [ ] Empty state shown
 - [ ] Message: "No starred articles"
 - [ ] Helpful text: "Star articles to save them for later"
@@ -254,6 +290,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 ### ArticleListPanel Component
 
 **Renders correctly:**
+
 - [ ] Shows view title ("All Articles" or "Unread")
 - [ ] Shows article count
 - [ ] Shows filter buttons (All, Unread, Starred)
@@ -261,6 +298,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 - [ ] Shows sort dropdown
 
 **User interactions:**
+
 - [ ] Clicking filter changes active filter
 - [ ] Clicking view toggle changes view mode
 - [ ] Clicking sort option changes sort order
@@ -269,6 +307,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 ### ArticleRow Component
 
 **Renders correctly:**
+
 - [ ] Shows article title (truncated if long)
 - [ ] Shows feed/source name
 - [ ] Shows publication date (relative or absolute)
@@ -277,6 +316,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 - [ ] Shows action buttons on hover
 
 **User interactions:**
+
 - [ ] Clicking row selects article
 - [ ] Clicking star toggles star status
 - [ ] Clicking read toggle changes read status
@@ -286,6 +326,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 ### ArticleCard Component
 
 **Renders correctly:**
+
 - [ ] Shows article title
 - [ ] Shows preview text (first ~100 characters)
 - [ ] Shows feed/source name
@@ -295,11 +336,13 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 - [ ] Shows action buttons
 
 **User interactions:**
+
 - [ ] Same as ArticleRow component
 
 ### ArticleDetailPane Component
 
 **Renders correctly:**
+
 - [ ] Shows article title as heading
 - [ ] Shows source name (linked to site)
 - [ ] Shows publication date
@@ -308,6 +351,7 @@ Test the article tracking views including list/card layouts, filtering, sorting,
 - [ ] Shows "Open original" link
 
 **User interactions:**
+
 - [ ] Clicking read toggle changes status
 - [ ] Clicking star toggles star
 - [ ] Clicking "Open original" opens URL
@@ -380,12 +424,12 @@ const mockArticles = [
     isRead: false,
     isStarred: false,
   },
-];
+]
 
 // Empty states
-const mockEmptyArticles = [];
-const mockAllRead = mockArticles.map(a => ({ ...a, isRead: true }));
-const mockNoStarred = mockArticles.map(a => ({ ...a, isStarred: false }));
+const mockEmptyArticles = []
+const mockAllRead = mockArticles.map((a) => ({ ...a, isRead: true }))
+const mockNoStarred = mockArticles.map((a) => ({ ...a, isStarred: false }))
 ```
 
 ---

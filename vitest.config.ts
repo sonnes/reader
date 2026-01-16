@@ -1,6 +1,6 @@
 /// <reference types="vitest/config" />
+import { URL, fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
-import { fileURLToPath, URL } from 'url'
 
 export default defineConfig({
   test: {

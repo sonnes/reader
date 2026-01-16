@@ -57,7 +57,15 @@ export function ReadingPane({
           Select an article to read
         </h3>
         <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
-          Choose an article from the list or use <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">j</kbd> / <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">k</kbd> to navigate
+          Choose an article from the list or use{' '}
+          <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">
+            j
+          </kbd>{' '}
+          /{' '}
+          <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-xs">
+            k
+          </kbd>{' '}
+          to navigate
         </p>
       </div>
     )
@@ -191,7 +199,9 @@ export function ReadingPane({
 
       {/* Article content */}
       <div className="flex-1 overflow-y-auto">
-        <article className={`mx-auto px-6 py-8 ${readerView ? 'max-w-2xl' : 'max-w-4xl'}`}>
+        <article
+          className={`mx-auto px-6 py-8 ${readerView ? 'max-w-2xl' : 'max-w-4xl'}`}
+        >
           {/* Header */}
           <header className="mb-8">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight mb-4">
@@ -207,8 +217,12 @@ export function ReadingPane({
               >
                 {feed?.title}
               </a>
-              <span className="text-slate-300 dark:text-slate-600">&middot;</span>
-              <time dateTime={article.publishedAt}>{formatDate(article.publishedAt)}</time>
+              <span className="text-slate-300 dark:text-slate-600">
+                &middot;
+              </span>
+              <time dateTime={article.publishedAt}>
+                {formatDate(article.publishedAt)}
+              </time>
             </div>
           </header>
 

@@ -4,11 +4,11 @@ This product uses the following fonts from Google Fonts:
 
 ## Font Family
 
-| Purpose | Font | Weights |
-|---------|------|---------|
-| Headings | Noto Sans | 600, 700 |
-| Body | Noto Sans | 400, 500 |
-| Code | JetBrains Mono | 400, 500 |
+| Purpose  | Font           | Weights  |
+| -------- | -------------- | -------- |
+| Headings | Noto Sans      | 600, 700 |
+| Body     | Noto Sans      | 400, 500 |
+| Code     | JetBrains Mono | 400, 500 |
 
 ## Installation
 
@@ -17,9 +17,12 @@ This product uses the following fonts from Google Fonts:
 Add to your HTML `<head>`:
 
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ### Option 2: CSS @import
@@ -41,12 +44,12 @@ npm install @fontsource/noto-sans @fontsource/jetbrains-mono
 Import in your app entry point:
 
 ```javascript
-import '@fontsource/noto-sans/400.css';
-import '@fontsource/noto-sans/500.css';
-import '@fontsource/noto-sans/600.css';
-import '@fontsource/noto-sans/700.css';
-import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/noto-sans/400.css'
+import '@fontsource/noto-sans/500.css'
+import '@fontsource/noto-sans/600.css'
+import '@fontsource/noto-sans/700.css'
+import '@fontsource/jetbrains-mono/400.css'
+import '@fontsource/jetbrains-mono/500.css'
 ```
 
 ## Tailwind CSS Configuration
@@ -70,15 +73,15 @@ Then use in your components:
 
 ## Typography Scale
 
-| Element | Classes |
-|---------|---------|
-| Page title | `text-2xl font-semibold` |
-| Section heading | `text-xl font-semibold` |
-| Card title | `text-lg font-medium` |
-| Body text | `text-base` |
-| Small text | `text-sm` |
-| Caption | `text-xs text-slate-500` |
-| Code | `font-mono text-sm` |
+| Element         | Classes                  |
+| --------------- | ------------------------ |
+| Page title      | `text-2xl font-semibold` |
+| Section heading | `text-xl font-semibold`  |
+| Card title      | `text-lg font-medium`    |
+| Body text       | `text-base`              |
+| Small text      | `text-sm`                |
+| Caption         | `text-xs text-slate-500` |
+| Code            | `font-mono text-sm`      |
 
 ## Usage Examples
 

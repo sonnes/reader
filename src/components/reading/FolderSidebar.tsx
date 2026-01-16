@@ -1,9 +1,9 @@
-import { Pencil, Trash2, Plus, Settings } from 'lucide-react'
-import type { Folder, Feed } from '@/types'
+import { Pencil, Plus, Settings, Trash2 } from 'lucide-react'
+import type { Feed, Folder } from '@/types'
 
 interface FolderSidebarProps {
-  folders: Folder[]
-  feeds: Feed[]
+  folders: Array<Folder>
+  feeds: Array<Feed>
   selectedFolderId: string | null
   selectedFeedId: string | null
   onSelectFolder?: (folderId: string | null) => void
@@ -48,7 +48,8 @@ export function FolderSidebar({
     feeds.filter((f) => f.folderId === folderId)
 
   // Calculate total unread from feeds if not provided via props
-  const totalUnread = unreadCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
+  const totalUnread =
+    unreadCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
   const totalArticles = totalArticleCount ?? 0
   const totalStarred = starredCount ?? 0
 
@@ -89,7 +90,9 @@ export function FolderSidebar({
             onFilterChange?.('all')
           }}
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
-            filterMode === 'all' && selectedFolderId === null && selectedFeedId === null
+            filterMode === 'all' &&
+            selectedFolderId === null &&
+            selectedFeedId === null
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
@@ -124,7 +127,9 @@ export function FolderSidebar({
             onFilterChange?.('unread')
           }}
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
-            filterMode === 'unread' && selectedFolderId === null && selectedFeedId === null
+            filterMode === 'unread' &&
+            selectedFolderId === null &&
+            selectedFeedId === null
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
@@ -357,15 +362,19 @@ export function FolderSidebar({
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
-        <button
-          onClick={onManageSubscriptions}
+        <a
+          href="/feeds"
           className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
         >
           <Settings className="w-4 h-4" />
           Manage Subscriptions
-        </button>
+        </a>
         <p className="text-xs text-slate-500 dark:text-slate-500">
-          Press <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">?</kbd> for shortcuts
+          Press{' '}
+          <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">
+            ?
+          </kbd>{' '}
+          for shortcuts
         </p>
       </div>
     </div>

@@ -5,7 +5,7 @@
 export interface Folder {
   id: string
   name: string
-  feedIds: string[]
+  feedIds: Array<string>
   unreadCount: number
 }
 
@@ -26,9 +26,9 @@ export interface Feed {
 
 export interface FeedManagementProps {
   /** Folders for organizing feeds */
-  folders: Folder[]
+  folders: Array<Folder>
   /** All subscribed feeds (some may have folderId: null) */
-  feeds: Feed[]
+  feeds: Array<Feed>
 
   // Folder actions
   /** Called when user creates a new folder */

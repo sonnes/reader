@@ -12,6 +12,7 @@ Implement the Feed Management feature — subscribe to feeds, organize them into
 Feed Management is a full-page interface where users can view, add, and organize their RSS subscriptions. Users can create folders to group related feeds and bulk import/export their subscriptions via OPML.
 
 **Key Functionality:**
+
 - View all subscribed feeds grouped by folder
 - Add a new feed via modal dialog (enter URL, select folder)
 - Remove a feed from subscriptions
@@ -25,6 +26,7 @@ Feed Management is a full-page interface where users can view, add, and organize
 Before implementing this section, **write tests first** based on the test specifications provided.
 
 See `reader-plan/sections/feed-management/tests.md` for detailed test-writing instructions including:
+
 - Key user flows to test (success and failure paths)
 - Specific UI elements, button labels, and interactions to verify
 - Expected behaviors and assertions
@@ -32,6 +34,7 @@ See `reader-plan/sections/feed-management/tests.md` for detailed test-writing in
 The test instructions are framework-agnostic — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
 
 **TDD Workflow:**
+
 1. Read `tests.md` and write failing tests for the key user flows
 2. Implement the feature to make tests pass
 3. Refactor while keeping tests green
@@ -71,6 +74,7 @@ interface Feed {
 ```
 
 You'll need to:
+
 - Create API endpoints for CRUD operations on folders and feeds
 - Implement RSS/Atom feed discovery and parsing
 - Store favicon URLs (or proxy them)
@@ -80,16 +84,16 @@ You'll need to:
 
 Wire up these user actions:
 
-| Callback | Description |
-|----------|-------------|
-| `onCreateFolder` | Called when user creates a new folder |
-| `onRenameFolder` | Called when user renames a folder |
-| `onDeleteFolder` | Called when user deletes a folder |
-| `onAddFeed` | Called when user subscribes to a new feed |
-| `onRemoveFeed` | Called when user unsubscribes from a feed |
-| `onMoveFeed` | Called when user moves a feed to a different folder |
-| `onImportOPML` | Called when user imports feeds from OPML file |
-| `onExportOPML` | Called when user exports feeds to OPML file |
+| Callback         | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `onCreateFolder` | Called when user creates a new folder               |
+| `onRenameFolder` | Called when user renames a folder                   |
+| `onDeleteFolder` | Called when user deletes a folder                   |
+| `onAddFeed`      | Called when user subscribes to a new feed           |
+| `onRemoveFeed`   | Called when user unsubscribes from a feed           |
+| `onMoveFeed`     | Called when user moves a feed to a different folder |
+| `onImportOPML`   | Called when user imports feeds from OPML file       |
+| `onExportOPML`   | Called when user exports feeds to OPML file         |
 
 ### Empty States
 

@@ -14,7 +14,7 @@ export interface Folder {
   /** Display name (e.g., "Tech Blogs", "News") */
   name: string
   /** IDs of feeds in this folder */
-  feedIds: string[]
+  feedIds: Array<string>
   /** Count of unread articles across all feeds in folder */
   unreadCount: number
 }
@@ -104,9 +104,9 @@ export interface UIState {
  * Use this for loading/saving state or initializing with sample data.
  */
 export interface AppData {
-  folders: Folder[]
-  feeds: Feed[]
-  articles: Article[]
-  starredArticles: StarredArticle[]
+  folders: Array<Folder>
+  feeds: Array<Feed>
+  articles: Array<Article>
+  starredArticles: Array<StarredArticle>
   uiState: UIState
 }

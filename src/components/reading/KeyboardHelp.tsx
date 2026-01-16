@@ -99,7 +99,15 @@ export function KeyboardHelp({ onClose }: KeyboardHelpProps) {
         {/* Footer */}
         <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
           <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">Esc</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">?</kbd> to close
+            Press{' '}
+            <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">
+              Esc
+            </kbd>{' '}
+            or{' '}
+            <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">
+              ?
+            </kbd>{' '}
+            to close
           </p>
         </div>
       </div>

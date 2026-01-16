@@ -1,17 +1,17 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import type { Folder, Feed, Article, UIState } from '@/types'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { FolderSidebar } from './FolderSidebar'
 import { ArticleList } from './ArticleList'
 import { ReadingPane } from './ReadingPane'
 import { KeyboardHelp } from './KeyboardHelp'
+import type { Article, Feed, Folder, UIState } from '@/types'
 
 type ViewMode = 'list' | 'card'
 type FilterMode = 'all' | 'unread' | 'starred'
 
 interface ReadingExperienceProps {
-  folders: Folder[]
-  feeds: Feed[]
-  articles: Article[]
+  folders: Array<Folder>
+  feeds: Array<Feed>
+  articles: Array<Article>
   initialUIState?: Partial<UIState>
   stats?: {
     totalArticles: number
@@ -34,13 +34,25 @@ export function ReadingExperience({
   onRefresh,
 }: ReadingExperienceProps) {
   // UI State
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(initialUIState?.sidebarCollapsed ?? false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    initialUIState?.sidebarCollapsed ?? false,
+  )
   const [focusMode, setFocusMode] = useState(initialUIState?.focusMode ?? false)
-  const [viewMode, setViewMode] = useState<ViewMode>(initialUIState?.viewMode ?? 'list')
-  const [readerView, setReaderView] = useState(initialUIState?.readerView ?? true)
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(initialUIState?.selectedFolderId ?? null)
-  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(initialUIState?.selectedFeedId ?? null)
-  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(initialUIState?.selectedArticleId ?? null)
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    initialUIState?.viewMode ?? 'list',
+  )
+  const [readerView, setReaderView] = useState(
+    initialUIState?.readerView ?? true,
+  )
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
+    initialUIState?.selectedFolderId ?? null,
+  )
+  const [selectedFeedId, setSelectedFeedId] = useState<string | null>(
+    initialUIState?.selectedFeedId ?? null,
+  )
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(
+    initialUIState?.selectedArticleId ?? null,
+  )
   const [filterMode, setFilterMode] = useState<FilterMode>('all')
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false)
 
@@ -78,7 +90,8 @@ export function ReadingExperience({
   })()
 
   // Get the selected article
-  const selectedArticle = articles.find((a) => a.id === selectedArticleId) || null
+  const selectedArticle =
+    articles.find((a) => a.id === selectedArticleId) || null
   const selectedFeed = selectedArticle
     ? feeds.find((f) => f.id === selectedArticle.feedId)
     : undefined
@@ -89,63 +102,85 @@ export function ReadingExperience({
   }, [filteredArticles, selectedArticleId])
 
   // Select article and mark as read
-  const handleSelectArticle = useCallback((articleId: string) => {
-    setSelectedArticleId(articleId)
-    const article = articles.find((a) => a.id === articleId)
-    if (article && !article.isRead) {
-      onToggleRead?.(articleId, true)
-    }
-  }, [articles, onToggleRead])
+  const handleSelectArticle = useCallback(
+    (articleId: string) => {
+      setSelectedArticleId(articleId)
+      const article = articles.find((a) => a.id === articleId)
+      if (article && !article.isRead) {
+        onToggleRead?.(articleId, true)
+      }
+    },
+    [articles, onToggleRead],
+  )
 
   // Navigate to next/previous article
-  const navigateArticle = useCallback((direction: 'next' | 'prev') => {
-    if (filteredArticles.length === 0) return
+  const navigateArticle = useCallback(
+    (direction: 'next' | 'prev') => {
+      if (filteredArticles.length === 0) return
 
-    const currentIndex = getArticleIndex()
-    let newIndex: number
+      const currentIndex = getArticleIndex()
+      let newIndex: number
 
-    if (direction === 'next') {
-      newIndex = currentIndex < filteredArticles.length - 1 ? currentIndex + 1 : currentIndex
-    } else {
-      newIndex = currentIndex > 0 ? currentIndex - 1 : 0
-    }
+      if (direction === 'next') {
+        newIndex =
+          currentIndex < filteredArticles.length - 1
+            ? currentIndex + 1
+            : currentIndex
+      } else {
+        newIndex = currentIndex > 0 ? currentIndex - 1 : 0
+      }
 
-    if (newIndex !== currentIndex || currentIndex === -1) {
-      const newArticle = filteredArticles[newIndex === -1 ? 0 : newIndex]
-      handleSelectArticle(newArticle.id)
-    }
-  }, [filteredArticles, getArticleIndex, handleSelectArticle])
+      if (newIndex !== currentIndex || currentIndex === -1) {
+        const newArticle = filteredArticles[newIndex === -1 ? 0 : newIndex]
+        handleSelectArticle(newArticle.id)
+      }
+    },
+    [filteredArticles, getArticleIndex, handleSelectArticle],
+  )
 
   // Toggle read status
-  const handleToggleRead = useCallback((articleId: string) => {
-    const article = articles.find((a) => a.id === articleId)
-    if (article) {
-      onToggleRead?.(articleId, !article.isRead)
-    }
-  }, [articles, onToggleRead])
+  const handleToggleRead = useCallback(
+    (articleId: string) => {
+      const article = articles.find((a) => a.id === articleId)
+      if (article) {
+        onToggleRead?.(articleId, !article.isRead)
+      }
+    },
+    [articles, onToggleRead],
+  )
 
   // Toggle star status
-  const handleToggleStar = useCallback((articleId: string) => {
-    const article = articles.find((a) => a.id === articleId)
-    if (article) {
-      onToggleStar?.(articleId, !article.isStarred)
-    }
-  }, [articles, onToggleStar])
+  const handleToggleStar = useCallback(
+    (articleId: string) => {
+      const article = articles.find((a) => a.id === articleId)
+      if (article) {
+        onToggleStar?.(articleId, !article.isStarred)
+      }
+    },
+    [articles, onToggleStar],
+  )
 
   // Open in browser
-  const handleOpenInBrowser = useCallback((articleId: string) => {
-    const article = articles.find((a) => a.id === articleId)
-    if (article) {
-      window.open(article.url, '_blank', 'noopener,noreferrer')
-    }
-  }, [articles])
+  const handleOpenInBrowser = useCallback(
+    (articleId: string) => {
+      const article = articles.find((a) => a.id === articleId)
+      if (article) {
+        window.open(article.url, '_blank', 'noopener,noreferrer')
+      }
+    },
+    [articles],
+  )
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't handle shortcuts when typing in inputs
       const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
         return
       }
 
@@ -263,28 +298,34 @@ export function ReadingExperience({
   ])
 
   // Handle folder selection
-  const handleSelectFolder = useCallback((folderId: string | null) => {
-    if (folderId === 'starred') {
-      setFilterMode('starred')
-      setSelectedFolderId('starred')
-      setSelectedFeedId(null)
-    } else {
-      setSelectedFolderId(folderId)
-      setSelectedFeedId(null)
+  const handleSelectFolder = useCallback(
+    (folderId: string | null) => {
+      if (folderId === 'starred') {
+        setFilterMode('starred')
+        setSelectedFolderId('starred')
+        setSelectedFeedId(null)
+      } else {
+        setSelectedFolderId(folderId)
+        setSelectedFeedId(null)
+        if (filterMode === 'starred') {
+          setFilterMode('all')
+        }
+      }
+    },
+    [filterMode],
+  )
+
+  // Handle feed selection
+  const handleSelectFeed = useCallback(
+    (feedId: string) => {
+      setSelectedFeedId(feedId)
+      setSelectedFolderId(null)
       if (filterMode === 'starred') {
         setFilterMode('all')
       }
-    }
-  }, [filterMode])
-
-  // Handle feed selection
-  const handleSelectFeed = useCallback((feedId: string) => {
-    setSelectedFeedId(feedId)
-    setSelectedFolderId(null)
-    if (filterMode === 'starred') {
-      setFilterMode('all')
-    }
-  }, [filterMode])
+    },
+    [filterMode],
+  )
 
   // Focus mode - only show reading pane
   if (focusMode) {
@@ -296,9 +337,15 @@ export function ReadingExperience({
           readerView={readerView}
           focusMode={true}
           onToggleReaderView={() => setReaderView((prev) => !prev)}
-          onToggleRead={() => selectedArticle && handleToggleRead(selectedArticle.id)}
-          onToggleStar={() => selectedArticle && handleToggleStar(selectedArticle.id)}
-          onOpenInBrowser={() => selectedArticle && handleOpenInBrowser(selectedArticle.id)}
+          onToggleRead={() =>
+            selectedArticle && handleToggleRead(selectedArticle.id)
+          }
+          onToggleStar={() =>
+            selectedArticle && handleToggleStar(selectedArticle.id)
+          }
+          onOpenInBrowser={() =>
+            selectedArticle && handleOpenInBrowser(selectedArticle.id)
+          }
           onExitFocusMode={() => setFocusMode(false)}
         />
         {showKeyboardHelp && (
@@ -362,7 +409,9 @@ export function ReadingExperience({
           viewMode={viewMode}
           onSelectArticle={handleSelectArticle}
           onToggleStar={handleToggleStar}
-          onToggleViewMode={() => setViewMode((prev) => (prev === 'list' ? 'card' : 'list'))}
+          onToggleViewMode={() =>
+            setViewMode((prev) => (prev === 'list' ? 'card' : 'list'))
+          }
           onRefresh={onRefresh}
         />
       </div>
@@ -374,9 +423,15 @@ export function ReadingExperience({
           feed={selectedFeed}
           readerView={readerView}
           onToggleReaderView={() => setReaderView((prev) => !prev)}
-          onToggleRead={() => selectedArticle && handleToggleRead(selectedArticle.id)}
-          onToggleStar={() => selectedArticle && handleToggleStar(selectedArticle.id)}
-          onOpenInBrowser={() => selectedArticle && handleOpenInBrowser(selectedArticle.id)}
+          onToggleRead={() =>
+            selectedArticle && handleToggleRead(selectedArticle.id)
+          }
+          onToggleStar={() =>
+            selectedArticle && handleToggleStar(selectedArticle.id)
+          }
+          onOpenInBrowser={() =>
+            selectedArticle && handleOpenInBrowser(selectedArticle.id)
+          }
         />
       </div>
 

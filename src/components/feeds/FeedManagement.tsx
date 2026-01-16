@@ -7,6 +7,7 @@ import {
   FolderOpen,
   FolderPlus,
   GripVertical,
+  Loader2,
   MoreHorizontal,
   PanelLeft,
   Pencil,
@@ -14,9 +15,28 @@ import {
   Rss,
   Trash2,
   Upload,
+  X,
 } from 'lucide-react'
-import { FolderSidebar } from '../../reading-experience/components/FolderSidebar'
-import type { Feed, FeedManagementProps, Folder } from '../types'
+import type { Feed, Folder } from '@/types'
+import { FolderSidebar } from '@/components/reading/FolderSidebar'
+
+interface FeedManagementProps {
+  folders: Array<Folder>
+  feeds: Array<Feed>
+  onCreateFolder: (name: string) => Promise<void>
+  onRenameFolder: (folderId: string, name: string) => Promise<void>
+  onDeleteFolder: (folderId: string) => Promise<void>
+  onAddFeed: (
+    url: string,
+    folderId?: string,
+  ) => Promise<{ success: boolean; error?: string }>
+  onRemoveFeed: (feedId: string) => Promise<void>
+  onMoveFeed: (feedId: string, folderId: string | null) => Promise<void>
+  onImportOPML: (
+    file: File,
+  ) => Promise<{ success: boolean; imported?: number; error?: string }>
+  onExportOPML: () => Promise<void>
+}
 
 // Sub-component: Feed Row
 interface FeedRowProps {
@@ -68,13 +88,15 @@ function FeedRow({ feed, onRemove, onMove, folders }: FeedRowProps) {
           )}
         </div>
         <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-          <span className="truncate">{new URL(feed.siteUrl).hostname}</span>
+          <span className="truncate">
+            {new URL(feed.siteUrl || feed.url).hostname}
+          </span>
         </div>
       </div>
 
       {/* External Link */}
       <a
-        href={feed.siteUrl}
+        href={feed.siteUrl || feed.url}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded p-1.5 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-300"
@@ -315,7 +337,10 @@ interface AddFeedModalProps {
   isOpen: boolean
   folders: Array<Folder>
   onClose: () => void
-  onAdd: (url: string, folderId?: string) => void
+  onAdd: (
+    url: string,
+    folderId?: string,
+  ) => Promise<{ success: boolean; error?: string }>
 }
 
 function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
@@ -323,17 +348,36 @@ function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
   const [selectedFolderId, setSelectedFolderId] = useState<string | undefined>(
     undefined,
   )
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   if (!isOpen) return null
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (url.trim()) {
-      onAdd(url.trim(), selectedFolderId)
+    if (!url.trim()) return
+
+    setIsLoading(true)
+    setError(null)
+
+    const result = await onAdd(url.trim(), selectedFolderId)
+
+    setIsLoading(false)
+
+    if (result.success) {
       setUrl('')
       setSelectedFolderId(undefined)
       onClose()
+    } else {
+      setError(result.error || 'Failed to add feed')
     }
+  }
+
+  const handleClose = () => {
+    setUrl('')
+    setSelectedFolderId(undefined)
+    setError(null)
+    onClose()
   }
 
   return (
@@ -341,11 +385,18 @@ function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       {/* Modal */}
       <div className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+        <button
+          onClick={handleClose}
+          className="absolute right-4 top-4 rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
         <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
           Add Feed
         </h2>
@@ -358,11 +409,24 @@ function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
             <input
               type="url"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => {
+                setUrl(e.target.value)
+                setError(null)
+              }}
               placeholder="https://example.com/feed.xml"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-colors focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+              className={`w-full rounded-lg border px-3 py-2.5 text-slate-900 placeholder-slate-400 outline-none transition-colors focus:ring-2 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500 ${
+                error
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                  : 'border-slate-300 focus:border-sky-500 focus:ring-sky-500/20 dark:border-slate-600'
+              }`}
               autoFocus
+              disabled={isLoading}
             />
+            {error && (
+              <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                {error}
+              </p>
+            )}
           </div>
 
           <div className="mb-6">
@@ -373,6 +437,7 @@ function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
               value={selectedFolderId ?? ''}
               onChange={(e) => setSelectedFolderId(e.target.value || undefined)}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 outline-none transition-colors focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+              disabled={isLoading}
             >
               <option value="">No folder</option>
               {folders.map((folder) => (
@@ -386,16 +451,18 @@ function AddFeedModal({ isOpen, folders, onClose, onAdd }: AddFeedModalProps) {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={!url.trim()}
-              className="flex-1 rounded-lg bg-sky-500 px-4 py-2.5 font-medium text-white transition-colors hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!url.trim() || isLoading}
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-sky-500 px-4 py-2.5 font-medium text-white transition-colors hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               Subscribe
             </button>
           </div>
@@ -430,14 +497,26 @@ function CreateFolderModal({
     }
   }
 
+  const handleClose = () => {
+    setName('')
+    onClose()
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       <div className="relative w-full max-w-sm rounded-xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-800">
+        <button
+          onClick={handleClose}
+          className="absolute right-4 top-4 rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
         <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
           Create Folder
         </h2>
@@ -460,7 +539,7 @@ function CreateFolderModal({
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
             >
               Cancel
@@ -497,6 +576,11 @@ export function FeedManagement({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
   const [selectedFeedId, setSelectedFeedId] = useState<string | null>(null)
+  const [importStatus, setImportStatus] = useState<{
+    loading: boolean
+    message?: string
+    error?: boolean
+  }>({ loading: false })
 
   // Group feeds by folder
   const feedsByFolder = folders.reduce(
@@ -517,12 +601,11 @@ export function FeedManagement({
   // Filter feeds/folders based on sidebar selection
   const getVisibleFolders = () => {
     if (selectedFeedId) {
-      // Show the folder containing the selected feed
       const feed = feeds.find((f) => f.id === selectedFeedId)
       if (feed?.folderId) {
         return folders.filter((f) => f.id === feed.folderId)
       }
-      return [] // Uncategorized feed selected
+      return []
     }
     if (selectedFolderId && selectedFolderId !== 'starred') {
       return folders.filter((f) => f.id === selectedFolderId)
@@ -547,15 +630,30 @@ export function FeedManagement({
   const visibleFolders = getVisibleFolders()
   const visibleUncategorizedFeeds = getVisibleUncategorizedFeeds()
 
-  // Hidden file input for OPML import
+  // Handle OPML import
   const handleImportClick = () => {
     const input = document.createElement('input')
     input.type = 'file'
     input.accept = '.opml,.xml'
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (file) {
-        onImportOPML?.(file)
+        setImportStatus({ loading: true })
+        const result = await onImportOPML(file)
+        if (result.success) {
+          setImportStatus({
+            loading: false,
+            message: `Imported ${result.imported} feeds`,
+          })
+          setTimeout(() => setImportStatus({ loading: false }), 3000)
+        } else {
+          setImportStatus({
+            loading: false,
+            message: result.error || 'Import failed',
+            error: true,
+          })
+          setTimeout(() => setImportStatus({ loading: false }), 5000)
+        }
       }
     }
     input.click()
@@ -584,6 +682,8 @@ export function FeedManagement({
             onSelectFolder={handleSelectFolder}
             onSelectFeed={handleSelectFeed}
             onCollapse={() => setSidebarCollapsed(true)}
+            onAddFeed={() => setShowAddFeedModal(true)}
+            onAddFolder={() => setShowCreateFolderModal(true)}
           />
         </div>
       )}
@@ -617,16 +717,28 @@ export function FeedManagement({
 
             {/* Actions */}
             <div className="flex flex-wrap items-center gap-2">
+              {importStatus.message && (
+                <span
+                  className={`text-sm ${importStatus.error ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}
+                >
+                  {importStatus.message}
+                </span>
+              )}
               <button
                 onClick={handleImportClick}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                disabled={importStatus.loading}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
               >
-                <Upload className="h-4 w-4" />
+                {importStatus.loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
                 <span className="hidden sm:inline">Import OPML</span>
                 <span className="sm:hidden">Import</span>
               </button>
               <button
-                onClick={() => onExportOPML?.()}
+                onClick={() => onExportOPML()}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 <Download className="h-4 w-4" />
@@ -668,8 +780,8 @@ export function FeedManagement({
                     : feedsByFolder[folder.id] || []
                 }
                 allFolders={folders}
-                onRename={(newName) => onRenameFolder?.(folder.id, newName)}
-                onDelete={() => onDeleteFolder?.(folder.id)}
+                onRename={(newName) => onRenameFolder(folder.id, newName)}
+                onDelete={() => onDeleteFolder(folder.id)}
                 onRemoveFeed={onRemoveFeed}
                 onMoveFeed={onMoveFeed}
               />
@@ -693,8 +805,8 @@ export function FeedManagement({
                       key={feed.id}
                       feed={feed}
                       folders={folders}
-                      onRemove={() => onRemoveFeed?.(feed.id)}
-                      onMove={(folderId) => onMoveFeed?.(feed.id, folderId)}
+                      onRemove={() => onRemoveFeed(feed.id)}
+                      onMove={(folderId) => onMoveFeed(feed.id, folderId)}
                     />
                   ))}
                 </div>
@@ -742,13 +854,13 @@ export function FeedManagement({
         isOpen={showAddFeedModal}
         folders={folders}
         onClose={() => setShowAddFeedModal(false)}
-        onAdd={(url, folderId) => onAddFeed?.(url, folderId)}
+        onAdd={onAddFeed}
       />
 
       <CreateFolderModal
         isOpen={showCreateFolderModal}
         onClose={() => setShowCreateFolderModal(false)}
-        onCreate={(name) => onCreateFolder?.(name)}
+        onCreate={onCreateFolder}
       />
     </div>
   )

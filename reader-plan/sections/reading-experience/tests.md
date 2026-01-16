@@ -17,16 +17,19 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 #### Success Path
 
 **Setup:**
+
 - Folders and feeds exist with articles
 - Article "Test Article" is unread
 
 **Steps:**
+
 1. User clicks "Tech Blogs" folder in sidebar
 2. User sees filtered article list
 3. User clicks "Test Article" in the list
 4. Article content appears in reading pane
 
 **Expected Results:**
+
 - [ ] Article list filters to show only articles from "Tech Blogs" feeds
 - [ ] Clicked article is highlighted in list
 - [ ] Reading pane shows article title, source, date
@@ -41,16 +44,19 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User navigates articles using keyboard
 
 **Setup:**
+
 - Multiple articles exist in list
 - First article is selected
 
 **Steps:**
+
 1. User presses `j` key
 2. User presses `j` again
 3. User presses `k` key
 4. User presses `o` key
 
 **Expected Results:**
+
 - [ ] After first `j`: Selection moves to second article
 - [ ] After second `j`: Selection moves to third article
 - [ ] After `k`: Selection moves back to second article
@@ -63,13 +69,16 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User marks an article as unread
 
 **Setup:**
+
 - Article "Read Article" is currently read (isRead: true)
 
 **Steps:**
+
 1. User selects "Read Article"
 2. User presses `m` key (or clicks the read toggle button)
 
 **Expected Results:**
+
 - [ ] Article changes to unread status
 - [ ] Unread indicator (blue dot) appears on article row
 - [ ] Title styling changes to bold/prominent
@@ -82,13 +91,16 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User stars an article for later
 
 **Setup:**
+
 - Article "Important Post" exists, not starred
 
 **Steps:**
+
 1. User selects "Important Post"
 2. User presses `s` key (or clicks star button in reading pane)
 
 **Expected Results:**
+
 - [ ] Star icon fills with amber color
 - [ ] Article appears in "Starred" filter
 - [ ] Starred count increments
@@ -100,12 +112,15 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User wants distraction-free reading
 
 **Setup:**
+
 - Article is selected and displayed in reading pane
 
 **Steps:**
+
 1. User presses `f` key (or clicks focus mode button)
 
 **Expected Results:**
+
 - [ ] Sidebar hides
 - [ ] Article list hides
 - [ ] Reading pane expands to full width
@@ -119,12 +134,15 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User switches between list and card views
 
 **Setup:**
+
 - Article list is in list view
 
 **Steps:**
+
 1. User presses `v` key (or clicks view toggle button)
 
 **Expected Results:**
+
 - [ ] Articles display as cards with previews
 - [ ] Pressing `v` again returns to list view
 
@@ -135,9 +153,11 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User wants to see available shortcuts
 
 **Steps:**
+
 1. User presses `?` key
 
 **Expected Results:**
+
 - [ ] Keyboard shortcuts modal appears
 - [ ] Shows Navigation shortcuts (j, k, g f, g a)
 - [ ] Shows Article Actions (o, m, s, r)
@@ -153,9 +173,11 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** Selected folder/feed has no articles
 
 **Setup:**
+
 - `articles` array is empty (`[]`)
 
 **Expected Results:**
+
 - [ ] Article list shows empty state icon (newspaper/document)
 - [ ] Shows heading "No articles yet"
 - [ ] Shows message "Subscribe to feeds to see articles here"
@@ -166,9 +188,11 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 **Scenario:** User hasn't selected an article yet
 
 **Setup:**
+
 - Articles exist but `selectedArticleId` is null
 
 **Expected Results:**
+
 - [ ] Reading pane shows empty state with book icon
 - [ ] Shows "Select an article to read"
 - [ ] Shows keyboard hint "Choose an article from the list or use j / k to navigate"
@@ -180,11 +204,13 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 ### ReadingExperience Component
 
 **Renders correctly:**
+
 - [ ] Shows 3-pane layout (sidebar, article list, reading pane)
 - [ ] Sidebar shows All Articles, Unread, Starred options
 - [ ] Sidebar shows folders with nested feeds
 
 **State management:**
+
 - [ ] Selecting folder filters article list
 - [ ] Selecting feed filters to that feed only
 - [ ] Selecting article displays in reading pane
@@ -192,6 +218,7 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 ### FolderSidebar Component
 
 **Renders correctly:**
+
 - [ ] Shows "Feeds" header with collapse button
 - [ ] Shows All Articles with total count
 - [ ] Shows Unread with unread count badge (sky blue)
@@ -199,6 +226,7 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 - [ ] Shows folders with folder icon and feed count
 
 **User interactions:**
+
 - [ ] Clicking All Articles shows all articles
 - [ ] Clicking Unread filters to unread only
 - [ ] Clicking Starred shows starred articles
@@ -208,12 +236,14 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 ### ArticleList Component
 
 **Renders correctly:**
+
 - [ ] Shows article count (e.g., "15 articles")
 - [ ] Shows unread count (e.g., "(5 unread)")
 - [ ] Shows refresh button
 - [ ] Shows view toggle button
 
 **User interactions:**
+
 - [ ] Clicking article selects it
 - [ ] Clicking star button toggles star
 - [ ] Clicking refresh calls `onRefresh`
@@ -222,6 +252,7 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 ### ReadingPane Component
 
 **Renders correctly:**
+
 - [ ] Shows toolbar with read, star, open buttons
 - [ ] Shows reader view toggle
 - [ ] Shows article title
@@ -230,6 +261,7 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 - [ ] Shows article content
 
 **User interactions:**
+
 - [ ] Clicking read button toggles read status
 - [ ] Clicking star button toggles star
 - [ ] Clicking open button opens in browser
@@ -239,21 +271,21 @@ Test the 3-pane reading interface including folder/feed navigation, article sele
 
 ## Keyboard Shortcut Tests
 
-| Key | Expected Behavior |
-|-----|-------------------|
-| `j` | Selects next article in list |
-| `k` | Selects previous article in list |
-| `o` | Opens current article in new browser tab |
-| `m` | Toggles read/unread status |
-| `s` | Toggles starred status |
-| `r` | Refreshes feeds |
-| `[` | Collapses/expands sidebar |
-| `f` | Toggles focus mode |
-| `v` | Toggles list/card view |
-| `g f` | Navigates to feeds/all articles |
-| `g a` | Navigates to all articles |
-| `?` | Shows keyboard shortcuts help |
-| `Esc` | Closes keyboard help modal |
+| Key   | Expected Behavior                        |
+| ----- | ---------------------------------------- |
+| `j`   | Selects next article in list             |
+| `k`   | Selects previous article in list         |
+| `o`   | Opens current article in new browser tab |
+| `m`   | Toggles read/unread status               |
+| `s`   | Toggles starred status                   |
+| `r`   | Refreshes feeds                          |
+| `[`   | Collapses/expands sidebar                |
+| `f`   | Toggles focus mode                       |
+| `v`   | Toggles list/card view                   |
+| `g f` | Navigates to feeds/all articles          |
+| `g a` | Navigates to all articles                |
+| `?`   | Shows keyboard shortcuts help            |
+| `Esc` | Closes keyboard help modal               |
 
 ---
 
@@ -292,7 +324,7 @@ const mockUIState = {
   selectedFolderId: null,
   selectedFeedId: 'feed-1',
   selectedArticleId: 'article-1',
-};
+}
 
 // Articles
 const mockArticles = [
@@ -318,11 +350,11 @@ const mockArticles = [
     isRead: true,
     isStarred: true,
   },
-];
+]
 
 // Empty states
-const mockEmptyArticles = [];
-const mockNoSelection = { ...mockUIState, selectedArticleId: null };
+const mockEmptyArticles = []
+const mockNoSelection = { ...mockUIState, selectedArticleId: null }
 ```
 
 ---

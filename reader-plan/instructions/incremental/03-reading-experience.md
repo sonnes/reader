@@ -12,6 +12,7 @@ Implement the Reading Experience feature — the core reading interface featurin
 The Reading Experience is the heart of the RSS reader. It provides a classic 3-pane layout (folders, article list, reading pane) with keyboard navigation for efficient reading. Users can collapse the sidebar, enter focus mode for distraction-free reading, and toggle between clean reader view and original formatting.
 
 **Key Functionality:**
+
 - Browse articles by selecting a folder or feed in the sidebar
 - Select an article to view it in the reading pane (automatically marks as read)
 - Use j/k keys to navigate through articles, o to open, m to toggle read status, s to star
@@ -26,6 +27,7 @@ The Reading Experience is the heart of the RSS reader. It provides a classic 3-p
 Before implementing this section, **write tests first** based on the test specifications provided.
 
 See `reader-plan/sections/reading-experience/tests.md` for detailed test-writing instructions including:
+
 - Key user flows to test (success and failure paths)
 - Specific UI elements, button labels, and interactions to verify
 - Expected behaviors and assertions
@@ -33,6 +35,7 @@ See `reader-plan/sections/reading-experience/tests.md` for detailed test-writing
 The test instructions are framework-agnostic — adapt them to your testing setup.
 
 **TDD Workflow:**
+
 1. Read `tests.md` and write failing tests for the key user flows
 2. Implement the feature to make tests pass
 3. Refactor while keeping tests green
@@ -79,6 +82,7 @@ interface Article {
 ```
 
 You'll need to:
+
 - Fetch articles based on selected folder/feed
 - Manage UI state (sidebar, focus mode, view mode)
 - Implement keyboard event handlers
@@ -89,38 +93,38 @@ You'll need to:
 
 Wire up these user actions:
 
-| Callback | Description |
-|----------|-------------|
-| `onSelectFolder` | Called when user selects a folder |
-| `onSelectFeed` | Called when user selects a feed |
-| `onSelectArticle` | Called when user selects an article |
-| `onToggleRead` | Called when user toggles read status (keyboard: m) |
-| `onToggleStar` | Called when user toggles starred status (keyboard: s) |
-| `onOpenInBrowser` | Called when user opens article in browser (keyboard: o) |
-| `onToggleSidebar` | Called when user toggles sidebar visibility |
-| `onToggleFocusMode` | Called when user toggles focus mode |
-| `onToggleViewMode` | Called when user switches between list/card view |
-| `onToggleReaderView` | Called when user toggles reader view |
-| `onRefresh` | Called when user requests feed refresh (keyboard: r) |
+| Callback             | Description                                             |
+| -------------------- | ------------------------------------------------------- |
+| `onSelectFolder`     | Called when user selects a folder                       |
+| `onSelectFeed`       | Called when user selects a feed                         |
+| `onSelectArticle`    | Called when user selects an article                     |
+| `onToggleRead`       | Called when user toggles read status (keyboard: m)      |
+| `onToggleStar`       | Called when user toggles starred status (keyboard: s)   |
+| `onOpenInBrowser`    | Called when user opens article in browser (keyboard: o) |
+| `onToggleSidebar`    | Called when user toggles sidebar visibility             |
+| `onToggleFocusMode`  | Called when user toggles focus mode                     |
+| `onToggleViewMode`   | Called when user switches between list/card view        |
+| `onToggleReaderView` | Called when user toggles reader view                    |
+| `onRefresh`          | Called when user requests feed refresh (keyboard: r)    |
 
 ### Keyboard Shortcuts
 
 Implement these keyboard shortcuts:
 
-| Key | Action |
-|-----|--------|
-| `j` | Next article |
-| `k` | Previous article |
-| `o` | Open in browser |
-| `m` | Toggle read/unread |
-| `s` | Toggle star |
-| `r` | Refresh feeds |
-| `[` | Collapse sidebar |
-| `f` | Toggle focus mode |
-| `v` | Toggle list/card view |
-| `g f` | Go to feeds |
-| `g a` | Go to all articles |
-| `?` | Show keyboard shortcuts |
+| Key   | Action                  |
+| ----- | ----------------------- |
+| `j`   | Next article            |
+| `k`   | Previous article        |
+| `o`   | Open in browser         |
+| `m`   | Toggle read/unread      |
+| `s`   | Toggle star             |
+| `r`   | Refresh feeds           |
+| `[`   | Collapse sidebar        |
+| `f`   | Toggle focus mode       |
+| `v`   | Toggle list/card view   |
+| `g f` | Go to feeds             |
+| `g a` | Go to all articles      |
+| `?`   | Show keyboard shortcuts |
 
 ### Empty States
 

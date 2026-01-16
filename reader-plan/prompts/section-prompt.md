@@ -4,11 +4,11 @@ Use this template when implementing one section at a time. Replace `[SECTION]` w
 
 ---
 
-[SECTION]=reading-experience
+[SECTION]=feed-management
 
 ## Prompt
 
-I want you to implement the **[SECTION]** section of the Reader RSS application. use tanstack-start server functions for data fetching. https://tanstack.com/start/latest/docs/framework/react/guide/server-functions
+I want you to implement the **[SECTION]** section of the Reader RSS application. Reuse existing components and data model. Only add new components and functions.
 
 Organize db functions as defined In the documentation.
 

@@ -24,10 +24,12 @@ A full-page feed management interface where users can view, add, and organize th
 ## Data Used
 
 **Entities:**
+
 - `Folder` — Container for organizing feeds
 - `Feed` — RSS/Atom feed source
 
 **From global model:**
+
 - Folder has many Feeds
 - Feed belongs to one Folder (or none)
 
@@ -41,13 +43,13 @@ See `screenshot.png` for the target UI design.
 
 ## Callback Props
 
-| Callback | Description |
-|----------|-------------|
-| `onCreateFolder` | Called when user creates a new folder |
-| `onRenameFolder` | Called when user renames a folder |
-| `onDeleteFolder` | Called when user deletes a folder |
-| `onAddFeed` | Called when user subscribes to a new feed |
-| `onRemoveFeed` | Called when user unsubscribes from a feed |
-| `onMoveFeed` | Called when user moves a feed to a different folder |
-| `onImportOPML` | Called when user imports feeds from OPML file |
-| `onExportOPML` | Called when user exports feeds to OPML file |
+| Callback         | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `onCreateFolder` | Called when user creates a new folder               |
+| `onRenameFolder` | Called when user renames a folder                   |
+| `onDeleteFolder` | Called when user deletes a folder                   |
+| `onAddFeed`      | Called when user subscribes to a new feed           |
+| `onRemoveFeed`   | Called when user unsubscribes from a feed           |
+| `onMoveFeed`     | Called when user moves a feed to a different folder |
+| `onImportOPML`   | Called when user imports feeds from OPML file       |
+| `onExportOPML`   | Called when user exports feeds to OPML file         |

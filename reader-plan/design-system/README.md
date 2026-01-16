@@ -4,11 +4,11 @@ This directory contains the design tokens and guidelines for the Reader RSS appl
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| [tokens.css](tokens.css) | CSS custom properties for colors and fonts |
-| [tailwind-colors.md](tailwind-colors.md) | Tailwind color class reference |
-| [fonts.md](fonts.md) | Typography setup and usage |
+| File                                     | Description                                |
+| ---------------------------------------- | ------------------------------------------ |
+| [tokens.css](tokens.css)                 | CSS custom properties for colors and fonts |
+| [tailwind-colors.md](tailwind-colors.md) | Tailwind color class reference             |
+| [fonts.md](fonts.md)                     | Typography setup and usage                 |
 
 ## Quick Start
 
@@ -18,19 +18,19 @@ This directory contains the design tokens and guidelines for the Reader RSS appl
 
 ## Color Palette
 
-| Role | Tailwind Color | Usage |
-|------|----------------|-------|
-| Primary | `sky` | Buttons, links, active states, unread indicators |
-| Secondary | `amber` | Stars, favorites, warnings |
-| Neutral | `slate` | Text, backgrounds, borders |
+| Role      | Tailwind Color | Usage                                            |
+| --------- | -------------- | ------------------------------------------------ |
+| Primary   | `sky`          | Buttons, links, active states, unread indicators |
+| Secondary | `amber`        | Stars, favorites, warnings                       |
+| Neutral   | `slate`        | Text, backgrounds, borders                       |
 
 ## Typography
 
-| Role | Font |
-|------|------|
-| Headings | Noto Sans (600, 700) |
-| Body | Noto Sans (400, 500) |
-| Code | JetBrains Mono (400, 500) |
+| Role     | Font                      |
+| -------- | ------------------------- |
+| Headings | Noto Sans (600, 700)      |
+| Body     | Noto Sans (400, 500)      |
+| Code     | JetBrains Mono (400, 500) |
 
 ## Dark Mode
 

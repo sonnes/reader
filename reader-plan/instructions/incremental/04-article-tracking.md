@@ -12,6 +12,7 @@ Implement the Article Tracking feature — views for browsing all articles and m
 Article Tracking provides dedicated views for browsing all articles and all unread articles, with the ability to toggle between list and card layouts. Users can manage individual articles by marking them read/unread, starring them, or deleting them.
 
 **Key Functionality:**
+
 - View all articles across all subscribed feeds
 - View all unread articles filtered from the full list
 - Toggle between list view (compact rows) and card view (with previews)
@@ -27,6 +28,7 @@ Article Tracking provides dedicated views for browsing all articles and all unre
 Before implementing this section, **write tests first** based on the test specifications provided.
 
 See `reader-plan/sections/article-tracking/tests.md` for detailed test-writing instructions including:
+
 - Key user flows to test (success and failure paths)
 - Specific UI elements, button labels, and interactions to verify
 - Expected behaviors and assertions
@@ -34,6 +36,7 @@ See `reader-plan/sections/article-tracking/tests.md` for detailed test-writing i
 The test instructions are framework-agnostic — adapt them to your testing setup.
 
 **TDD Workflow:**
+
 1. Read `tests.md` and write failing tests for the key user flows
 2. Implement the feature to make tests pass
 3. Refactor while keeping tests green
@@ -80,6 +83,7 @@ interface ArticleTrackingProps {
 ```
 
 You'll need to:
+
 - Fetch and filter articles based on selection
 - Sort articles by date
 - Track read/unread status
@@ -90,15 +94,15 @@ You'll need to:
 
 Wire up these user actions:
 
-| Callback | Description |
-|----------|-------------|
-| `onSelectFolder` | Called when user selects a folder |
-| `onSelectFeed` | Called when user selects a feed |
+| Callback          | Description                                 |
+| ----------------- | ------------------------------------------- |
+| `onSelectFolder`  | Called when user selects a folder           |
+| `onSelectFeed`    | Called when user selects a feed             |
 | `onSelectArticle` | Called when user selects an article to view |
-| `onOpenInNewTab` | Called when user wants to open in new tab |
-| `onToggleRead` | Called when user toggles read/unread status |
-| `onToggleStar` | Called when user toggles starred status |
-| `onDelete` | Called when user deletes an article |
+| `onOpenInNewTab`  | Called when user wants to open in new tab   |
+| `onToggleRead`    | Called when user toggles read/unread status |
+| `onToggleStar`    | Called when user toggles starred status     |
+| `onDelete`        | Called when user deletes an article         |
 
 ### Empty States
 

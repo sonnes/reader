@@ -5,7 +5,7 @@
 export interface Folder {
   id: string
   name: string
-  feedIds: string[]
+  feedIds: Array<string>
   unreadCount: number
 }
 
@@ -55,13 +55,13 @@ export interface UIState {
 
 export interface ReadingExperienceProps {
   /** Folders for organizing feeds */
-  folders: Folder[]
+  folders: Array<Folder>
   /** All subscribed feeds (some may have folderId: null) */
-  feeds: Feed[]
+  feeds: Array<Feed>
   /** Articles from the currently selected feed/folder */
-  articles: Article[]
+  articles: Array<Article>
   /** List of starred article references */
-  starredArticles: StarredArticle[]
+  starredArticles: Array<StarredArticle>
   /** Current UI state */
   uiState: UIState
 

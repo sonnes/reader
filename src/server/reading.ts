@@ -1,15 +1,15 @@
 import { createServerFn } from '@tanstack/react-start'
 import {
-  getAllFolders,
-  getAllFeeds,
   getAllArticles,
+  getAllFeeds,
+  getAllFolders,
   getArticlesByFeed,
   getArticlesByFolder,
-  getUnreadArticles,
   getStarredArticles,
+  getStats,
+  getUnreadArticles,
   updateArticleReadStatus,
   updateArticleStarStatus,
-  getStats,
 } from '@/db/queries'
 import { seedDatabase } from '@/db/seed'
 
@@ -41,14 +41,14 @@ export const fetchReadingData = createServerFn({ method: 'GET' }).handler(
       articles,
       stats,
     }
-  }
+  },
 )
 
 export const fetchArticlesFn = createServerFn({ method: 'GET' }).handler(
   async () => {
     ensureInitialized()
     return getAllArticles()
-  }
+  },
 )
 
 // ============================================================================
@@ -57,16 +57,22 @@ export const fetchArticlesFn = createServerFn({ method: 'GET' }).handler(
 
 export const toggleArticleRead = createServerFn({ method: 'POST' }).handler(
   async (ctx) => {
-    const { articleId, isRead } = ctx.data as { articleId: string; isRead: boolean }
+    const { articleId, isRead } = ctx.data as {
+      articleId: string
+      isRead: boolean
+    }
     updateArticleReadStatus(articleId, isRead)
     return { success: true }
-  }
+  },
 )
 
 export const toggleArticleStar = createServerFn({ method: 'POST' }).handler(
   async (ctx) => {
-    const { articleId, isStarred } = ctx.data as { articleId: string; isStarred: boolean }
+    const { articleId, isStarred } = ctx.data as {
+      articleId: string
+      isStarred: boolean
+    }
     updateArticleStarStatus(articleId, isStarred)
     return { success: true }
-  }
+  },
 )

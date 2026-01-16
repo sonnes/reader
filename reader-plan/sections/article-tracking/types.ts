@@ -5,7 +5,7 @@
 export interface Folder {
   id: string
   name: string
-  feedIds: string[]
+  feedIds: Array<string>
   unreadCount: number
 }
 
@@ -38,11 +38,11 @@ export interface Article {
 
 export interface ArticleTrackingProps {
   /** The list of articles to display */
-  articles: Article[]
+  articles: Array<Article>
   /** Folders for organizing feeds */
-  folders: Folder[]
+  folders: Array<Folder>
   /** All subscribed feeds */
-  feeds: Feed[]
+  feeds: Array<Feed>
   /** Currently selected folder ID (null = All Articles, 'starred' = Starred) */
   selectedFolderId: string | null
   /** Currently selected feed ID (when drilling into a specific feed) */

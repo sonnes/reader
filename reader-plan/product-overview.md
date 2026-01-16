@@ -29,12 +29,14 @@ A minimal, personal RSS reader for following blogs and news sources. Features a 
 ## Data Model
 
 **Entities:**
+
 - **Folder** — A container for organizing feeds by topic
 - **Feed** — An RSS or Atom feed source that the user subscribes to
 - **Article** — An individual post or item from a feed
 - **StarredArticle** — A reference to an article the user has saved for later
 
 **Relationships:**
+
 - Folder has many Feeds
 - Feed belongs to one Folder (or no folder)
 - Feed has many Articles
@@ -44,11 +46,13 @@ A minimal, personal RSS reader for following blogs and news sources. Features a 
 ## Design System
 
 **Colors:**
+
 - Primary: `sky`
 - Secondary: `amber`
 - Neutral: `slate`
 
 **Typography:**
+
 - Heading: Noto Sans
 - Body: Noto Sans
 - Mono: JetBrains Mono

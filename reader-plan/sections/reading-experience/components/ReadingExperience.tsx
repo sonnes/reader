@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { ReadingExperienceProps } from '../types'
 import { FolderSidebar } from './FolderSidebar'
 import { ArticleList } from './ArticleList'
 import { ReadingPane } from './ReadingPane'
 import { KeyboardHelp } from './KeyboardHelp'
+import type { ReadingExperienceProps } from '../types'
 
 export function ReadingExperience({
   folders,
@@ -25,7 +25,8 @@ export function ReadingExperience({
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false)
 
   // Get the selected article
-  const selectedArticle = articles.find((a) => a.id === uiState.selectedArticleId) || null
+  const selectedArticle =
+    articles.find((a) => a.id === uiState.selectedArticleId) || null
   const selectedFeed = selectedArticle
     ? feeds.find((f) => f.id === selectedArticle.feedId)
     : undefined
@@ -50,9 +51,15 @@ export function ReadingExperience({
           readerView={uiState.readerView}
           focusMode={true}
           onToggleReaderView={onToggleReaderView}
-          onToggleRead={() => selectedArticle && onToggleRead?.(selectedArticle.id)}
-          onToggleStar={() => selectedArticle && onToggleStar?.(selectedArticle.id)}
-          onOpenInBrowser={() => selectedArticle && onOpenInBrowser?.(selectedArticle.id)}
+          onToggleRead={() =>
+            selectedArticle && onToggleRead?.(selectedArticle.id)
+          }
+          onToggleStar={() =>
+            selectedArticle && onToggleStar?.(selectedArticle.id)
+          }
+          onOpenInBrowser={() =>
+            selectedArticle && onOpenInBrowser?.(selectedArticle.id)
+          }
           onExitFocusMode={onToggleFocusMode}
         />
         {showKeyboardHelp && (
@@ -123,9 +130,15 @@ export function ReadingExperience({
           feed={selectedFeed}
           readerView={uiState.readerView}
           onToggleReaderView={onToggleReaderView}
-          onToggleRead={() => selectedArticle && onToggleRead?.(selectedArticle.id)}
-          onToggleStar={() => selectedArticle && onToggleStar?.(selectedArticle.id)}
-          onOpenInBrowser={() => selectedArticle && onOpenInBrowser?.(selectedArticle.id)}
+          onToggleRead={() =>
+            selectedArticle && onToggleRead?.(selectedArticle.id)
+          }
+          onToggleStar={() =>
+            selectedArticle && onToggleStar?.(selectedArticle.id)
+          }
+          onOpenInBrowser={() =>
+            selectedArticle && onOpenInBrowser?.(selectedArticle.id)
+          }
         />
       </div>
 

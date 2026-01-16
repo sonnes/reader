@@ -11,6 +11,7 @@ I want you to implement a complete RSS reader application called **Reader**. Thi
 ### Before We Start
 
 Please ask me about:
+
 1. **Tech stack** - What React framework should we use? (Next.js, Vite, Create React App, etc.)
 2. **Authentication** - Do we need user accounts? If so, what auth provider?
 3. **Data persistence** - Where should we store data? (Local storage, database, etc.)
@@ -19,6 +20,7 @@ Please ask me about:
 ### Implementation Package
 
 I have a complete implementation package that includes:
+
 - **Product overview** - What the app does and key features
 - **Implementation instructions** - Step-by-step guide for each milestone
 - **React components** - Reference implementations for all screens

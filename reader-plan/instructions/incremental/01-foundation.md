@@ -8,6 +8,7 @@
 ## About These Instructions
 
 **What you're receiving:**
+
 - Finished UI designs (React components with full styling)
 - Data model definitions (TypeScript types and sample data)
 - UI/UX specifications (user flows, requirements, screenshots)
@@ -15,6 +16,7 @@
 - Test-writing instructions for each section (for TDD approach)
 
 **What you need to build:**
+
 - Backend API endpoints and database schema
 - Authentication and authorization
 - Data fetching and state management
@@ -22,6 +24,7 @@
 - Integration of the provided UI components with real data
 
 **Important guidelines:**
+
 - **DO NOT** redesign or restyle the provided components — use them as-is
 - **DO** wire up the callback props to your routing and API calls
 - **DO** replace sample data with real data from your backend
@@ -47,11 +50,13 @@ Configure your styling system with these tokens:
 - See `reader-plan/design-system/fonts.md` for Google Fonts setup
 
 **Color Palette:**
+
 - Primary: `sky` — Used for buttons, links, key accents
 - Secondary: `amber` — Used for stars, highlights, secondary elements
 - Neutral: `slate` — Used for backgrounds, text, borders
 
 **Typography:**
+
 - Heading: Noto Sans
 - Body: Noto Sans
 - Mono: JetBrains Mono
@@ -64,6 +69,7 @@ Create TypeScript interfaces for your core entities:
 - See `reader-plan/data-model/README.md` for entity relationships
 
 **Core Entities:**
+
 - `Folder` — Container for organizing feeds
 - `Feed` — RSS/Atom feed source
 - `Article` — Individual post from a feed
@@ -87,6 +93,7 @@ Copy the shell components from `reader-plan/shell/components/` to your project:
 
 **Shell Layout:**
 Reader uses a minimal header shell that keeps the focus on the reading experience:
+
 - Fixed header at top (56px height)
 - Logo/wordmark on the left
 - User menu on the right
@@ -95,6 +102,7 @@ Reader uses a minimal header shell that keeps the focus on the reading experienc
 **Wire Up Navigation:**
 
 The shell does not include section navigation. The 3-pane layout is the primary interface:
+
 - Feed Management → Left pane (folder tree)
 - Reading Experience → Center + right panes (article list + reader)
 - Article Tracking → Integrated into article list and reader panes
@@ -102,6 +110,7 @@ The shell does not include section navigation. The 3-pane layout is the primary 
 **User Menu:**
 
 The user menu expects:
+
 - User name
 - Avatar URL (optional)
 - Logout callback

@@ -1,15 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { ReadingExperience } from '../ReadingExperience'
-import type { Folder, Feed, Article } from '@/types'
+import type { Article, Feed, Folder } from '@/types'
 
 // Mock data
-const mockFolders: Folder[] = [
+const mockFolders: Array<Folder> = [
   { id: 'folder-1', name: 'Tech Blogs', feedIds: ['feed-1'], unreadCount: 3 },
   { id: 'folder-2', name: 'News', feedIds: ['feed-2'], unreadCount: 2 },
 ]
 
-const mockFeeds: Feed[] = [
+const mockFeeds: Array<Feed> = [
   {
     id: 'feed-1',
     title: 'Test Blog',
@@ -32,7 +32,7 @@ const mockFeeds: Feed[] = [
   },
 ]
 
-const mockArticles: Article[] = [
+const mockArticles: Array<Article> = [
   {
     id: 'article-1',
     feedId: 'feed-1',
@@ -96,7 +96,7 @@ describe('ReadingExperience', () => {
         onToggleStar={mockOnToggleStar}
         onRefresh={mockOnRefresh}
         {...props}
-      />
+      />,
     )
   }
 
@@ -316,11 +316,13 @@ describe('ReadingExperience', () => {
           onToggleRead={mockOnToggleRead}
           onToggleStar={mockOnToggleStar}
           onRefresh={mockOnRefresh}
-        />
+        />,
       )
 
       expect(screen.getByText('No articles yet')).toBeInTheDocument()
-      expect(screen.getByText('Subscribe to feeds to see articles here')).toBeInTheDocument()
+      expect(
+        screen.getByText('Subscribe to feeds to see articles here'),
+      ).toBeInTheDocument()
     })
 
     it('shows empty reading pane when no article selected', () => {

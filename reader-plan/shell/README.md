@@ -27,18 +27,18 @@ Reader uses a minimal header shell that keeps the focus on the reading experienc
 
 ### AppShell
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `children` | `React.ReactNode` | Content to render in main area |
-| `user` | `{ name: string; avatarUrl?: string }` | Current user info |
-| `onLogout` | `() => void` | Called when user clicks logout |
+| Prop       | Type                                   | Description                    |
+| ---------- | -------------------------------------- | ------------------------------ |
+| `children` | `React.ReactNode`                      | Content to render in main area |
+| `user`     | `{ name: string; avatarUrl?: string }` | Current user info              |
+| `onLogout` | `() => void`                           | Called when user clicks logout |
 
 ### UserMenu
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `user` | `{ name: string; avatarUrl?: string }` | User info for display |
-| `onLogout` | `() => void` | Called when user clicks "Sign out" |
+| Prop       | Type                                   | Description                        |
+| ---------- | -------------------------------------- | ---------------------------------- |
+| `user`     | `{ name: string; avatarUrl?: string }` | User info for display              |
+| `onLogout` | `() => void`                           | Called when user clicks "Sign out" |
 
 ## Design Tokens
 

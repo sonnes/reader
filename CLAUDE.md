@@ -17,10 +17,10 @@ RSS feed reader inspired by Google Reader. 3-pane interface with keyboard naviga
 ## Commands
 
 ```bash
-bun dev          # Start dev server on port 3000
-bun test         # Run tests
-bun run build    # Production build
-bun run check    # Format + lint fix
+bun --bun run dev   # Start dev server on port 3000
+bun --bun test         # Run tests
+bun --bun build    # Production build
+bun --bun check    # Format + lint fix
 ```
 
 ## Project Structure
@@ -56,11 +56,13 @@ export const fetchData = createServerFn({ method: 'GET' }).handler(async () => {
 })
 
 // POST for mutations
-export const updateData = createServerFn({ method: 'POST' }).handler(async (ctx) => {
-  const { id, value } = ctx.data as { id: string; value: string }
-  // perform mutation
-  return { success: true }
-})
+export const updateData = createServerFn({ method: 'POST' }).handler(
+  async (ctx) => {
+    const { id, value } = ctx.data as { id: string; value: string }
+    // perform mutation
+    return { success: true }
+  },
+)
 ```
 
 ### Usage in Routes
@@ -112,6 +114,7 @@ db.query('UPDATE articles SET is_read = ? WHERE id = ?').run(1, id)
 ```
 
 Key differences from better-sqlite3:
+
 - Use `db.query()` instead of `db.prepare()` (statements are cached)
 - Use `db.run()` for PRAGMAs and schema execution
 - 3-6x faster than better-sqlite3
@@ -136,6 +139,7 @@ Path alias `@/` maps to `src/` in both app and tests.
 ## Implementation Plan
 
 Detailed specs in `reader-plan/`:
+
 - `product-overview.md` - Features and product description
 - `instructions/` - Step-by-step implementation guides
 - `sections/` - Feature-specific specs with test cases

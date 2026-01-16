@@ -1,11 +1,11 @@
-import type { Article, Feed } from '@/types'
 import { ArticleListItem } from './ArticleListItem'
+import type { Article, Feed } from '@/types'
 
 type ViewMode = 'list' | 'card'
 
 interface ArticleListProps {
-  articles: Article[]
-  feeds: Feed[]
+  articles: Array<Article>
+  feeds: Array<Feed>
   selectedArticleId: string | null
   viewMode: ViewMode
   onSelectArticle?: (articleId: string) => void
@@ -108,7 +108,11 @@ export function ArticleList({
           <button
             onClick={onToggleViewMode}
             className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title={viewMode === 'list' ? 'Switch to card view' : 'Switch to list view'}
+            title={
+              viewMode === 'list'
+                ? 'Switch to card view'
+                : 'Switch to list view'
+            }
           >
             {viewMode === 'list' ? (
               <svg

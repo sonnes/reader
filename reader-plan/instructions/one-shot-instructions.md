@@ -5,6 +5,7 @@
 ## About These Instructions
 
 **What you're receiving:**
+
 - Finished UI designs (React components with full styling)
 - Data model definitions (TypeScript types and sample data)
 - UI/UX specifications (user flows, requirements, screenshots)
@@ -12,6 +13,7 @@
 - Test-writing instructions for each section (for TDD approach)
 
 **What you need to build:**
+
 - Backend API endpoints and database schema
 - Authentication and authorization
 - Data fetching and state management
@@ -19,6 +21,7 @@
 - Integration of the provided UI components with real data
 
 **Important guidelines:**
+
 - **DO NOT** redesign or restyle the provided components — use them as-is
 - **DO** wire up the callback props to your routing and API calls
 - **DO** replace sample data with real data from your backend
@@ -34,12 +37,14 @@
 Each section includes a `tests.md` file with detailed test-writing instructions. These are **framework-agnostic** — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
 
 **For each section:**
+
 1. Read `reader-plan/sections/[section-id]/tests.md`
 2. Write failing tests for key user flows (success and failure paths)
 3. Implement the feature to make tests pass
 4. Refactor while keeping tests green
 
 The test instructions include:
+
 - Specific UI elements, button labels, and interactions to verify
 - Expected success and failure behaviors
 - Empty state handling (when no records exist yet)
@@ -72,12 +77,14 @@ A minimal, personal RSS reader for following blogs and news sources. Features a 
 ## Data Model
 
 **Entities:**
+
 - **Folder** — A container for organizing feeds by topic
 - **Feed** — An RSS or Atom feed source that the user subscribes to
 - **Article** — An individual post or item from a feed
 - **StarredArticle** — A reference to an article the user has saved for later
 
 **Relationships:**
+
 - Folder has many Feeds
 - Feed belongs to one Folder (or no folder)
 - Feed has many Articles
@@ -99,11 +106,13 @@ Set up the foundational elements: design tokens, data model types, routing struc
 Configure your styling system with these tokens:
 
 **Color Palette:**
+
 - Primary: `sky` — Used for buttons, links, key accents
 - Secondary: `amber` — Used for stars, highlights, secondary elements
 - Neutral: `slate` — Used for backgrounds, text, borders
 
 **Typography:**
+
 - Heading: Noto Sans
 - Body: Noto Sans
 - Mono: JetBrains Mono
@@ -154,6 +163,7 @@ interface StarredArticle {
 ### 3. Routing Structure
 
 Create placeholder routes:
+
 - `/` or `/feeds` — Feed management page
 - `/read` — Reading experience (3-pane layout)
 - `/articles` — Article tracking views
@@ -161,11 +171,13 @@ Create placeholder routes:
 ### 4. Application Shell
 
 Copy the shell components from `reader-plan/shell/components/`:
+
 - `AppShell.tsx` — Main layout wrapper with minimal header
 - `MainNav.tsx` — Navigation component
 - `UserMenu.tsx` — User menu with dropdown
 
 **Shell Layout:**
+
 - Fixed header at top (56px height)
 - Logo/wordmark on the left
 - User menu on the right
@@ -192,6 +204,7 @@ Implement feed subscription management — add feeds, organize into folders, imp
 A full-page interface where users can view, add, and organize their RSS subscriptions.
 
 **Key Functionality:**
+
 - View all subscribed feeds grouped by folder
 - Add a new feed via modal dialog
 - Remove a feed from subscriptions
@@ -202,20 +215,21 @@ A full-page interface where users can view, add, and organize their RSS subscrip
 ## Components
 
 Copy from `reader-plan/sections/feed-management/components/`:
+
 - `FeedManagement.tsx` — Main component with full page layout
 
 ## Callbacks
 
-| Callback | Description |
-|----------|-------------|
-| `onCreateFolder` | Create a new folder |
-| `onRenameFolder` | Rename a folder |
-| `onDeleteFolder` | Delete a folder |
-| `onAddFeed` | Subscribe to a new feed |
-| `onRemoveFeed` | Unsubscribe from a feed |
-| `onMoveFeed` | Move a feed to a different folder |
-| `onImportOPML` | Import feeds from OPML file |
-| `onExportOPML` | Export feeds to OPML file |
+| Callback         | Description                       |
+| ---------------- | --------------------------------- |
+| `onCreateFolder` | Create a new folder               |
+| `onRenameFolder` | Rename a folder                   |
+| `onDeleteFolder` | Delete a folder                   |
+| `onAddFeed`      | Subscribe to a new feed           |
+| `onRemoveFeed`   | Unsubscribe from a feed           |
+| `onMoveFeed`     | Move a feed to a different folder |
+| `onImportOPML`   | Import feeds from OPML file       |
+| `onExportOPML`   | Export feeds to OPML file         |
 
 ## User Flows
 
@@ -246,6 +260,7 @@ Implement the core reading interface — 3-pane layout with keyboard navigation.
 The heart of the RSS reader with folder sidebar, article list, and reading pane.
 
 **Key Functionality:**
+
 - Browse articles by selecting folder/feed
 - Select article to view in reading pane
 - Keyboard navigation (j/k/o/m/s/r)
@@ -255,6 +270,7 @@ The heart of the RSS reader with folder sidebar, article list, and reading pane.
 ## Components
 
 Copy from `reader-plan/sections/reading-experience/components/`:
+
 - `ReadingExperience.tsx` — Main 3-pane layout
 - `FolderSidebar.tsx` — Left sidebar navigation
 - `ArticleList.tsx` — Center pane article list
@@ -264,34 +280,34 @@ Copy from `reader-plan/sections/reading-experience/components/`:
 
 ## Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `j` | Next article |
-| `k` | Previous article |
-| `o` | Open in browser |
-| `m` | Toggle read/unread |
-| `s` | Toggle star |
-| `r` | Refresh feeds |
-| `[` | Collapse sidebar |
-| `f` | Toggle focus mode |
-| `v` | Toggle list/card view |
+| Key | Action                  |
+| --- | ----------------------- |
+| `j` | Next article            |
+| `k` | Previous article        |
+| `o` | Open in browser         |
+| `m` | Toggle read/unread      |
+| `s` | Toggle star             |
+| `r` | Refresh feeds           |
+| `[` | Collapse sidebar        |
+| `f` | Toggle focus mode       |
+| `v` | Toggle list/card view   |
 | `?` | Show keyboard shortcuts |
 
 ## Callbacks
 
-| Callback | Description |
-|----------|-------------|
-| `onSelectFolder` | Select a folder |
-| `onSelectFeed` | Select a feed |
-| `onSelectArticle` | Select an article |
-| `onToggleRead` | Toggle read status |
-| `onToggleStar` | Toggle starred status |
-| `onOpenInBrowser` | Open in browser |
-| `onToggleSidebar` | Toggle sidebar |
-| `onToggleFocusMode` | Toggle focus mode |
-| `onToggleViewMode` | Toggle list/card |
-| `onToggleReaderView` | Toggle reader view |
-| `onRefresh` | Refresh feeds |
+| Callback             | Description           |
+| -------------------- | --------------------- |
+| `onSelectFolder`     | Select a folder       |
+| `onSelectFeed`       | Select a feed         |
+| `onSelectArticle`    | Select an article     |
+| `onToggleRead`       | Toggle read status    |
+| `onToggleStar`       | Toggle starred status |
+| `onOpenInBrowser`    | Open in browser       |
+| `onToggleSidebar`    | Toggle sidebar        |
+| `onToggleFocusMode`  | Toggle focus mode     |
+| `onToggleViewMode`   | Toggle list/card      |
+| `onToggleReaderView` | Toggle reader view    |
+| `onRefresh`          | Refresh feeds         |
 
 ## User Flows
 
@@ -322,6 +338,7 @@ Implement article browsing views with read/unread management.
 Dedicated views for browsing all articles and unread articles with list/card layouts.
 
 **Key Functionality:**
+
 - View all articles or filter to unread
 - Toggle between list and card views
 - Sort by date (newest/oldest)
@@ -331,6 +348,7 @@ Dedicated views for browsing all articles and unread articles with list/card lay
 ## Components
 
 Copy from `reader-plan/sections/article-tracking/components/`:
+
 - `ArticleList.tsx` — Main 3-pane layout
 - `ArticleListPanel.tsx` — Article list with controls
 - `ArticleRow.tsx` — Compact list view item
@@ -339,15 +357,15 @@ Copy from `reader-plan/sections/article-tracking/components/`:
 
 ## Callbacks
 
-| Callback | Description |
-|----------|-------------|
-| `onSelectFolder` | Select a folder |
-| `onSelectFeed` | Select a feed |
-| `onSelectArticle` | Select an article |
-| `onOpenInNewTab` | Open in new tab |
-| `onToggleRead` | Toggle read/unread |
-| `onToggleStar` | Toggle starred |
-| `onDelete` | Delete article |
+| Callback          | Description        |
+| ----------------- | ------------------ |
+| `onSelectFolder`  | Select a folder    |
+| `onSelectFeed`    | Select a feed      |
+| `onSelectArticle` | Select an article  |
+| `onOpenInNewTab`  | Open in new tab    |
+| `onToggleRead`    | Toggle read/unread |
+| `onToggleStar`    | Toggle starred     |
+| `onDelete`        | Delete article     |
 
 ## User Flows
 
@@ -373,24 +391,29 @@ Copy from `reader-plan/sections/article-tracking/components/`:
 # Files Reference
 
 **Design System:**
+
 - `reader-plan/design-system/tokens.css`
 - `reader-plan/design-system/tailwind-colors.md`
 - `reader-plan/design-system/fonts.md`
 
 **Data Model:**
+
 - `reader-plan/data-model/types.ts`
 - `reader-plan/data-model/sample-data.json`
 
 **Shell:**
+
 - `reader-plan/shell/components/`
 - `reader-plan/shell/README.md`
 
 **Sections:**
+
 - `reader-plan/sections/feed-management/`
 - `reader-plan/sections/reading-experience/`
 - `reader-plan/sections/article-tracking/`
 
 Each section contains:
+
 - `README.md` — Feature overview
 - `tests.md` — Test-writing instructions
 - `components/` — React components

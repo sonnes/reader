@@ -18,13 +18,13 @@ Article Tracking provides views for browsing all articles and all unread article
 
 ## Components
 
-| Component | Description |
-|-----------|-------------|
-| `ArticleList` | Main container for the article tracking view |
-| `ArticleListPanel` | Panel wrapper with header, filters, and view toggles |
-| `ArticleRow` | Compact list row for an article (list view) |
-| `ArticleCard` | Card with preview for an article (card view) |
-| `ArticleDetailPane` | Detail pane showing full article content |
+| Component           | Description                                          |
+| ------------------- | ---------------------------------------------------- |
+| `ArticleList`       | Main container for the article tracking view         |
+| `ArticleListPanel`  | Panel wrapper with header, filters, and view toggles |
+| `ArticleRow`        | Compact list row for an article (list view)          |
+| `ArticleCard`       | Card with preview for an article (card view)         |
+| `ArticleDetailPane` | Detail pane showing full article content             |
 
 ## Props Interface
 

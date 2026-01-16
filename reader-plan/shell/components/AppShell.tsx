@@ -15,7 +15,10 @@ export function AppShell({ children, user, onLogout }: AppShellProps) {
         {/* Left: Logo/Wordmark */}
         <div className="flex items-center gap-2">
           <Rss className="h-5 w-5 text-sky-500" />
-          <span className="text-lg font-semibold text-slate-900 dark:text-slate-100" style={{ fontFamily: "'Noto Sans', sans-serif" }}>
+          <span
+            className="text-lg font-semibold text-slate-900 dark:text-slate-100"
+            style={{ fontFamily: "'Noto Sans', sans-serif" }}
+          >
             Reader
           </span>
         </div>

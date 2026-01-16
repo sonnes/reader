@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 export interface UserMenuProps {
@@ -29,7 +29,9 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         className="flex items-center gap-1 text-xs text-sky-100 hover:text-white"
       >
         {user.name}
-        <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {/* Dropdown */}

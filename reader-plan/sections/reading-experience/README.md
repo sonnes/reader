@@ -27,12 +27,14 @@ The core reading interface featuring a flexible 3-pane layout (folders, article 
 ## Data Used
 
 **Entities:**
+
 - `Folder` — Container for organizing feeds
 - `Feed` — RSS/Atom feed source
 - `Article` — Individual post with content
 - `StarredArticle` — Reference to saved articles
 
 **UI State:**
+
 - `sidebarCollapsed` — Whether sidebar is visible
 - `focusMode` — Whether only reading pane is shown
 - `viewMode` — 'list' or 'card'
@@ -54,16 +56,16 @@ See `screenshot.png` for the target UI design.
 
 ## Callback Props
 
-| Callback | Description |
-|----------|-------------|
-| `onSelectFolder` | Called when user selects a folder |
-| `onSelectFeed` | Called when user selects a feed |
-| `onSelectArticle` | Called when user selects an article |
-| `onToggleRead` | Called when user toggles read status (keyboard: m) |
-| `onToggleStar` | Called when user toggles starred status (keyboard: s) |
-| `onOpenInBrowser` | Called when user opens article in browser (keyboard: o) |
-| `onToggleSidebar` | Called when user toggles sidebar visibility |
-| `onToggleFocusMode` | Called when user toggles focus mode |
-| `onToggleViewMode` | Called when user switches between list/card view |
-| `onToggleReaderView` | Called when user toggles reader view |
-| `onRefresh` | Called when user requests feed refresh (keyboard: r) |
+| Callback             | Description                                             |
+| -------------------- | ------------------------------------------------------- |
+| `onSelectFolder`     | Called when user selects a folder                       |
+| `onSelectFeed`       | Called when user selects a feed                         |
+| `onSelectArticle`    | Called when user selects an article                     |
+| `onToggleRead`       | Called when user toggles read status (keyboard: m)      |
+| `onToggleStar`       | Called when user toggles starred status (keyboard: s)   |
+| `onOpenInBrowser`    | Called when user opens article in browser (keyboard: o) |
+| `onToggleSidebar`    | Called when user toggles sidebar visibility             |
+| `onToggleFocusMode`  | Called when user toggles focus mode                     |
+| `onToggleViewMode`   | Called when user switches between list/card view        |
+| `onToggleReaderView` | Called when user toggles reader view                    |
+| `onRefresh`          | Called when user requests feed refresh (keyboard: r)    |
