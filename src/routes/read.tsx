@@ -1,20 +1,86 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useState, useCallback } from 'react'
+import { ReadingExperience } from '@/components/reading'
+import { fetchReadingData, toggleArticleRead, toggleArticleStar } from '@/server/reading'
+import type { Article } from '@/types'
 
 export const Route = createFileRoute('/read')({
+  loader: async () => {
+    return await fetchReadingData()
+  },
   component: ReadPage,
 })
 
 function ReadPage() {
+  const initialData = Route.useLoaderData()
+
+  // Local state for optimistic updates
+  const [articles, setArticles] = useState<Article[]>(initialData.articles)
+
+  // Calculate stats from current articles
+  const stats = {
+    totalArticles: articles.length,
+    unreadCount: articles.filter((a) => !a.isRead).length,
+    starredCount: articles.filter((a) => a.isStarred).length,
+  }
+
+  // Handle toggling read status
+  const handleToggleRead = useCallback(async (articleId: string, isRead: boolean) => {
+    // Optimistic update
+    setArticles((prev) =>
+      prev.map((a) => (a.id === articleId ? { ...a, isRead } : a))
+    )
+
+    // Server update
+    try {
+      await toggleArticleRead({ data: { articleId, isRead } } as unknown as void)
+    } catch (error) {
+      // Revert on error
+      console.error('Failed to update read status:', error)
+      setArticles((prev) =>
+        prev.map((a) => (a.id === articleId ? { ...a, isRead: !isRead } : a))
+      )
+    }
+  }, [])
+
+  // Handle toggling star status
+  const handleToggleStar = useCallback(async (articleId: string, isStarred: boolean) => {
+    // Optimistic update
+    setArticles((prev) =>
+      prev.map((a) => (a.id === articleId ? { ...a, isStarred } : a))
+    )
+
+    // Server update
+    try {
+      await toggleArticleStar({ data: { articleId, isStarred } } as unknown as void)
+    } catch (error) {
+      // Revert on error
+      console.error('Failed to update star status:', error)
+      setArticles((prev) =>
+        prev.map((a) => (a.id === articleId ? { ...a, isStarred: !isStarred } : a))
+      )
+    }
+  }, [])
+
+  // Handle refresh
+  const handleRefresh = useCallback(async () => {
+    try {
+      const data = await fetchReadingData()
+      setArticles(data.articles)
+    } catch (error) {
+      console.error('Failed to refresh:', error)
+    }
+  }, [])
+
   return (
-    <div className="flex h-full items-center justify-center bg-slate-50 dark:bg-slate-950">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">
-          Reading Experience
-        </h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">
-          3-pane layout for reading articles
-        </p>
-      </div>
-    </div>
+    <ReadingExperience
+      folders={initialData.folders}
+      feeds={initialData.feeds}
+      articles={articles}
+      stats={stats}
+      onToggleRead={handleToggleRead}
+      onToggleStar={handleToggleStar}
+      onRefresh={handleRefresh}
+    />
   )
 }
