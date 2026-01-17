@@ -4,7 +4,7 @@ Use this template when implementing one section at a time. Replace `[SECTION]` w
 
 ---
 
-[SECTION]=feed-management
+[SECTION]=article-tracking
 
 ## Prompt
 

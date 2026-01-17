@@ -1,13 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
 import {
+  deleteArticle,
   getAllArticles,
   getAllFeeds,
   getAllFolders,
-  getArticlesByFeed,
-  getArticlesByFolder,
-  getStarredArticles,
   getStats,
-  getUnreadArticles,
   updateArticleReadStatus,
   updateArticleStarStatus,
 } from '@/db/queries'
@@ -73,6 +70,14 @@ export const toggleArticleStar = createServerFn({ method: 'POST' }).handler(
       isStarred: boolean
     }
     updateArticleStarStatus(articleId, isStarred)
+    return { success: true }
+  },
+)
+
+export const deleteArticleFn = createServerFn({ method: 'POST' }).handler(
+  async (ctx) => {
+    const { articleId } = ctx.data as { articleId: string }
+    deleteArticle(articleId)
     return { success: true }
   },
 )

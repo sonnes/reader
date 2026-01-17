@@ -7,6 +7,7 @@ import type { Article, Feed, Folder, UIState } from '@/types'
 
 type ViewMode = 'list' | 'card'
 type FilterMode = 'all' | 'unread' | 'starred'
+type SortOrder = 'newest' | 'oldest'
 
 interface ReadingExperienceProps {
   folders: Array<Folder>
@@ -20,6 +21,7 @@ interface ReadingExperienceProps {
   }
   onToggleRead?: (articleId: string, isRead: boolean) => void
   onToggleStar?: (articleId: string, isStarred: boolean) => void
+  onDelete?: (articleId: string) => void
   onRefresh?: () => void
 }
 
@@ -31,6 +33,7 @@ export function ReadingExperience({
   stats,
   onToggleRead,
   onToggleStar,
+  onDelete,
   onRefresh,
 }: ReadingExperienceProps) {
   // UI State
@@ -54,37 +57,43 @@ export function ReadingExperience({
     initialUIState?.selectedArticleId ?? null,
   )
   const [filterMode, setFilterMode] = useState<FilterMode>('all')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false)
 
   // For g+key shortcuts
   const pendingKeyRef = useRef<string | null>(null)
 
-  // Filter articles based on selection
+  // Filter and sort articles based on selection
   const filteredArticles = (() => {
     let result = articles
 
     // Filter by starred
     if (selectedFolderId === 'starred' || filterMode === 'starred') {
-      return result.filter((a) => a.isStarred)
+      result = result.filter((a) => a.isStarred)
+    } else {
+      // Filter by unread
+      if (filterMode === 'unread') {
+        result = result.filter((a) => !a.isRead)
+      }
+
+      // Filter by feed
+      if (selectedFeedId) {
+        result = result.filter((a) => a.feedId === selectedFeedId)
+      } else if (selectedFolderId && selectedFolderId !== 'starred') {
+        // Filter by folder
+        const folderFeedIds = feeds
+          .filter((f) => f.folderId === selectedFolderId)
+          .map((f) => f.id)
+        result = result.filter((a) => folderFeedIds.includes(a.feedId))
+      }
     }
 
-    // Filter by unread
-    if (filterMode === 'unread') {
-      result = result.filter((a) => !a.isRead)
-    }
-
-    // Filter by feed
-    if (selectedFeedId) {
-      return result.filter((a) => a.feedId === selectedFeedId)
-    }
-
-    // Filter by folder
-    if (selectedFolderId && selectedFolderId !== 'starred') {
-      const folderFeedIds = feeds
-        .filter((f) => f.folderId === selectedFolderId)
-        .map((f) => f.id)
-      return result.filter((a) => folderFeedIds.includes(a.feedId))
-    }
+    // Sort articles
+    result = [...result].sort((a, b) => {
+      const dateA = new Date(a.publishedAt).getTime()
+      const dateB = new Date(b.publishedAt).getTime()
+      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
+    })
 
     return result
   })()
@@ -158,6 +167,18 @@ export function ReadingExperience({
       }
     },
     [articles, onToggleStar],
+  )
+
+  // Delete article
+  const handleDelete = useCallback(
+    (articleId: string) => {
+      onDelete?.(articleId)
+      // If the deleted article was selected, clear selection
+      if (selectedArticleId === articleId) {
+        setSelectedArticleId(null)
+      }
+    },
+    [onDelete, selectedArticleId],
   )
 
   // Open in browser
@@ -407,11 +428,14 @@ export function ReadingExperience({
           feeds={feeds}
           selectedArticleId={selectedArticleId}
           viewMode={viewMode}
+          sortOrder={sortOrder}
           onSelectArticle={handleSelectArticle}
           onToggleStar={handleToggleStar}
+          onDelete={handleDelete}
           onToggleViewMode={() =>
             setViewMode((prev) => (prev === 'list' ? 'card' : 'list'))
           }
+          onSortChange={setSortOrder}
           onRefresh={onRefresh}
         />
       </div>

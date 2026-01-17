@@ -27,6 +27,7 @@ interface ArticleRow {
   content: string
   is_read: number
   is_starred: number
+  is_deleted: number
 }
 
 // ============================================================================
@@ -62,7 +63,7 @@ export function getAllFolders(): Array<Folder> {
       SELECT COUNT(*) as count
       FROM articles a
       JOIN feeds f ON a.feed_id = f.id
-      WHERE f.folder_id = ? AND a.is_read = 0
+      WHERE f.folder_id = ? AND a.is_read = 0 AND a.is_deleted = 0
     `,
       )
       .get(row.id) as { count: number }
@@ -133,7 +134,7 @@ export function getAllFeeds(): Array<Feed> {
     const unreadResult = db
       .query(
         `
-      SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0
+      SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0 AND is_deleted = 0
     `,
       )
       .get(row.id) as { count: number }
@@ -187,7 +188,7 @@ export function getFeedByUrl(url: string): Feed | null {
   const unreadResult = db
     .query(
       `
-    SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0
+    SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0 AND is_deleted = 0
   `,
     )
     .get(row.id) as { count: number }
@@ -244,8 +245,9 @@ export function getAllArticles(): Array<Article> {
   const rows = db
     .query(
       `
-    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
+    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred, is_deleted
     FROM articles
+    WHERE is_deleted = 0
     ORDER BY published_at DESC
   `,
     )
@@ -259,9 +261,9 @@ export function getArticlesByFeed(feedId: string): Array<Article> {
   const rows = db
     .query(
       `
-    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
+    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred, is_deleted
     FROM articles
-    WHERE feed_id = ?
+    WHERE feed_id = ? AND is_deleted = 0
     ORDER BY published_at DESC
   `,
     )
@@ -275,10 +277,10 @@ export function getArticlesByFolder(folderId: string): Array<Article> {
   const rows = db
     .query(
       `
-    SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.preview, a.content, a.is_read, a.is_starred
+    SELECT a.id, a.feed_id, a.title, a.url, a.published_at, a.preview, a.content, a.is_read, a.is_starred, a.is_deleted
     FROM articles a
     JOIN feeds f ON a.feed_id = f.id
-    WHERE f.folder_id = ?
+    WHERE f.folder_id = ? AND a.is_deleted = 0
     ORDER BY a.published_at DESC
   `,
     )
@@ -292,9 +294,9 @@ export function getUnreadArticles(): Array<Article> {
   const rows = db
     .query(
       `
-    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
+    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred, is_deleted
     FROM articles
-    WHERE is_read = 0
+    WHERE is_read = 0 AND is_deleted = 0
     ORDER BY published_at DESC
   `,
     )
@@ -308,9 +310,9 @@ export function getStarredArticles(): Array<Article> {
   const rows = db
     .query(
       `
-    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
+    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred, is_deleted
     FROM articles
-    WHERE is_starred = 1
+    WHERE is_starred = 1 AND is_deleted = 0
     ORDER BY published_at DESC
   `,
     )
@@ -324,9 +326,9 @@ export function getArticleById(id: string): Article | null {
   const row = db
     .query(
       `
-    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred
+    SELECT id, feed_id, title, url, published_at, preview, content, is_read, is_starred, is_deleted
     FROM articles
-    WHERE id = ?
+    WHERE id = ? AND is_deleted = 0
   `,
     )
     .get(id) as ArticleRow | undefined
@@ -386,23 +388,33 @@ export function markAllAsRead(feedId?: string, folderId?: string): void {
     db.query(
       `
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
-      WHERE feed_id = ?
+      WHERE feed_id = ? AND is_deleted = 0
     `,
     ).run(feedId)
   } else if (folderId) {
     db.query(
       `
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
-      WHERE feed_id IN (SELECT id FROM feeds WHERE folder_id = ?)
+      WHERE feed_id IN (SELECT id FROM feeds WHERE folder_id = ?) AND is_deleted = 0
     `,
     ).run(folderId)
   } else {
     db.query(
       `
       UPDATE articles SET is_read = 1, updated_at = datetime('now')
+      WHERE is_deleted = 0
     `,
     ).run()
   }
+}
+
+export function deleteArticle(id: string): void {
+  const db = getDb()
+  db.query(
+    `
+    UPDATE articles SET is_deleted = 1, updated_at = datetime('now') WHERE id = ?
+  `,
+  ).run(id)
 }
 
 // ============================================================================
@@ -413,13 +425,13 @@ export function getStats() {
   const db = getDb()
 
   const totalResult = db
-    .query(`SELECT COUNT(*) as count FROM articles`)
+    .query(`SELECT COUNT(*) as count FROM articles WHERE is_deleted = 0`)
     .get() as { count: number }
   const unreadResult = db
-    .query(`SELECT COUNT(*) as count FROM articles WHERE is_read = 0`)
+    .query(`SELECT COUNT(*) as count FROM articles WHERE is_read = 0 AND is_deleted = 0`)
     .get() as { count: number }
   const starredResult = db
-    .query(`SELECT COUNT(*) as count FROM articles WHERE is_starred = 1`)
+    .query(`SELECT COUNT(*) as count FROM articles WHERE is_starred = 1 AND is_deleted = 0`)
     .get() as { count: number }
 
   return {

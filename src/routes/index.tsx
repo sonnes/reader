@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import type { Article } from '@/types'
 import { ReadingExperience } from '@/components/reading'
 import {
+  deleteArticleFn,
   fetchReadingData,
   toggleArticleRead,
   toggleArticleStar,
@@ -74,6 +75,26 @@ function ReadPage() {
     [],
   )
 
+  // Handle delete
+  const handleDelete = useCallback(async (articleId: string) => {
+    // Store the article for potential rollback
+    const articleToDelete = articles.find((a) => a.id === articleId)
+
+    // Optimistic update - remove from list
+    setArticles((prev) => prev.filter((a) => a.id !== articleId))
+
+    // Server update
+    try {
+      await deleteArticleFn({ articleId })
+    } catch (error) {
+      // Revert on error
+      console.error('Failed to delete article:', error)
+      if (articleToDelete) {
+        setArticles((prev) => [...prev, articleToDelete])
+      }
+    }
+  }, [articles])
+
   // Handle refresh
   const handleRefresh = useCallback(async () => {
     try {
@@ -92,6 +113,7 @@ function ReadPage() {
       stats={stats}
       onToggleRead={handleToggleRead}
       onToggleStar={handleToggleStar}
+      onDelete={handleDelete}
       onRefresh={handleRefresh}
     />
   )

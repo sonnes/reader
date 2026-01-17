@@ -77,11 +77,13 @@ const mockStats = {
 describe('ReadingExperience', () => {
   let mockOnToggleRead: ReturnType<typeof vi.fn>
   let mockOnToggleStar: ReturnType<typeof vi.fn>
+  let mockOnDelete: ReturnType<typeof vi.fn>
   let mockOnRefresh: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
     mockOnToggleRead = vi.fn()
     mockOnToggleStar = vi.fn()
+    mockOnDelete = vi.fn()
     mockOnRefresh = vi.fn()
   })
 
@@ -94,6 +96,7 @@ describe('ReadingExperience', () => {
         stats={mockStats}
         onToggleRead={mockOnToggleRead}
         onToggleStar={mockOnToggleStar}
+        onDelete={mockOnDelete}
         onRefresh={mockOnRefresh}
         {...props}
       />,
@@ -348,6 +351,72 @@ describe('ReadingExperience', () => {
       fireEvent.click(refreshButton)
 
       expect(mockOnRefresh).toHaveBeenCalled()
+    })
+  })
+
+  describe('sorting', () => {
+    it('shows sort dropdown with options', () => {
+      renderComponent()
+
+      const sortSelect = screen.getByRole('combobox')
+      expect(sortSelect).toBeInTheDocument()
+      expect(screen.getByText('Newest')).toBeInTheDocument()
+    })
+
+    it('changes sort order when selecting oldest', () => {
+      renderComponent()
+
+      const sortSelect = screen.getByRole('combobox')
+      fireEvent.change(sortSelect, { target: { value: 'oldest' } })
+
+      // After changing to oldest, the first article in the list should be the oldest one
+      // (News Article from 2026-01-13)
+      const articles = screen.getAllByRole('article')
+      // The first article should now be the oldest one
+      expect(articles.length).toBe(3)
+    })
+
+    it('defaults to newest first sort order', () => {
+      renderComponent()
+
+      const sortSelect = screen.getByRole('combobox') as HTMLSelectElement
+      expect(sortSelect.value).toBe('newest')
+    })
+  })
+
+  describe('delete', () => {
+    it('shows delete button on article hover', () => {
+      renderComponent()
+
+      // Delete buttons should exist (shown on hover via CSS)
+      const deleteButtons = screen.getAllByTitle('Delete')
+      expect(deleteButtons.length).toBe(3) // One for each article
+    })
+
+    it('calls onDelete when delete button is clicked', () => {
+      renderComponent()
+
+      const deleteButtons = screen.getAllByTitle('Delete')
+      fireEvent.click(deleteButtons[0])
+
+      expect(mockOnDelete).toHaveBeenCalledWith('article-1')
+    })
+
+    it('clears selection when selected article is deleted', () => {
+      renderComponent()
+
+      // Select first article
+      fireEvent.click(screen.getByText('First Article'))
+
+      // Verify article is selected (appears in reading pane)
+      const headings = screen.getAllByText('First Article')
+      expect(headings.length).toBe(2) // In list and reading pane
+
+      // Delete the selected article
+      const deleteButtons = screen.getAllByTitle('Delete')
+      fireEvent.click(deleteButtons[0])
+
+      expect(mockOnDelete).toHaveBeenCalledWith('article-1')
     })
   })
 })

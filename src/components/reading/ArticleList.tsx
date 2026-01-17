@@ -2,15 +2,19 @@ import { ArticleListItem } from './ArticleListItem'
 import type { Article, Feed } from '@/types'
 
 type ViewMode = 'list' | 'card'
+type SortOrder = 'newest' | 'oldest'
 
 interface ArticleListProps {
   articles: Array<Article>
   feeds: Array<Feed>
   selectedArticleId: string | null
   viewMode: ViewMode
+  sortOrder: SortOrder
   onSelectArticle?: (articleId: string) => void
   onToggleStar?: (articleId: string) => void
+  onDelete?: (articleId: string) => void
   onToggleViewMode?: () => void
+  onSortChange?: (order: SortOrder) => void
   onRefresh?: () => void
 }
 
@@ -19,9 +23,12 @@ export function ArticleList({
   feeds,
   selectedArticleId,
   viewMode,
+  sortOrder,
   onSelectArticle,
   onToggleStar,
+  onDelete,
   onToggleViewMode,
+  onSortChange,
   onRefresh,
 }: ArticleListProps) {
   // Get feed by ID
@@ -83,6 +90,16 @@ export function ArticleList({
         </div>
 
         <div className="flex items-center gap-1">
+          {/* Sort dropdown */}
+          <select
+            value={sortOrder}
+            onChange={(e) => onSortChange?.(e.target.value as SortOrder)}
+            className="text-xs bg-transparent border-none text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 focus:outline-none focus:ring-0"
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+
           {/* Refresh */}
           <button
             onClick={onRefresh}
@@ -160,6 +177,7 @@ export function ArticleList({
                 viewMode={viewMode}
                 onSelect={() => onSelectArticle?.(article.id)}
                 onToggleStar={() => onToggleStar?.(article.id)}
+                onDelete={() => onDelete?.(article.id)}
               />
             ))}
           </div>
@@ -174,6 +192,7 @@ export function ArticleList({
                 viewMode={viewMode}
                 onSelect={() => onSelectArticle?.(article.id)}
                 onToggleStar={() => onToggleStar?.(article.id)}
+                onDelete={() => onDelete?.(article.id)}
               />
             ))}
           </div>
