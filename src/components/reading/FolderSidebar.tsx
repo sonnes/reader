@@ -1,45 +1,52 @@
+import { useContext } from 'react'
 import { Pencil, Plus, Settings, Trash2 } from 'lucide-react'
 import type { Feed, Folder } from '@/types'
+import { FeedsContext } from '@/context'
 
 interface FolderSidebarProps {
-  folders: Array<Folder>
-  feeds: Array<Feed>
-  selectedFolderId: string | null
-  selectedFeedId: string | null
+  // Props for standalone usage (FeedManagement)
+  folders?: Array<Folder>
+  feeds?: Array<Feed>
+  selectedFolderId?: string | null
+  selectedFeedId?: string | null
+  filterMode?: 'all' | 'unread' | 'starred'
   onSelectFolder?: (folderId: string | null) => void
   onSelectFeed?: (feedId: string) => void
-  onCollapse?: () => void
-  filterMode?: 'all' | 'unread' | 'starred'
   onFilterChange?: (filter: 'all' | 'unread' | 'starred') => void
-  totalArticleCount?: number
-  unreadCount?: number
-  starredCount?: number
+  onCollapse?: () => void
   onAddFeed?: () => void
   onAddFolder?: () => void
   onEditFeed?: (feedId: string) => void
   onDeleteFeed?: (feedId: string) => void
-  onManageSubscriptions?: () => void
+  // Props for context usage
+  stats?: {
+    totalArticles: number
+    unreadCount: number
+    starredCount: number
+  }
 }
 
-export function FolderSidebar({
-  folders,
-  feeds,
-  selectedFolderId,
-  selectedFeedId,
-  onSelectFolder,
-  onSelectFeed,
-  onCollapse,
-  filterMode = 'all',
-  onFilterChange,
-  totalArticleCount,
-  unreadCount,
-  starredCount,
-  onAddFeed,
-  onAddFolder,
-  onEditFeed,
-  onDeleteFeed,
-  onManageSubscriptions,
-}: FolderSidebarProps) {
+export function FolderSidebar(props: FolderSidebarProps) {
+  // Try to use context if available
+  const contextValue = useContext(FeedsContext)
+
+  // Determine values - prefer context, fall back to props
+  const folders = contextValue?.folders ?? props.folders ?? []
+  const feeds = contextValue?.feeds ?? props.feeds ?? []
+  const selectedFolderId =
+    contextValue?.selectedFolderId ?? props.selectedFolderId ?? null
+  const selectedFeedId =
+    contextValue?.selectedFeedId ?? props.selectedFeedId ?? null
+  const filterMode = contextValue?.filterMode ?? props.filterMode ?? 'all'
+  const selectFolder =
+    contextValue?.selectFolder ?? props.onSelectFolder ?? (() => {})
+  const selectFeed =
+    contextValue?.selectFeed ?? props.onSelectFeed ?? (() => {})
+  const setFilterMode =
+    contextValue?.setFilterMode ?? props.onFilterChange ?? (() => {})
+  const toggleSidebar =
+    contextValue?.toggleSidebar ?? props.onCollapse ?? (() => {})
+
   // Get feeds that don't belong to any folder
   const uncategorizedFeeds = feeds.filter((f) => f.folderId === null)
 
@@ -47,11 +54,11 @@ export function FolderSidebar({
   const getFeedsForFolder = (folderId: string) =>
     feeds.filter((f) => f.folderId === folderId)
 
-  // Calculate total unread from feeds if not provided via props
+  // Calculate totals
   const totalUnread =
-    unreadCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
-  const totalArticles = totalArticleCount ?? 0
-  const totalStarred = starredCount ?? 0
+    props.stats?.unreadCount ?? feeds.reduce((sum, f) => sum + f.unreadCount, 0)
+  const totalArticles = props.stats?.totalArticles ?? 0
+  const totalStarred = props.stats?.starredCount ?? 0
 
   return (
     <div className="h-full flex flex-col bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
@@ -61,7 +68,7 @@ export function FolderSidebar({
           Feeds
         </h2>
         <button
-          onClick={onCollapse}
+          onClick={toggleSidebar}
           className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
           title="Collapse sidebar"
         >
@@ -86,8 +93,8 @@ export function FolderSidebar({
         {/* All Articles */}
         <button
           onClick={() => {
-            onSelectFolder?.(null)
-            onFilterChange?.('all')
+            selectFolder(null)
+            setFilterMode('all')
           }}
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
             filterMode === 'all' &&
@@ -123,8 +130,8 @@ export function FolderSidebar({
         {/* Unread */}
         <button
           onClick={() => {
-            onSelectFolder?.(null)
-            onFilterChange?.('unread')
+            selectFolder(null)
+            setFilterMode('unread')
           }}
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
             filterMode === 'unread' &&
@@ -159,7 +166,7 @@ export function FolderSidebar({
 
         {/* Starred */}
         <button
-          onClick={() => onSelectFolder?.('starred')}
+          onClick={() => selectFolder('starred')}
           className={`w-full flex items-center justify-between px-4 py-2 text-left text-sm font-medium transition-colors ${
             selectedFolderId === 'starred'
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
@@ -190,7 +197,7 @@ export function FolderSidebar({
         {folders.map((folder) => (
           <div key={folder.id} className="mb-1">
             <button
-              onClick={() => onSelectFolder?.(folder.id)}
+              onClick={() => selectFolder(folder.id)}
               className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
                 selectedFolderId === folder.id
                   ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
@@ -232,7 +239,7 @@ export function FolderSidebar({
                   }`}
                 >
                   <button
-                    onClick={() => onSelectFeed?.(feed.id)}
+                    onClick={() => selectFeed(feed.id)}
                     className="flex-1 text-left text-sm truncate"
                   >
                     {feed.title}
@@ -242,7 +249,7 @@ export function FolderSidebar({
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        onEditFeed?.(feed.id)
+                        props.onEditFeed?.(feed.id)
                       }}
                       className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                       title="Edit feed"
@@ -252,7 +259,7 @@ export function FolderSidebar({
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        onDeleteFeed?.(feed.id)
+                        props.onDeleteFeed?.(feed.id)
                       }}
                       className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                       title="Delete feed"
@@ -290,7 +297,7 @@ export function FolderSidebar({
                 }`}
               >
                 <button
-                  onClick={() => onSelectFeed?.(feed.id)}
+                  onClick={() => selectFeed(feed.id)}
                   className="flex-1 flex items-center gap-2 text-left text-sm"
                 >
                   <svg
@@ -313,7 +320,7 @@ export function FolderSidebar({
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      onEditFeed?.(feed.id)
+                      props.onEditFeed?.(feed.id)
                     }}
                     className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                     title="Edit feed"
@@ -323,7 +330,7 @@ export function FolderSidebar({
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      onDeleteFeed?.(feed.id)
+                      props.onDeleteFeed?.(feed.id)
                     }}
                     className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                     title="Delete feed"
@@ -344,14 +351,14 @@ export function FolderSidebar({
         {/* Add Feed/Folder buttons */}
         <div className="mt-2 mx-4 border-t border-slate-200 dark:border-slate-700 pt-3 pb-1 flex flex-col gap-1">
           <button
-            onClick={onAddFeed}
+            onClick={props.onAddFeed}
             className="flex items-center gap-2 px-2 py-1.5 text-sm text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Feed
           </button>
           <button
-            onClick={onAddFolder}
+            onClick={props.onAddFolder}
             className="flex items-center gap-2 px-2 py-1.5 text-sm text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />

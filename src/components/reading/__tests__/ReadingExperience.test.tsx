@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { ReadingExperience } from '../ReadingExperience'
 import type { Article, Feed, Folder } from '@/types'
+import {
+  ArticleActionsProvider,
+  ArticleListProvider,
+  FeedsProvider,
+  KeyboardProvider,
+} from '@/context'
 
 // Mock data
 const mockFolders: Array<Folder> = [
@@ -87,19 +93,30 @@ describe('ReadingExperience', () => {
     mockOnRefresh = vi.fn()
   })
 
-  const renderComponent = (props = {}) => {
+  const renderComponent = (
+    props: {
+      articles?: Array<Article>
+      stats?: typeof mockStats
+    } = {},
+  ) => {
+    const articles = props.articles ?? mockArticles
+    const stats = props.stats ?? mockStats
     return render(
-      <ReadingExperience
-        folders={mockFolders}
-        feeds={mockFeeds}
-        articles={mockArticles}
-        stats={mockStats}
+      <ArticleActionsProvider
+        articles={articles}
         onToggleRead={mockOnToggleRead}
         onToggleStar={mockOnToggleStar}
         onDelete={mockOnDelete}
         onRefresh={mockOnRefresh}
-        {...props}
-      />,
+      >
+        <FeedsProvider folders={mockFolders} feeds={mockFeeds}>
+          <ArticleListProvider articles={articles} feeds={mockFeeds}>
+            <KeyboardProvider>
+              <ReadingExperience stats={stats} />
+            </KeyboardProvider>
+          </ArticleListProvider>
+        </FeedsProvider>
+      </ArticleActionsProvider>,
     )
   }
 
@@ -310,17 +327,10 @@ describe('ReadingExperience', () => {
 
   describe('empty states', () => {
     it('shows empty state when no articles', () => {
-      render(
-        <ReadingExperience
-          folders={mockFolders}
-          feeds={mockFeeds}
-          articles={[]}
-          stats={{ totalArticles: 0, unreadCount: 0, starredCount: 0 }}
-          onToggleRead={mockOnToggleRead}
-          onToggleStar={mockOnToggleStar}
-          onRefresh={mockOnRefresh}
-        />,
-      )
+      renderComponent({
+        articles: [],
+        stats: { totalArticles: 0, unreadCount: 0, starredCount: 0 },
+      })
 
       expect(screen.getByText('No articles yet')).toBeInTheDocument()
       expect(
@@ -379,30 +389,36 @@ describe('ReadingExperience', () => {
     it('defaults to newest first sort order', () => {
       renderComponent()
 
-      const sortSelect = screen.getByRole('combobox') as HTMLSelectElement
+      const sortSelect = screen.getByRole('combobox')
       expect(sortSelect.value).toBe('newest')
     })
   })
 
   describe('delete', () => {
-    it('shows delete button on article hover', () => {
+    it('shows delete button in reading pane when article is selected', () => {
       renderComponent()
 
-      // Delete buttons should exist (shown on hover via CSS)
-      const deleteButtons = screen.getAllByTitle('Delete')
-      expect(deleteButtons.length).toBe(3) // One for each article
+      // Delete button appears only in reading pane after selection
+      expect(screen.queryByTitle('Delete article')).not.toBeInTheDocument()
+
+      fireEvent.click(screen.getByText('First Article'))
+
+      expect(screen.getByTitle('Delete article')).toBeInTheDocument()
     })
 
     it('calls onDelete when delete button is clicked', () => {
       renderComponent()
 
-      const deleteButtons = screen.getAllByTitle('Delete')
-      fireEvent.click(deleteButtons[0])
+      // Select article first to show reading pane with delete button
+      fireEvent.click(screen.getByText('First Article'))
+
+      const deleteButton = screen.getByTitle('Delete article')
+      fireEvent.click(deleteButton)
 
       expect(mockOnDelete).toHaveBeenCalledWith('article-1')
     })
 
-    it('clears selection when selected article is deleted', () => {
+    it('calls onDelete for the selected article', () => {
       renderComponent()
 
       // Select first article
@@ -413,8 +429,8 @@ describe('ReadingExperience', () => {
       expect(headings.length).toBe(2) // In list and reading pane
 
       // Delete the selected article
-      const deleteButtons = screen.getAllByTitle('Delete')
-      fireEvent.click(deleteButtons[0])
+      const deleteButton = screen.getByTitle('Delete article')
+      fireEvent.click(deleteButton)
 
       expect(mockOnDelete).toHaveBeenCalledWith('article-1')
     })

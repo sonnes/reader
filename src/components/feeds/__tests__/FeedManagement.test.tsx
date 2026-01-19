@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { FeedManagement } from '../FeedManagement'
 import type { Feed, Folder } from '@/types'
+import {
+  FeedActionsProvider,
+  FeedsProvider,
+  FolderActionsProvider,
+} from '@/context'
 
 // Mock data
 const mockFolders: Array<Folder> = [
@@ -63,21 +68,34 @@ describe('FeedManagement', () => {
     mockOnExportOPML = vi.fn()
   })
 
-  const renderComponent = (props = {}) => {
+  const renderComponent = (
+    props: {
+      folders?: Array<Folder>
+      feeds?: Array<Feed>
+    } = {},
+  ) => {
+    const folders = props.folders ?? mockFolders
+    const feeds = props.feeds ?? mockFeeds
     return render(
-      <FeedManagement
-        folders={mockFolders}
-        feeds={mockFeeds}
+      <FolderActionsProvider
         onCreateFolder={mockOnCreateFolder}
         onRenameFolder={mockOnRenameFolder}
         onDeleteFolder={mockOnDeleteFolder}
-        onAddFeed={mockOnAddFeed}
-        onRemoveFeed={mockOnRemoveFeed}
-        onMoveFeed={mockOnMoveFeed}
-        onImportOPML={mockOnImportOPML}
-        onExportOPML={mockOnExportOPML}
-        {...props}
-      />,
+      >
+        <FeedActionsProvider
+          folders={folders}
+          feeds={feeds}
+          onAddFeed={mockOnAddFeed}
+          onRemoveFeed={mockOnRemoveFeed}
+          onMoveFeed={mockOnMoveFeed}
+          onImportOPML={mockOnImportOPML}
+          onExportOPML={mockOnExportOPML}
+        >
+          <FeedsProvider folders={folders} feeds={feeds}>
+            <FeedManagement />
+          </FeedsProvider>
+        </FeedActionsProvider>
+      </FolderActionsProvider>,
     )
   }
 
@@ -348,20 +366,7 @@ describe('FeedManagement', () => {
 
   describe('Empty States', () => {
     it('shows empty state when no feeds exist', () => {
-      render(
-        <FeedManagement
-          folders={[]}
-          feeds={[]}
-          onCreateFolder={mockOnCreateFolder}
-          onRenameFolder={mockOnRenameFolder}
-          onDeleteFolder={mockOnDeleteFolder}
-          onAddFeed={mockOnAddFeed}
-          onRemoveFeed={mockOnRemoveFeed}
-          onMoveFeed={mockOnMoveFeed}
-          onImportOPML={mockOnImportOPML}
-          onExportOPML={mockOnExportOPML}
-        />,
-      )
+      renderComponent({ folders: [], feeds: [] })
 
       expect(screen.getByText('No feeds yet')).toBeInTheDocument()
       expect(
@@ -377,27 +382,17 @@ describe('FeedManagement', () => {
     })
 
     it('shows empty folder message when folder has no feeds', () => {
-      render(
-        <FeedManagement
-          folders={[
-            {
-              id: 'folder-empty',
-              name: 'Empty Folder',
-              feedIds: [],
-              unreadCount: 0,
-            },
-          ]}
-          feeds={[]}
-          onCreateFolder={mockOnCreateFolder}
-          onRenameFolder={mockOnRenameFolder}
-          onDeleteFolder={mockOnDeleteFolder}
-          onAddFeed={mockOnAddFeed}
-          onRemoveFeed={mockOnRemoveFeed}
-          onMoveFeed={mockOnMoveFeed}
-          onImportOPML={mockOnImportOPML}
-          onExportOPML={mockOnExportOPML}
-        />,
-      )
+      renderComponent({
+        folders: [
+          {
+            id: 'folder-empty',
+            name: 'Empty Folder',
+            feedIds: [],
+            unreadCount: 0,
+          },
+        ],
+        feeds: [],
+      })
 
       // Main area shows "No feeds yet" empty state since total feeds is 0
       expect(screen.getByText('No feeds yet')).toBeInTheDocument()

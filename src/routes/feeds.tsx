@@ -1,6 +1,11 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { FeedManagement } from '@/components/feeds'
 import {
+  FeedActionsProvider,
+  FeedsProvider,
+  FolderActionsProvider,
+} from '@/context'
+import {
   createFolderFn,
   deleteFolderFn,
   exportOPMLFn,
@@ -80,17 +85,24 @@ function FeedsPage() {
   }
 
   return (
-    <FeedManagement
-      folders={folders}
-      feeds={feeds}
+    <FolderActionsProvider
       onCreateFolder={handleCreateFolder}
       onRenameFolder={handleRenameFolder}
       onDeleteFolder={handleDeleteFolder}
-      onAddFeed={handleAddFeed}
-      onRemoveFeed={handleRemoveFeed}
-      onMoveFeed={handleMoveFeed}
-      onImportOPML={handleImportOPML}
-      onExportOPML={handleExportOPML}
-    />
+    >
+      <FeedActionsProvider
+        folders={folders}
+        feeds={feeds}
+        onAddFeed={handleAddFeed}
+        onRemoveFeed={handleRemoveFeed}
+        onMoveFeed={handleMoveFeed}
+        onImportOPML={handleImportOPML}
+        onExportOPML={handleExportOPML}
+      >
+        <FeedsProvider folders={folders} feeds={feeds}>
+          <FeedManagement />
+        </FeedsProvider>
+      </FeedActionsProvider>
+    </FolderActionsProvider>
   )
 }

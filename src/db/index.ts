@@ -19,13 +19,17 @@ export function getDb(): Database {
     db.run(schema)
 
     // Migration: Add is_deleted column if it doesn't exist
-    const columns = db
-      .query("PRAGMA table_info(articles)")
-      .all() as Array<{ name: string }>
+    const columns = db.query('PRAGMA table_info(articles)').all() as Array<{
+      name: string
+    }>
     const hasIsDeleted = columns.some((col) => col.name === 'is_deleted')
     if (!hasIsDeleted) {
-      db.run('ALTER TABLE articles ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0')
-      db.run('CREATE INDEX IF NOT EXISTS idx_articles_is_deleted ON articles(is_deleted)')
+      db.run(
+        'ALTER TABLE articles ADD COLUMN is_deleted INTEGER NOT NULL DEFAULT 0',
+      )
+      db.run(
+        'CREATE INDEX IF NOT EXISTS idx_articles_is_deleted ON articles(is_deleted)',
+      )
     }
   }
   return db

@@ -3,6 +3,12 @@ import { useCallback, useState } from 'react'
 import type { Article } from '@/types'
 import { ReadingExperience } from '@/components/reading'
 import {
+  ArticleActionsProvider,
+  ArticleListProvider,
+  FeedsProvider,
+  KeyboardProvider,
+} from '@/context'
+import {
   deleteArticleFn,
   fetchReadingData,
   toggleArticleRead,
@@ -76,24 +82,27 @@ function ReadPage() {
   )
 
   // Handle delete
-  const handleDelete = useCallback(async (articleId: string) => {
-    // Store the article for potential rollback
-    const articleToDelete = articles.find((a) => a.id === articleId)
+  const handleDelete = useCallback(
+    async (articleId: string) => {
+      // Store the article for potential rollback
+      const articleToDelete = articles.find((a) => a.id === articleId)
 
-    // Optimistic update - remove from list
-    setArticles((prev) => prev.filter((a) => a.id !== articleId))
+      // Optimistic update - remove from list
+      setArticles((prev) => prev.filter((a) => a.id !== articleId))
 
-    // Server update
-    try {
-      await deleteArticleFn({ articleId })
-    } catch (error) {
-      // Revert on error
-      console.error('Failed to delete article:', error)
-      if (articleToDelete) {
-        setArticles((prev) => [...prev, articleToDelete])
+      // Server update
+      try {
+        await deleteArticleFn({ articleId })
+      } catch (error) {
+        // Revert on error
+        console.error('Failed to delete article:', error)
+        if (articleToDelete) {
+          setArticles((prev) => [...prev, articleToDelete])
+        }
       }
-    }
-  }, [articles])
+    },
+    [articles],
+  )
 
   // Handle refresh
   const handleRefresh = useCallback(async () => {
@@ -106,15 +115,20 @@ function ReadPage() {
   }, [])
 
   return (
-    <ReadingExperience
-      folders={initialData.folders}
-      feeds={initialData.feeds}
+    <ArticleActionsProvider
       articles={articles}
-      stats={stats}
       onToggleRead={handleToggleRead}
       onToggleStar={handleToggleStar}
       onDelete={handleDelete}
       onRefresh={handleRefresh}
-    />
+    >
+      <FeedsProvider folders={initialData.folders} feeds={initialData.feeds}>
+        <ArticleListProvider articles={articles} feeds={initialData.feeds}>
+          <KeyboardProvider>
+            <ReadingExperience stats={stats} />
+          </KeyboardProvider>
+        </ArticleListProvider>
+      </FeedsProvider>
+    </ArticleActionsProvider>
   )
 }

@@ -10,7 +10,6 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import appCss from '../styles.css?url'
 import { AppShell } from '@/components/shell'
 
-
 export const Route = createRootRoute({
   head: () => ({
     meta: [

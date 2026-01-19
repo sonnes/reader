@@ -1,40 +1,27 @@
 import { ArticleListItem } from './ArticleListItem'
-import type { Article, Feed } from '@/types'
+import { useArticleActions, useArticleList, useFeedsContext } from '@/context'
 
-type ViewMode = 'list' | 'card'
-type SortOrder = 'newest' | 'oldest'
+export function ArticleList() {
+  const {
+    filteredArticles,
+    selectedArticleId,
+    viewMode,
+    sortOrder,
+    selectArticle,
+    toggleViewMode,
+    setSortOrder,
+  } = useArticleList()
+  const { refresh } = useArticleActions()
+  const { feeds } = useFeedsContext()
 
-interface ArticleListProps {
-  articles: Array<Article>
-  feeds: Array<Feed>
-  selectedArticleId: string | null
-  viewMode: ViewMode
-  sortOrder: SortOrder
-  onSelectArticle?: (articleId: string) => void
-  onToggleViewMode?: () => void
-  onSortChange?: (order: SortOrder) => void
-  onRefresh?: () => void
-}
-
-export function ArticleList({
-  articles,
-  feeds,
-  selectedArticleId,
-  viewMode,
-  sortOrder,
-  onSelectArticle,
-  onToggleViewMode,
-  onSortChange,
-  onRefresh,
-}: ArticleListProps) {
   // Get feed by ID
   const getFeed = (feedId: string) => feeds.find((f) => f.id === feedId)
 
   // Count unread
-  const unreadCount = articles.filter((a) => !a.isRead).length
+  const unreadCount = filteredArticles.filter((a) => !a.isRead).length
 
   // Empty state
-  if (articles.length === 0) {
+  if (filteredArticles.length === 0) {
     return (
       <div className="h-full flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
@@ -60,7 +47,7 @@ export function ArticleList({
             Subscribe to feeds to see articles here
           </p>
           <button
-            onClick={onRefresh}
+            onClick={refresh}
             className="px-4 py-2 text-sm font-medium text-white bg-sky-500 hover:bg-sky-600 rounded-lg transition-colors"
           >
             Refresh feeds
@@ -76,7 +63,7 @@ export function ArticleList({
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
-            {articles.length} articles
+            {filteredArticles.length} articles
           </span>
           {unreadCount > 0 && (
             <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -89,7 +76,9 @@ export function ArticleList({
           {/* Sort dropdown */}
           <select
             value={sortOrder}
-            onChange={(e) => onSortChange?.(e.target.value as SortOrder)}
+            onChange={(e) =>
+              setSortOrder(e.target.value as 'newest' | 'oldest')
+            }
             className="text-xs bg-transparent border-none text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-200 focus:outline-none focus:ring-0"
           >
             <option value="newest">Newest</option>
@@ -98,7 +87,7 @@ export function ArticleList({
 
           {/* Refresh */}
           <button
-            onClick={onRefresh}
+            onClick={refresh}
             className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title="Refresh (r)"
           >
@@ -119,7 +108,7 @@ export function ArticleList({
 
           {/* View toggle */}
           <button
-            onClick={onToggleViewMode}
+            onClick={toggleViewMode}
             className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             title={
               viewMode === 'list'
@@ -164,27 +153,27 @@ export function ArticleList({
       <div className="flex-1 overflow-y-auto">
         {viewMode === 'card' ? (
           <div className="grid grid-cols-1 gap-3 p-4">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <ArticleListItem
                 key={article.id}
                 article={article}
                 feed={getFeed(article.feedId)}
                 isSelected={article.id === selectedArticleId}
                 viewMode={viewMode}
-                onSelect={() => onSelectArticle?.(article.id)}
+                onSelect={() => selectArticle(article.id)}
               />
             ))}
           </div>
         ) : (
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <ArticleListItem
                 key={article.id}
                 article={article}
                 feed={getFeed(article.feedId)}
                 isSelected={article.id === selectedArticleId}
                 viewMode={viewMode}
-                onSelect={() => onSelectArticle?.(article.id)}
+                onSelect={() => selectArticle(article.id)}
               />
             ))}
           </div>

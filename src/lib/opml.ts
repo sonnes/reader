@@ -119,7 +119,10 @@ function decodeHtmlEntities(text: string): string {
 /**
  * Generate OPML content from feeds and folders
  */
-export function generateOPML(folders: Array<Folder>, feeds: Array<Feed>): string {
+export function generateOPML(
+  folders: Array<Folder>,
+  feeds: Array<Feed>,
+): string {
   const now = new Date().toUTCString()
 
   let opml = `<?xml version="1.0" encoding="UTF-8"?>

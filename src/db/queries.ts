@@ -428,10 +428,14 @@ export function getStats() {
     .query(`SELECT COUNT(*) as count FROM articles WHERE is_deleted = 0`)
     .get() as { count: number }
   const unreadResult = db
-    .query(`SELECT COUNT(*) as count FROM articles WHERE is_read = 0 AND is_deleted = 0`)
+    .query(
+      `SELECT COUNT(*) as count FROM articles WHERE is_read = 0 AND is_deleted = 0`,
+    )
     .get() as { count: number }
   const starredResult = db
-    .query(`SELECT COUNT(*) as count FROM articles WHERE is_starred = 1 AND is_deleted = 0`)
+    .query(
+      `SELECT COUNT(*) as count FROM articles WHERE is_starred = 1 AND is_deleted = 0`,
+    )
     .get() as { count: number }
 
   return {

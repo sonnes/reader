@@ -1,30 +1,17 @@
-import type { Article, Feed } from '@/types'
+import { useArticleActions, useArticleList } from '@/context'
 
-interface ReadingPaneProps {
-  article: Article | null
-  feed?: Feed
-  readerView: boolean
-  onToggleReaderView?: () => void
-  onToggleRead?: () => void
-  onToggleStar?: () => void
-  onOpenInBrowser?: () => void
-  onDelete?: () => void
-  onExitFocusMode?: () => void
-  focusMode?: boolean
-}
+export function ReadingPane() {
+  const {
+    selectedArticle,
+    selectedFeed,
+    readerView,
+    focusMode,
+    toggleReaderView,
+    exitFocusMode,
+  } = useArticleList()
+  const { toggleRead, toggleStar, openInBrowser, deleteArticle } =
+    useArticleActions()
 
-export function ReadingPane({
-  article,
-  feed,
-  readerView,
-  onToggleReaderView,
-  onToggleRead,
-  onToggleStar,
-  onOpenInBrowser,
-  onDelete,
-  onExitFocusMode,
-  focusMode,
-}: ReadingPaneProps) {
   // Format date
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -37,7 +24,7 @@ export function ReadingPane({
   }
 
   // Empty state
-  if (!article) {
+  if (!selectedArticle) {
     return (
       <div className="h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-8 text-center">
         <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
@@ -81,7 +68,7 @@ export function ReadingPane({
           {/* Focus mode exit */}
           {focusMode && (
             <button
-              onClick={onExitFocusMode}
+              onClick={exitFocusMode}
               className="p-2 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors mr-2"
               title="Exit focus mode"
             >
@@ -103,17 +90,19 @@ export function ReadingPane({
 
           {/* Toggle read */}
           <button
-            onClick={onToggleRead}
+            onClick={() => toggleRead(selectedArticle.id)}
             className={`p-2 rounded-md transition-colors ${
-              article.isRead
+              selectedArticle.isRead
                 ? 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
                 : 'text-sky-500 hover:text-sky-600'
             } hover:bg-slate-200 dark:hover:bg-slate-800`}
-            title={article.isRead ? 'Mark as unread (m)' : 'Mark as read (m)'}
+            title={
+              selectedArticle.isRead ? 'Mark as unread (m)' : 'Mark as read (m)'
+            }
           >
             <svg
               className="w-4 h-4"
-              fill={article.isRead ? 'none' : 'currentColor'}
+              fill={selectedArticle.isRead ? 'none' : 'currentColor'}
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
@@ -128,17 +117,19 @@ export function ReadingPane({
 
           {/* Star */}
           <button
-            onClick={onToggleStar}
+            onClick={() => toggleStar(selectedArticle.id)}
             className={`p-2 rounded-md transition-colors ${
-              article.isStarred
+              selectedArticle.isStarred
                 ? 'text-amber-500'
                 : 'text-slate-400 hover:text-amber-500 dark:text-slate-500'
             } hover:bg-slate-200 dark:hover:bg-slate-800`}
-            title={article.isStarred ? 'Remove star (s)' : 'Star article (s)'}
+            title={
+              selectedArticle.isStarred ? 'Remove star (s)' : 'Star article (s)'
+            }
           >
             <svg
               className="w-4 h-4"
-              fill={article.isStarred ? 'currentColor' : 'none'}
+              fill={selectedArticle.isStarred ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
@@ -153,7 +144,7 @@ export function ReadingPane({
 
           {/* Open in browser */}
           <button
-            onClick={onOpenInBrowser}
+            onClick={() => openInBrowser(selectedArticle.id)}
             className="p-2 rounded-md text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
             title="Open in browser (o)"
           >
@@ -174,7 +165,7 @@ export function ReadingPane({
 
           {/* Delete */}
           <button
-            onClick={onDelete}
+            onClick={() => deleteArticle(selectedArticle.id)}
             className="p-2 rounded-md text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
             title="Delete article"
           >
@@ -196,7 +187,7 @@ export function ReadingPane({
 
         {/* View toggle */}
         <button
-          onClick={onToggleReaderView}
+          onClick={toggleReaderView}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
             readerView
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
@@ -228,23 +219,23 @@ export function ReadingPane({
           {/* Header */}
           <header className="mb-8">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight mb-4">
-              {article.title}
+              {selectedArticle.title}
             </h1>
 
             <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
               <a
-                href={feed?.siteUrl}
+                href={selectedFeed?.siteUrl}
                 className="font-medium text-sky-600 dark:text-sky-400 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {feed?.title}
+                {selectedFeed?.title}
               </a>
               <span className="text-slate-300 dark:text-slate-600">
                 &middot;
               </span>
-              <time dateTime={article.publishedAt}>
-                {formatDate(article.publishedAt)}
+              <time dateTime={selectedArticle.publishedAt}>
+                {formatDate(selectedArticle.publishedAt)}
               </time>
             </div>
           </header>
@@ -256,18 +247,18 @@ export function ReadingPane({
                 ? 'prose-slate prose-lg prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-sky-600 dark:prose-a:text-sky-400 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-600 dark:prose-code:text-sky-400 prose-code:before:content-none prose-code:after:content-none'
                 : 'prose-sm'
             }`}
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
           />
 
           {/* Footer */}
           <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
             <a
-              href={article.url}
+              href={selectedArticle.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300"
             >
-              Read on {feed?.title}
+              Read on {selectedFeed?.title}
               <svg
                 className="w-4 h-4"
                 fill="none"
