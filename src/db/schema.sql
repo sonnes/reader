@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS feeds (
   site_url TEXT NOT NULL,
   favicon TEXT,
   folder_id TEXT REFERENCES folders(id) ON DELETE SET NULL,
+  prefer_iframe INTEGER NOT NULL DEFAULT 0,
   last_fetched TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))

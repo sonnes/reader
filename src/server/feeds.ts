@@ -13,6 +13,7 @@ import {
   getStats,
   renameFolder,
   updateFeedFolder,
+  updateFeedIframePreference,
   updateFeedLastFetched,
 } from '@/db/queries'
 import {
@@ -246,6 +247,7 @@ export const subscribeFeedFn = createServerFn({ method: 'POST' })
         siteUrl: parsedFeed.siteUrl,
         favicon: validatedFavicon,
         folderId: data.folderId || null,
+        preferIframe: false,
         lastFetched: new Date().toISOString(),
       })
 
@@ -297,6 +299,18 @@ export const moveFeedFn = createServerFn({ method: 'POST' })
   .inputValidator(MoveFeedSchema)
   .handler(async ({ data }) => {
     updateFeedFolder(data.feedId, data.folderId)
+    return { success: true }
+  })
+
+const UpdateFeedIframeSchema = z.object({
+  feedId: z.string(),
+  preferIframe: z.boolean(),
+})
+
+export const updateFeedIframeFn = createServerFn({ method: 'POST' })
+  .inputValidator(UpdateFeedIframeSchema)
+  .handler(async ({ data }) => {
+    updateFeedIframePreference(data.feedId, data.preferIframe)
     return { success: true }
   })
 
@@ -353,6 +367,7 @@ export const importOPMLFn = createServerFn({ method: 'POST' })
             siteUrl: parsedFeed.siteUrl || feedData.siteUrl,
             favicon: validatedFavicon,
             folderId: folderId || null,
+            preferIframe: false,
             lastFetched: new Date().toISOString(),
           })
 

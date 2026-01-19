@@ -36,6 +36,8 @@ export interface Feed {
   favicon: string | null
   /** ID of parent folder (null if uncategorized) */
   folderId: string | null
+  /** Whether to show articles from this feed in iframe by default */
+  preferIframe: boolean
   /** Count of unread articles in this feed */
   unreadCount: number
   /** ISO timestamp of last fetch */
@@ -89,8 +91,6 @@ export interface UIState {
   focusMode: boolean
   /** Article list view mode */
   viewMode: 'list' | 'card'
-  /** Whether reader view formatting is enabled */
-  readerView: boolean
   /** Currently selected folder ID (null = all) */
   selectedFolderId: string | null
   /** Currently selected feed ID (null = all in folder) */

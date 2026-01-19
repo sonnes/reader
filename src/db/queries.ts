@@ -14,6 +14,7 @@ interface FeedRow {
   site_url: string
   favicon: string | null
   folder_id: string | null
+  prefer_iframe: number
   last_fetched: string | null
 }
 
@@ -122,7 +123,7 @@ export function getAllFeeds(): Array<Feed> {
   const rows = db
     .query(
       `
-    SELECT id, title, url, site_url, favicon, folder_id, last_fetched
+    SELECT id, title, url, site_url, favicon, folder_id, prefer_iframe, last_fetched
     FROM feeds
     ORDER BY title
   `,
@@ -146,6 +147,7 @@ export function getAllFeeds(): Array<Feed> {
       siteUrl: row.site_url,
       favicon: row.favicon || '',
       folderId: row.folder_id,
+      preferIframe: row.prefer_iframe === 1,
       unreadCount: unreadResult.count,
       lastFetched: row.last_fetched || '',
     }
@@ -156,8 +158,8 @@ export function createFeed(feed: Omit<Feed, 'unreadCount'>): Feed {
   const db = getDb()
   db.query(
     `
-    INSERT INTO feeds (id, title, url, site_url, favicon, folder_id, last_fetched)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO feeds (id, title, url, site_url, favicon, folder_id, prefer_iframe, last_fetched)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     feed.id,
@@ -166,6 +168,7 @@ export function createFeed(feed: Omit<Feed, 'unreadCount'>): Feed {
     feed.siteUrl,
     feed.favicon || null,
     feed.folderId || null,
+    feed.preferIframe ? 1 : 0,
     feed.lastFetched || null,
   )
 
@@ -177,7 +180,7 @@ export function getFeedByUrl(url: string): Feed | null {
   const row = db
     .query(
       `
-    SELECT id, title, url, site_url, favicon, folder_id, last_fetched
+    SELECT id, title, url, site_url, favicon, folder_id, prefer_iframe, last_fetched
     FROM feeds WHERE url = ?
   `,
     )
@@ -200,6 +203,7 @@ export function getFeedByUrl(url: string): Feed | null {
     siteUrl: row.site_url,
     favicon: row.favicon || '',
     folderId: row.folder_id,
+    preferIframe: row.prefer_iframe === 1,
     unreadCount: unreadResult.count,
     lastFetched: row.last_fetched || '',
   }
@@ -234,6 +238,18 @@ export function updateFeedLastFetched(feedId: string): void {
     UPDATE feeds SET last_fetched = datetime('now'), updated_at = datetime('now') WHERE id = ?
   `,
   ).run(feedId)
+}
+
+export function updateFeedIframePreference(
+  feedId: string,
+  preferIframe: boolean,
+): void {
+  const db = getDb()
+  db.query(
+    `
+    UPDATE feeds SET prefer_iframe = ?, updated_at = datetime('now') WHERE id = ?
+  `,
+  ).run(preferIframe ? 1 : 0, feedId)
 }
 
 // ============================================================================

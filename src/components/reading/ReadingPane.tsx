@@ -4,9 +4,9 @@ export function ReadingPane() {
   const {
     selectedArticle,
     selectedFeed,
-    readerView,
+    iframeView,
     focusMode,
-    toggleReaderView,
+    toggleIframeView,
     exitFocusMode,
   } = useArticleList()
   const { toggleRead, toggleStar, openInBrowser, deleteArticle } =
@@ -187,9 +187,9 @@ export function ReadingPane() {
 
         {/* View toggle */}
         <button
-          onClick={toggleReaderView}
+          onClick={toggleIframeView}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-            readerView
+            iframeView
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
           }`}
@@ -204,78 +204,81 @@ export function ReadingPane() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
+              d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
             />
           </svg>
-          {readerView ? 'Reader view' : 'Original'}
+          {iframeView ? 'Original site' : 'RSS content'}
         </button>
       </div>
 
       {/* Article content */}
-      <div className="flex-1 overflow-y-auto">
-        <article
-          className={`mx-auto px-6 py-8 ${readerView ? 'max-w-2xl' : 'max-w-4xl'}`}
-        >
-          {/* Header */}
-          <header className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight mb-4">
-              {selectedArticle.title}
-            </h1>
+      {iframeView ? (
+        <iframe
+          src={selectedArticle.url}
+          className="flex-1 w-full border-0"
+          title={selectedArticle.title}
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        />
+      ) : (
+        <div className="flex-1 overflow-y-auto">
+          <article className="mx-auto px-6 py-8 max-w-3xl">
+            {/* Header */}
+            <header className="mb-8">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 leading-tight mb-4">
+                {selectedArticle.title}
+              </h1>
 
-            <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                <a
+                  href={selectedFeed?.siteUrl}
+                  className="font-medium text-sky-600 dark:text-sky-400 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {selectedFeed?.title}
+                </a>
+                <span className="text-slate-300 dark:text-slate-600">
+                  &middot;
+                </span>
+                <time dateTime={selectedArticle.publishedAt}>
+                  {formatDate(selectedArticle.publishedAt)}
+                </time>
+              </div>
+            </header>
+
+            {/* Content */}
+            <div
+              className="prose dark:prose-invert max-w-none prose-slate prose-lg prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-sky-600 dark:prose-a:text-sky-400 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-600 dark:prose-code:text-sky-400 prose-code:before:content-none prose-code:after:content-none"
+              dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+            />
+
+            {/* Footer */}
+            <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
               <a
-                href={selectedFeed?.siteUrl}
-                className="font-medium text-sky-600 dark:text-sky-400 hover:underline"
+                href={selectedArticle.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300"
               >
-                {selectedFeed?.title}
+                Read on {selectedFeed?.title}
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
               </a>
-              <span className="text-slate-300 dark:text-slate-600">
-                &middot;
-              </span>
-              <time dateTime={selectedArticle.publishedAt}>
-                {formatDate(selectedArticle.publishedAt)}
-              </time>
-            </div>
-          </header>
-
-          {/* Content */}
-          <div
-            className={`prose dark:prose-invert max-w-none ${
-              readerView
-                ? 'prose-slate prose-lg prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-sky-600 dark:prose-a:text-sky-400 prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-code:text-sky-600 dark:prose-code:text-sky-400 prose-code:before:content-none prose-code:after:content-none'
-                : 'prose-sm'
-            }`}
-            dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-          />
-
-          {/* Footer */}
-          <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <a
-              href={selectedArticle.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300"
-            >
-              Read on {selectedFeed?.title}
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </a>
-          </footer>
-        </article>
-      </div>
+            </footer>
+          </article>
+        </div>
+      )}
     </div>
   )
 }

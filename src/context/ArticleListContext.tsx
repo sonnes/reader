@@ -4,6 +4,7 @@ import { useArticleActions } from './ArticleActionsContext'
 import type { ReactNode } from 'react'
 import type { Article, Feed } from '@/types'
 import { useArticleFiltering } from '@/hooks/useArticleFiltering'
+import { updateFeedIframeFn } from '@/server/feeds'
 
 type ViewMode = 'list' | 'card'
 type SortOrder = 'newest' | 'oldest'
@@ -17,14 +18,14 @@ interface ArticleListContextValue {
   sortOrder: SortOrder
   viewMode: ViewMode
   focusMode: boolean
-  readerView: boolean
+  iframeView: boolean
   selectArticle: (articleId: string) => void
   navigateArticle: (direction: 'next' | 'prev') => void
   setSortOrder: (order: SortOrder) => void
   toggleViewMode: () => void
   toggleFocusMode: () => void
   exitFocusMode: () => void
-  toggleReaderView: () => void
+  toggleIframeView: () => void
 }
 
 const ArticleListContext = createContext<ArticleListContextValue | null>(null)
@@ -36,7 +37,6 @@ interface ArticleListProviderProps {
   initialArticleId?: string | null
   initialViewMode?: ViewMode
   initialFocusMode?: boolean
-  initialReaderView?: boolean
 }
 
 export function ArticleListProvider({
@@ -46,7 +46,6 @@ export function ArticleListProvider({
   initialArticleId = null,
   initialViewMode = 'list',
   initialFocusMode = false,
-  initialReaderView = true,
 }: ArticleListProviderProps) {
   const { selectedFolderId, selectedFeedId, filterMode } = useFeedsContext()
   const { toggleRead } = useArticleActions()
@@ -57,7 +56,7 @@ export function ArticleListProvider({
   const [sortOrder, setSortOrderState] = useState<SortOrder>('newest')
   const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode)
   const [focusMode, setFocusMode] = useState(initialFocusMode)
-  const [readerView, setReaderView] = useState(initialReaderView)
+  const [iframeView, setIframeView] = useState(false)
 
   const filteredArticles = useArticleFiltering({
     articles,
@@ -78,11 +77,17 @@ export function ArticleListProvider({
     (articleId: string) => {
       setSelectedArticleId(articleId)
       const article = articles.find((a) => a.id === articleId)
-      if (article && !article.isRead) {
-        toggleRead(articleId)
+      if (article) {
+        // Set iframe view based on feed's preference
+        const feed = feeds.find((f) => f.id === article.feedId)
+        setIframeView(feed?.preferIframe ?? false)
+        // Mark as read if unread
+        if (!article.isRead) {
+          toggleRead(articleId)
+        }
       }
     },
-    [articles, toggleRead],
+    [articles, feeds, toggleRead],
   )
 
   const navigateArticle = useCallback(
@@ -127,9 +132,18 @@ export function ArticleListProvider({
     setFocusMode(false)
   }, [])
 
-  const toggleReaderView = useCallback(() => {
-    setReaderView((prev) => !prev)
-  }, [])
+  const toggleIframeView = useCallback(() => {
+    setIframeView((prev) => {
+      const newValue = !prev
+      // Persist to feed's preference
+      if (selectedArticle) {
+        updateFeedIframeFn({
+          data: { feedId: selectedArticle.feedId, preferIframe: newValue },
+        })
+      }
+      return newValue
+    })
+  }, [selectedArticle])
 
   return (
     <ArticleListContext.Provider
@@ -142,14 +156,14 @@ export function ArticleListProvider({
         sortOrder,
         viewMode,
         focusMode,
-        readerView,
+        iframeView,
         selectArticle,
         navigateArticle,
         setSortOrder,
         toggleViewMode,
         toggleFocusMode,
         exitFocusMode,
-        toggleReaderView,
+        toggleIframeView,
       }}
     >
       {children}
