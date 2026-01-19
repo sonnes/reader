@@ -15,15 +15,16 @@ import {
   toggleArticleStar,
 } from '@/server/reading'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/f/$folderId')({
   loader: async () => {
     return await fetchReadingData()
   },
-  component: ReadPage,
+  component: FolderPage,
 })
 
-function ReadPage() {
+function FolderPage() {
   const initialData = Route.useLoaderData()
+  const { folderId } = Route.useParams()
 
   // Local state for optimistic updates
   const [articles, setArticles] = useState<Array<Article>>(initialData.articles)
@@ -125,7 +126,7 @@ function ReadPage() {
       <FeedsProvider
         folders={initialData.folders}
         feeds={initialData.feeds}
-        initialFilterMode="unread"
+        initialFolderId={folderId}
       >
         <ArticleListProvider articles={articles} feeds={initialData.feeds}>
           <KeyboardProvider>

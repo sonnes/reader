@@ -17,12 +17,12 @@ import {
   unsubscribeFeedFn,
 } from '@/server/feeds'
 
-export const Route = createFileRoute('/feeds')({
+export const Route = createFileRoute('/manage')({
   loader: async () => await fetchFeedManagementData(),
-  component: FeedsPage,
+  component: ManagePage,
 })
 
-function FeedsPage() {
+function ManagePage() {
   const { folders, feeds } = Route.useLoaderData()
   const router = useRouter()
 

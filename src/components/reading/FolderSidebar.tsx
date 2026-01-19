@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import { Link, useLocation } from '@tanstack/react-router'
 import { Pencil, Plus, Settings, Trash2 } from 'lucide-react'
 import type { Feed, Folder } from '@/types'
 import { FeedsContext } from '@/context'
@@ -29,21 +30,23 @@ interface FolderSidebarProps {
 export function FolderSidebar(props: FolderSidebarProps) {
   // Try to use context if available
   const contextValue = useContext(FeedsContext)
+  const location = useLocation()
 
   // Determine values - prefer context, fall back to props
   const folders = contextValue?.folders ?? props.folders ?? []
   const feeds = contextValue?.feeds ?? props.feeds ?? []
-  const selectedFolderId =
-    contextValue?.selectedFolderId ?? props.selectedFolderId ?? null
-  const selectedFeedId =
-    contextValue?.selectedFeedId ?? props.selectedFeedId ?? null
-  const filterMode = contextValue?.filterMode ?? props.filterMode ?? 'all'
-  const selectFolder =
-    contextValue?.selectFolder ?? props.onSelectFolder ?? (() => {})
-  const selectFeed =
-    contextValue?.selectFeed ?? props.onSelectFeed ?? (() => {})
-  const setFilterMode =
-    contextValue?.setFilterMode ?? props.onFilterChange ?? (() => {})
+
+  // Derive active state from URL
+  const pathname = location.pathname
+  const isRootActive = pathname === '/'
+  const isStarredActive = pathname === '/starred'
+  const activeFolderId = pathname.startsWith('/f/')
+    ? pathname.slice(3)
+    : null
+  const activeFeedId = pathname.startsWith('/s/')
+    ? pathname.slice(3)
+    : null
+
   const toggleSidebar =
     contextValue?.toggleSidebar ?? props.onCollapse ?? (() => {})
 
@@ -90,53 +93,11 @@ export function FolderSidebar(props: FolderSidebarProps) {
 
       {/* Feed List */}
       <nav className="flex-1 overflow-y-auto py-2">
-        {/* All Articles */}
-        <button
-          onClick={() => {
-            selectFolder(null)
-            setFilterMode('all')
-          }}
+        {/* Unread (Home) */}
+        <Link
+          to="/"
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
-            filterMode === 'all' &&
-            selectedFolderId === null &&
-            selectedFeedId === null
-              ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
-              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <span className="flex items-center gap-2 text-sm font-medium">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-              />
-            </svg>
-            All Articles
-          </span>
-          {totalArticles > 0 && (
-            <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-              {totalArticles}
-            </span>
-          )}
-        </button>
-
-        {/* Unread */}
-        <button
-          onClick={() => {
-            selectFolder(null)
-            setFilterMode('unread')
-          }}
-          className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
-            filterMode === 'unread' &&
-            selectedFolderId === null &&
-            selectedFeedId === null
+            isRootActive
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
@@ -162,13 +123,13 @@ export function FolderSidebar(props: FolderSidebarProps) {
               {totalUnread}
             </span>
           )}
-        </button>
+        </Link>
 
         {/* Starred */}
-        <button
-          onClick={() => selectFolder('starred')}
+        <Link
+          to="/starred"
           className={`w-full flex items-center justify-between px-4 py-2 text-left text-sm font-medium transition-colors ${
-            selectedFolderId === 'starred'
+            isStarredActive
               ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
@@ -188,7 +149,7 @@ export function FolderSidebar(props: FolderSidebarProps) {
               {totalStarred}
             </span>
           )}
-        </button>
+        </Link>
 
         {/* Divider */}
         <div className="my-2 mx-4 border-t border-slate-200 dark:border-slate-700" />
@@ -196,10 +157,11 @@ export function FolderSidebar(props: FolderSidebarProps) {
         {/* Folders */}
         {folders.map((folder) => (
           <div key={folder.id} className="mb-1">
-            <button
-              onClick={() => selectFolder(folder.id)}
+            <Link
+              to="/f/$folderId"
+              params={{ folderId: folder.id }}
               className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
-                selectedFolderId === folder.id
+                activeFolderId === folder.id
                   ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                   : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
@@ -225,7 +187,7 @@ export function FolderSidebar(props: FolderSidebarProps) {
                   {folder.unreadCount}
                 </span>
               )}
-            </button>
+            </Link>
 
             {/* Feeds in folder */}
             <div className="ml-6">
@@ -233,17 +195,18 @@ export function FolderSidebar(props: FolderSidebarProps) {
                 <div
                   key={feed.id}
                   className={`group w-full flex items-center justify-between px-4 py-1.5 transition-colors ${
-                    selectedFeedId === feed.id
+                    activeFeedId === feed.id
                       ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
-                  <button
-                    onClick={() => selectFeed(feed.id)}
+                  <Link
+                    to="/s/$feedId"
+                    params={{ feedId: feed.id }}
                     className="flex-1 text-left text-sm truncate"
                   >
                     {feed.title}
-                  </button>
+                  </Link>
                   <div className="flex items-center gap-1">
                     {/* Hover actions */}
                     <button
@@ -291,13 +254,14 @@ export function FolderSidebar(props: FolderSidebarProps) {
               <div
                 key={feed.id}
                 className={`group w-full flex items-center justify-between px-4 py-2 transition-colors ${
-                  selectedFeedId === feed.id
+                  activeFeedId === feed.id
                     ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
-                <button
-                  onClick={() => selectFeed(feed.id)}
+                <Link
+                  to="/s/$feedId"
+                  params={{ feedId: feed.id }}
                   className="flex-1 flex items-center gap-2 text-left text-sm"
                 >
                   <svg
@@ -314,7 +278,7 @@ export function FolderSidebar(props: FolderSidebarProps) {
                     />
                   </svg>
                   {feed.title}
-                </button>
+                </Link>
                 <div className="flex items-center gap-1">
                   {/* Hover actions */}
                   <button
@@ -369,13 +333,13 @@ export function FolderSidebar(props: FolderSidebarProps) {
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
-        <a
-          href="/feeds"
+        <Link
+          to="/manage"
           className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
         >
           <Settings className="w-4 h-4" />
           Manage Subscriptions
-        </a>
+        </Link>
         <p className="text-xs text-slate-500 dark:text-slate-500">
           Press{' '}
           <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-[10px]">

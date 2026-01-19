@@ -25,6 +25,7 @@ interface FeedsProviderProps {
   feeds: Array<Feed>
   initialFolderId?: string | null
   initialFeedId?: string | null
+  initialFilterMode?: FilterMode
   initialSidebarCollapsed?: boolean
 }
 
@@ -34,6 +35,7 @@ export function FeedsProvider({
   feeds,
   initialFolderId = null,
   initialFeedId = null,
+  initialFilterMode,
   initialSidebarCollapsed = false,
 }: FeedsProviderProps) {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
@@ -42,7 +44,12 @@ export function FeedsProvider({
   const [selectedFeedId, setSelectedFeedId] = useState<string | null>(
     initialFeedId,
   )
-  const [filterMode, setFilterModeState] = useState<FilterMode>('all')
+  // Derive initial filter mode: starred folder = starred, explicit prop, or default to all
+  const [filterMode, setFilterModeState] = useState<FilterMode>(
+    initialFolderId === 'starred'
+      ? 'starred'
+      : initialFilterMode ?? 'all',
+  )
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     initialSidebarCollapsed,
   )

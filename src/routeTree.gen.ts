@@ -9,12 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as FeedsRouteImport } from './routes/feeds'
+import { Route as StarredRouteImport } from './routes/starred'
+import { Route as ManageRouteImport } from './routes/manage'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SFeedIdRouteImport } from './routes/s.$feedId'
+import { Route as FFolderIdRouteImport } from './routes/f.$folderId'
 
-const FeedsRoute = FeedsRouteImport.update({
-  id: '/feeds',
-  path: '/feeds',
+const StarredRoute = StarredRouteImport.update({
+  id: '/starred',
+  path: '/starred',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageRoute = ManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -22,40 +30,69 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SFeedIdRoute = SFeedIdRouteImport.update({
+  id: '/s/$feedId',
+  path: '/s/$feedId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FFolderIdRoute = FFolderIdRouteImport.update({
+  id: '/f/$folderId',
+  path: '/f/$folderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/feeds': typeof FeedsRoute
+  '/manage': typeof ManageRoute
+  '/starred': typeof StarredRoute
+  '/f/$folderId': typeof FFolderIdRoute
+  '/s/$feedId': typeof SFeedIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/feeds': typeof FeedsRoute
+  '/manage': typeof ManageRoute
+  '/starred': typeof StarredRoute
+  '/f/$folderId': typeof FFolderIdRoute
+  '/s/$feedId': typeof SFeedIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/feeds': typeof FeedsRoute
+  '/manage': typeof ManageRoute
+  '/starred': typeof StarredRoute
+  '/f/$folderId': typeof FFolderIdRoute
+  '/s/$feedId': typeof SFeedIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/feeds'
+  fullPaths: '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/feeds'
-  id: '__root__' | '/' | '/feeds'
+  to: '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
+  id: '__root__' | '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FeedsRoute: typeof FeedsRoute
+  ManageRoute: typeof ManageRoute
+  StarredRoute: typeof StarredRoute
+  FFolderIdRoute: typeof FFolderIdRoute
+  SFeedIdRoute: typeof SFeedIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/feeds': {
-      id: '/feeds'
-      path: '/feeds'
-      fullPath: '/feeds'
-      preLoaderRoute: typeof FeedsRouteImport
+    '/starred': {
+      id: '/starred'
+      path: '/starred'
+      fullPath: '/starred'
+      preLoaderRoute: typeof StarredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -65,12 +102,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/s/$feedId': {
+      id: '/s/$feedId'
+      path: '/s/$feedId'
+      fullPath: '/s/$feedId'
+      preLoaderRoute: typeof SFeedIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/f/$folderId': {
+      id: '/f/$folderId'
+      path: '/f/$folderId'
+      fullPath: '/f/$folderId'
+      preLoaderRoute: typeof FFolderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FeedsRoute: FeedsRoute,
+  ManageRoute: ManageRoute,
+  StarredRoute: StarredRoute,
+  FFolderIdRoute: FFolderIdRoute,
+  SFeedIdRoute: SFeedIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
