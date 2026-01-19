@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 import {
   deleteArticle,
   getAllArticles,
@@ -52,32 +53,37 @@ export const fetchArticlesFn = createServerFn({ method: 'GET' }).handler(
 // Mutations
 // ============================================================================
 
-export const toggleArticleRead = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { articleId, isRead } = ctx.data as {
-      articleId: string
-      isRead: boolean
-    }
-    updateArticleReadStatus(articleId, isRead)
-    return { success: true }
-  },
-)
+const ToggleReadSchema = z.object({
+  articleId: z.string(),
+  isRead: z.boolean(),
+})
 
-export const toggleArticleStar = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { articleId, isStarred } = ctx.data as {
-      articleId: string
-      isStarred: boolean
-    }
-    updateArticleStarStatus(articleId, isStarred)
+export const toggleArticleRead = createServerFn({ method: 'POST' })
+  .inputValidator(ToggleReadSchema)
+  .handler(async ({ data }) => {
+    updateArticleReadStatus(data.articleId, data.isRead)
     return { success: true }
-  },
-)
+  })
 
-export const deleteArticleFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { articleId } = ctx.data as { articleId: string }
-    deleteArticle(articleId)
+const ToggleStarSchema = z.object({
+  articleId: z.string(),
+  isStarred: z.boolean(),
+})
+
+export const toggleArticleStar = createServerFn({ method: 'POST' })
+  .inputValidator(ToggleStarSchema)
+  .handler(async ({ data }) => {
+    updateArticleStarStatus(data.articleId, data.isStarred)
     return { success: true }
-  },
-)
+  })
+
+const DeleteArticleSchema = z.object({
+  articleId: z.string(),
+})
+
+export const deleteArticleFn = createServerFn({ method: 'POST' })
+  .inputValidator(DeleteArticleSchema)
+  .handler(async ({ data }) => {
+    deleteArticle(data.articleId)
+    return { success: true }
+  })

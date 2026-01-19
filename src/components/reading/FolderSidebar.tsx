@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { Pencil, Plus, Settings, Trash2 } from 'lucide-react'
+import { Plus, Settings } from 'lucide-react'
 import type { Feed, Folder } from '@/types'
-import { FeedsContext } from '@/context'
+import { FeedsContext, useFeedActions, useFolderActions } from '@/context'
 
 interface FolderSidebarProps {
   // Props for standalone usage (FeedManagement)
@@ -17,8 +17,6 @@ interface FolderSidebarProps {
   onCollapse?: () => void
   onAddFeed?: () => void
   onAddFolder?: () => void
-  onEditFeed?: (feedId: string) => void
-  onDeleteFeed?: (feedId: string) => void
   // Props for context usage
   stats?: {
     totalArticles: number
@@ -31,6 +29,22 @@ export function FolderSidebar(props: FolderSidebarProps) {
   // Try to use context if available
   const contextValue = useContext(FeedsContext)
   const location = useLocation()
+
+  // Get modal setters from contexts (with safe fallback)
+  let setShowAddFeedModal: ((show: boolean) => void) | undefined
+  let setShowCreateFolderModal: ((show: boolean) => void) | undefined
+  try {
+    const feedActions = useFeedActions()
+    setShowAddFeedModal = feedActions.setShowAddFeedModal
+  } catch {
+    // Context not available, will use props
+  }
+  try {
+    const folderActions = useFolderActions()
+    setShowCreateFolderModal = folderActions.setShowCreateFolderModal
+  } catch {
+    // Context not available, will use props
+  }
 
   // Determine values - prefer context, fall back to props
   const folders = contextValue?.folders ?? props.folders ?? []
@@ -194,7 +208,7 @@ export function FolderSidebar(props: FolderSidebarProps) {
               {getFeedsForFolder(folder.id).map((feed) => (
                 <div
                   key={feed.id}
-                  className={`group w-full flex items-center justify-between px-4 py-1.5 transition-colors ${
+                  className={`w-full flex items-center justify-between px-4 py-1.5 transition-colors ${
                     activeFeedId === feed.id
                       ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -203,38 +217,36 @@ export function FolderSidebar(props: FolderSidebarProps) {
                   <Link
                     to="/s/$feedId"
                     params={{ feedId: feed.id }}
-                    className="flex-1 text-left text-sm truncate"
+                    className="flex-1 flex items-center gap-2 text-left text-sm truncate"
                   >
-                    {feed.title}
-                  </Link>
-                  <div className="flex items-center gap-1">
-                    {/* Hover actions */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        props.onEditFeed?.(feed.id)
-                      }}
-                      className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                      title="Edit feed"
-                    >
-                      <Pencil className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        props.onDeleteFeed?.(feed.id)
-                      }}
-                      className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                      title="Delete feed"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                    {feed.unreadCount > 0 && (
-                      <span className="text-xs text-slate-500 dark:text-slate-500 ml-1">
-                        {feed.unreadCount}
-                      </span>
+                    {feed.favicon ? (
+                      <img
+                        src={feed.favicon}
+                        alt=""
+                        className="w-4 h-4 rounded-sm shrink-0"
+                      />
+                    ) : (
+                      <svg
+                        className="w-4 h-4 text-slate-400 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"
+                        />
+                      </svg>
                     )}
-                  </div>
+                    <span className="truncate">{feed.title}</span>
+                  </Link>
+                  {feed.unreadCount > 0 && (
+                    <span className="text-xs text-slate-500 dark:text-slate-500">
+                      {feed.unreadCount}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -253,7 +265,7 @@ export function FolderSidebar(props: FolderSidebarProps) {
             {uncategorizedFeeds.map((feed) => (
               <div
                 key={feed.id}
-                className={`group w-full flex items-center justify-between px-4 py-2 transition-colors ${
+                className={`w-full flex items-center justify-between px-4 py-2 transition-colors ${
                   activeFeedId === feed.id
                     ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -264,49 +276,34 @@ export function FolderSidebar(props: FolderSidebarProps) {
                   params={{ feedId: feed.id }}
                   className="flex-1 flex items-center gap-2 text-left text-sm"
                 >
-                  <svg
-                    className="w-4 h-4 text-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"
+                  {feed.favicon ? (
+                    <img
+                      src={feed.favicon}
+                      alt=""
+                      className="w-4 h-4 rounded-sm shrink-0"
                     />
-                  </svg>
-                  {feed.title}
-                </Link>
-                <div className="flex items-center gap-1">
-                  {/* Hover actions */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      props.onEditFeed?.(feed.id)
-                    }}
-                    className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                    title="Edit feed"
-                  >
-                    <Pencil className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      props.onDeleteFeed?.(feed.id)
-                    }}
-                    className="p-1 rounded opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                    title="Delete feed"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                  {feed.unreadCount > 0 && (
-                    <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 ml-1">
-                      {feed.unreadCount}
-                    </span>
+                  ) : (
+                    <svg
+                      className="w-4 h-4 text-slate-400 shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"
+                      />
+                    </svg>
                   )}
-                </div>
+                  <span className="truncate">{feed.title}</span>
+                </Link>
+                {feed.unreadCount > 0 && (
+                  <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    {feed.unreadCount}
+                  </span>
+                )}
               </div>
             ))}
           </>
@@ -315,14 +312,26 @@ export function FolderSidebar(props: FolderSidebarProps) {
         {/* Add Feed/Folder buttons */}
         <div className="mt-2 mx-4 border-t border-slate-200 dark:border-slate-700 pt-3 pb-1 flex flex-col gap-1">
           <button
-            onClick={props.onAddFeed}
+            onClick={() => {
+              if (setShowAddFeedModal) {
+                setShowAddFeedModal(true)
+              } else {
+                props.onAddFeed?.()
+              }
+            }}
             className="flex items-center gap-2 px-2 py-1.5 text-sm text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Feed
           </button>
           <button
-            onClick={props.onAddFolder}
+            onClick={() => {
+              if (setShowCreateFolderModal) {
+                setShowCreateFolderModal(true)
+              } else {
+                props.onAddFolder?.()
+              }
+            }}
             className="flex items-center gap-2 px-2 py-1.5 text-sm text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />

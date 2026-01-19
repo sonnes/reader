@@ -1,11 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useCallback, useState } from 'react'
 import type { Article } from '@/types'
 import { ReadingExperience } from '@/components/reading'
 import {
   ArticleActionsProvider,
   ArticleListProvider,
+  FeedActionsProvider,
   FeedsProvider,
+  FolderActionsProvider,
   KeyboardProvider,
 } from '@/context'
 import {
@@ -14,6 +16,7 @@ import {
   toggleArticleRead,
   toggleArticleStar,
 } from '@/server/reading'
+import { createFolderFn, subscribeFeedFn } from '@/server/feeds'
 
 export const Route = createFileRoute('/s/$feedId')({
   loader: async () => {
@@ -25,9 +28,25 @@ export const Route = createFileRoute('/s/$feedId')({
 function FeedPage() {
   const initialData = Route.useLoaderData()
   const { feedId } = Route.useParams()
+  const router = useRouter()
 
   // Local state for optimistic updates
   const [articles, setArticles] = useState<Array<Article>>(initialData.articles)
+
+  // Folder actions
+  const handleCreateFolder = async (name: string) => {
+    await createFolderFn({ data: { name } })
+    router.invalidate()
+  }
+
+  // Feed actions
+  const handleAddFeed = async (url: string, folderId?: string) => {
+    const result = await subscribeFeedFn({ data: { url, folderId } })
+    if (result.success) {
+      router.invalidate()
+    }
+    return result
+  }
 
   // Calculate stats from current articles
   const stats = {
@@ -46,7 +65,7 @@ function FeedPage() {
 
       // Server update
       try {
-        await toggleArticleRead({ articleId, isRead })
+        await toggleArticleRead({ data: { articleId, isRead } })
       } catch (error) {
         // Revert on error
         console.error('Failed to update read status:', error)
@@ -68,7 +87,7 @@ function FeedPage() {
 
       // Server update
       try {
-        await toggleArticleStar({ articleId, isStarred })
+        await toggleArticleStar({ data: { articleId, isStarred } })
       } catch (error) {
         // Revert on error
         console.error('Failed to update star status:', error)
@@ -93,7 +112,7 @@ function FeedPage() {
 
       // Server update
       try {
-        await deleteArticleFn({ articleId })
+        await deleteArticleFn({ data: { articleId } })
       } catch (error) {
         // Revert on error
         console.error('Failed to delete article:', error)
@@ -123,17 +142,25 @@ function FeedPage() {
       onDelete={handleDelete}
       onRefresh={handleRefresh}
     >
-      <FeedsProvider
-        folders={initialData.folders}
-        feeds={initialData.feeds}
-        initialFeedId={feedId}
-      >
-        <ArticleListProvider articles={articles} feeds={initialData.feeds}>
-          <KeyboardProvider>
-            <ReadingExperience stats={stats} />
-          </KeyboardProvider>
-        </ArticleListProvider>
-      </FeedsProvider>
+      <FolderActionsProvider onCreateFolder={handleCreateFolder}>
+        <FeedActionsProvider
+          folders={initialData.folders}
+          feeds={initialData.feeds}
+          onAddFeed={handleAddFeed}
+        >
+          <FeedsProvider
+            folders={initialData.folders}
+            feeds={initialData.feeds}
+            initialFeedId={feedId}
+          >
+            <ArticleListProvider articles={articles} feeds={initialData.feeds}>
+              <KeyboardProvider>
+                <ReadingExperience stats={stats} />
+              </KeyboardProvider>
+            </ArticleListProvider>
+          </FeedsProvider>
+        </FeedActionsProvider>
+      </FolderActionsProvider>
     </ArticleActionsProvider>
   )
 }

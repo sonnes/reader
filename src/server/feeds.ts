@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { z } from 'zod'
 import type { Article, Feed } from '@/types'
 import {
   createArticle,
@@ -55,59 +56,54 @@ export const fetchFeedManagementData = createServerFn({
 // Folder mutations
 // ============================================================================
 
-export const createFolderFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { name } = ctx.data as { name: string }
+const CreateFolderSchema = z.object({
+  name: z.string().min(1, 'Folder name is required'),
+})
 
-    if (!name || !name.trim()) {
-      return { success: false, error: 'Folder name is required' }
-    }
-
+export const createFolderFn = createServerFn({ method: 'POST' })
+  .inputValidator(CreateFolderSchema)
+  .handler(async ({ data }) => {
     const id = `folder-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-    const folder = createFolder(id, name.trim())
-
+    const folder = createFolder(id, data.name.trim())
     return { success: true, folder }
-  },
-)
+  })
 
-export const renameFolderFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { folderId, name } = ctx.data as { folderId: string; name: string }
+const RenameFolderSchema = z.object({
+  folderId: z.string(),
+  name: z.string().min(1, 'Folder name is required'),
+})
 
-    if (!name || !name.trim()) {
-      return { success: false, error: 'Folder name is required' }
-    }
-
-    renameFolder(folderId, name.trim())
-
+export const renameFolderFn = createServerFn({ method: 'POST' })
+  .inputValidator(RenameFolderSchema)
+  .handler(async ({ data }) => {
+    renameFolder(data.folderId, data.name.trim())
     return { success: true }
-  },
-)
+  })
 
-export const deleteFolderFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { folderId } = ctx.data as { folderId: string }
+const DeleteFolderSchema = z.object({
+  folderId: z.string(),
+})
 
-    deleteFolder(folderId)
-
+export const deleteFolderFn = createServerFn({ method: 'POST' })
+  .inputValidator(DeleteFolderSchema)
+  .handler(async ({ data }) => {
+    deleteFolder(data.folderId)
     return { success: true }
-  },
-)
+  })
 
 // ============================================================================
 // Feed mutations
 // ============================================================================
 
-export const subscribeFeedFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { url, folderId } = ctx.data as { url: string; folderId?: string }
+const SubscribeFeedSchema = z.object({
+  url: z.string().min(1, 'Feed URL is required'),
+  folderId: z.string().optional(),
+})
 
-    // Validate URL
-    if (!url || !url.trim()) {
-      return { success: false, error: 'Feed URL is required' }
-    }
-
-    let feedUrl = url.trim()
+export const subscribeFeedFn = createServerFn({ method: 'POST' })
+  .inputValidator(SubscribeFeedSchema)
+  .handler(async ({ data }) => {
+    let feedUrl = data.url.trim()
 
     if (!isValidUrl(feedUrl)) {
       return { success: false, error: 'Please enter a valid URL' }
@@ -157,7 +153,7 @@ export const subscribeFeedFn = createServerFn({ method: 'POST' }).handler(
         url: feedUrl,
         siteUrl: parsedFeed.siteUrl,
         favicon: parsedFeed.favicon || null,
-        folderId: folderId || null,
+        folderId: data.folderId || null,
         lastFetched: new Date().toISOString(),
       })
 
@@ -189,39 +185,42 @@ export const subscribeFeedFn = createServerFn({ method: 'POST' }).handler(
   },
 )
 
-export const unsubscribeFeedFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { feedId } = ctx.data as { feedId: string }
+const UnsubscribeFeedSchema = z.object({
+  feedId: z.string(),
+})
 
-    deleteFeed(feedId)
-
+export const unsubscribeFeedFn = createServerFn({ method: 'POST' })
+  .inputValidator(UnsubscribeFeedSchema)
+  .handler(async ({ data }) => {
+    deleteFeed(data.feedId)
     return { success: true }
-  },
-)
+  })
 
-export const moveFeedFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { feedId, folderId } = ctx.data as {
-      feedId: string
-      folderId: string | null
-    }
+const MoveFeedSchema = z.object({
+  feedId: z.string(),
+  folderId: z.string().nullable(),
+})
 
-    updateFeedFolder(feedId, folderId)
-
+export const moveFeedFn = createServerFn({ method: 'POST' })
+  .inputValidator(MoveFeedSchema)
+  .handler(async ({ data }) => {
+    updateFeedFolder(data.feedId, data.folderId)
     return { success: true }
-  },
-)
+  })
 
 // ============================================================================
 // OPML import/export
 // ============================================================================
 
-export const importOPMLFn = createServerFn({ method: 'POST' }).handler(
-  async (ctx) => {
-    const { content } = ctx.data as { content: string }
+const ImportOPMLSchema = z.object({
+  content: z.string(),
+})
 
+export const importOPMLFn = createServerFn({ method: 'POST' })
+  .inputValidator(ImportOPMLSchema)
+  .handler(async ({ data }) => {
     try {
-      const result = parseOPML(content)
+      const result = parseOPML(data.content)
 
       // Create folders first
       const folderMap = new Map<string, string>() // name -> id

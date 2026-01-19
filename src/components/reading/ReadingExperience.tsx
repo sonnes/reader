@@ -2,6 +2,8 @@ import { FolderSidebar } from './FolderSidebar'
 import { ArticleList } from './ArticleList'
 import { ReadingPane } from './ReadingPane'
 import { KeyboardHelp } from './KeyboardHelp'
+import { AddFeedModal } from '@/components/feeds/AddFeedModal'
+import { CreateFolderModal } from '@/components/feeds/CreateFolderModal'
 import { useArticleList, useFeedsContext, useKeyboard } from '@/context'
 
 interface ReadingExperienceProps {
@@ -65,6 +67,8 @@ export function ReadingExperience({ stats }: ReadingExperienceProps) {
       </div>
 
       {showKeyboardHelp && <KeyboardHelp onClose={toggleKeyboardHelp} />}
+      <AddFeedModal />
+      <CreateFolderModal />
     </div>
   )
 }
