@@ -11,8 +11,6 @@ interface ArticleListProps {
   viewMode: ViewMode
   sortOrder: SortOrder
   onSelectArticle?: (articleId: string) => void
-  onToggleStar?: (articleId: string) => void
-  onDelete?: (articleId: string) => void
   onToggleViewMode?: () => void
   onSortChange?: (order: SortOrder) => void
   onRefresh?: () => void
@@ -25,8 +23,6 @@ export function ArticleList({
   viewMode,
   sortOrder,
   onSelectArticle,
-  onToggleStar,
-  onDelete,
   onToggleViewMode,
   onSortChange,
   onRefresh,
@@ -176,8 +172,6 @@ export function ArticleList({
                 isSelected={article.id === selectedArticleId}
                 viewMode={viewMode}
                 onSelect={() => onSelectArticle?.(article.id)}
-                onToggleStar={() => onToggleStar?.(article.id)}
-                onDelete={() => onDelete?.(article.id)}
               />
             ))}
           </div>
@@ -191,8 +185,6 @@ export function ArticleList({
                 isSelected={article.id === selectedArticleId}
                 viewMode={viewMode}
                 onSelect={() => onSelectArticle?.(article.id)}
-                onToggleStar={() => onToggleStar?.(article.id)}
-                onDelete={() => onDelete?.(article.id)}
               />
             ))}
           </div>

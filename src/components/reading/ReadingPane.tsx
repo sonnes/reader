@@ -8,6 +8,7 @@ interface ReadingPaneProps {
   onToggleRead?: () => void
   onToggleStar?: () => void
   onOpenInBrowser?: () => void
+  onDelete?: () => void
   onExitFocusMode?: () => void
   focusMode?: boolean
 }
@@ -20,6 +21,7 @@ export function ReadingPane({
   onToggleRead,
   onToggleStar,
   onOpenInBrowser,
+  onDelete,
   onExitFocusMode,
   focusMode,
 }: ReadingPaneProps) {
@@ -166,6 +168,27 @@ export function ReadingPane({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </button>
+
+          {/* Delete */}
+          <button
+            onClick={onDelete}
+            className="p-2 rounded-md text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            title="Delete article"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
           </button>

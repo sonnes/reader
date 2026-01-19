@@ -367,6 +367,9 @@ export function ReadingExperience({
           onOpenInBrowser={() =>
             selectedArticle && handleOpenInBrowser(selectedArticle.id)
           }
+          onDelete={() =>
+            selectedArticle && handleDelete(selectedArticle.id)
+          }
           onExitFocusMode={() => setFocusMode(false)}
         />
         {showKeyboardHelp && (
@@ -430,8 +433,6 @@ export function ReadingExperience({
           viewMode={viewMode}
           sortOrder={sortOrder}
           onSelectArticle={handleSelectArticle}
-          onToggleStar={handleToggleStar}
-          onDelete={handleDelete}
           onToggleViewMode={() =>
             setViewMode((prev) => (prev === 'list' ? 'card' : 'list'))
           }
@@ -455,6 +456,9 @@ export function ReadingExperience({
           }
           onOpenInBrowser={() =>
             selectedArticle && handleOpenInBrowser(selectedArticle.id)
+          }
+          onDelete={() =>
+            selectedArticle && handleDelete(selectedArticle.id)
           }
         />
       </div>
