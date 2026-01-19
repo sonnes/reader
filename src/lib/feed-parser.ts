@@ -261,6 +261,35 @@ function getFaviconUrl(siteUrl: string): string {
 }
 
 /**
+ * Validate that a favicon URL returns a valid image
+ * Returns the URL if valid, null otherwise
+ */
+export async function validateFavicon(
+  faviconUrl: string | undefined,
+): Promise<string | null> {
+  if (!faviconUrl) return null
+
+  try {
+    const response = await fetch(faviconUrl, {
+      method: 'HEAD',
+      headers: {
+        'User-Agent': 'Reader RSS/1.0',
+      },
+    })
+
+    if (!response.ok) return null
+
+    const contentType = response.headers.get('content-type') || ''
+    // Check if response is an image
+    if (!contentType.startsWith('image/')) return null
+
+    return faviconUrl
+  } catch {
+    return null
+  }
+}
+
+/**
  * Discover feed URLs from a webpage
  */
 export async function discoverFeedUrl(pageUrl: string): Promise<string | null> {

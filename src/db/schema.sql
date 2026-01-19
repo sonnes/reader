@@ -4,7 +4,7 @@
 -- Folders for organizing feeds
 CREATE TABLE IF NOT EXISTS folders (
   id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

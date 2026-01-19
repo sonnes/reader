@@ -19,6 +19,7 @@ import {
   discoverFeedUrl,
   fetchAndParseFeed,
   isValidUrl,
+  validateFavicon,
 } from '@/lib/feed-parser'
 import { generateOPML, parseOPML } from '@/lib/opml'
 import { seedDatabase } from '@/db/seed'
@@ -29,7 +30,97 @@ function ensureInitialized() {
   if (!initialized) {
     seedDatabase()
     initialized = true
+    // Start background feed refresh
+    startBackgroundRefresh()
   }
+}
+
+// ============================================================================
+// Background feed refresh
+// ============================================================================
+
+const ONE_HOUR_MS = 60 * 60 * 1000
+
+/**
+ * Fetch and update all feeds with new articles
+ */
+async function refreshAllFeeds(): Promise<void> {
+  const feeds = getAllFeeds()
+  console.log(`[Feed Refresh] Starting refresh of ${feeds.length} feeds`)
+
+  for (const feed of feeds) {
+    try {
+      const parsedFeed = await fetchAndParseFeed(feed.url)
+
+      // Import new articles (skip duplicates via ON CONFLICT)
+      let newArticles = 0
+      for (const item of parsedFeed.items.slice(0, 50)) {
+        const articleId = `article-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+        createArticle({
+          id: articleId,
+          feedId: feed.id,
+          title: item.title,
+          url: item.url,
+          publishedAt: item.publishedAt,
+          preview: item.preview,
+          content: item.content,
+          isRead: false,
+          isStarred: false,
+        })
+        newArticles++
+      }
+
+      updateFeedLastFetched(feed.id)
+      console.log(`[Feed Refresh] ${feed.title}: processed ${newArticles} articles`)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      console.error(`[Feed Refresh] Failed to refresh ${feed.title}: ${message}`)
+    }
+  }
+
+  console.log('[Feed Refresh] Complete')
+}
+
+/**
+ * Start the background refresh process
+ */
+function startBackgroundRefresh(): void {
+  // Run immediately on startup
+  refreshAllFeeds().catch((error) => {
+    console.error('[Feed Refresh] Initial refresh failed:', error)
+  })
+
+  // Schedule hourly refresh
+  setInterval(() => {
+    refreshAllFeeds().catch((error) => {
+      console.error('[Feed Refresh] Scheduled refresh failed:', error)
+    })
+  }, ONE_HOUR_MS)
+
+  console.log('[Feed Refresh] Background refresh started (hourly)')
+}
+
+/**
+ * Derive a unique feed ID from the feed URL
+ */
+function feedIdFromUrl(url: string): string {
+  const parsed = new URL(url)
+  const slug = `${parsed.hostname}${parsed.pathname}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return `feed-${slug}`
+}
+
+/**
+ * Derive a unique folder ID from the folder name
+ */
+function folderIdFromName(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return slug
 }
 
 // ============================================================================
@@ -63,7 +154,7 @@ const CreateFolderSchema = z.object({
 export const createFolderFn = createServerFn({ method: 'POST' })
   .inputValidator(CreateFolderSchema)
   .handler(async ({ data }) => {
-    const id = `folder-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+    const id = folderIdFromName(data.name)
     const folder = createFolder(id, data.name.trim())
     return { success: true, folder }
   })
@@ -146,13 +237,14 @@ export const subscribeFeedFn = createServerFn({ method: 'POST' })
       }
 
       // Create the feed
-      const id = `feed-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+      const id = feedIdFromUrl(feedUrl)
+      const validatedFavicon = await validateFavicon(parsedFeed.favicon)
       const feed = createFeed({
         id,
         title: parsedFeed.title,
         url: feedUrl,
         siteUrl: parsedFeed.siteUrl,
-        favicon: parsedFeed.favicon || null,
+        favicon: validatedFavicon,
         folderId: data.folderId || null,
         lastFetched: new Date().toISOString(),
       })
@@ -226,7 +318,7 @@ export const importOPMLFn = createServerFn({ method: 'POST' })
       const folderMap = new Map<string, string>() // name -> id
 
       for (const folderName of result.folders) {
-        const id = `folder-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+        const id = folderIdFromName(folderName)
         createFolder(id, folderName)
         folderMap.set(folderName, id)
       }
@@ -248,17 +340,18 @@ export const importOPMLFn = createServerFn({ method: 'POST' })
           // Try to fetch and parse the feed
           const parsedFeed = await fetchAndParseFeed(feedData.url)
 
-          const id = `feed-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+          const id = feedIdFromUrl(feedData.url)
           const folderId = feedData.folderName
             ? folderMap.get(feedData.folderName)
             : null
 
+          const validatedFavicon = await validateFavicon(parsedFeed.favicon)
           createFeed({
             id,
             title: parsedFeed.title || feedData.title,
             url: feedData.url,
             siteUrl: parsedFeed.siteUrl || feedData.siteUrl,
-            favicon: parsedFeed.favicon || null,
+            favicon: validatedFavicon,
             folderId: folderId || null,
             lastFetched: new Date().toISOString(),
           })
