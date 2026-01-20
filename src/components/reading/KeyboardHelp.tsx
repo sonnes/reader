@@ -26,6 +26,7 @@ const shortcuts = [
     items: [
       { key: '[', description: 'Collapse sidebar' },
       { key: 'f', description: 'Toggle focus mode' },
+      { key: 'i', description: 'Toggle iframe/content view' },
       { key: 'v', description: 'Toggle list/card view' },
       { key: '?', description: 'Show keyboard shortcuts' },
     ],

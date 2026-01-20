@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { Plus, Settings } from 'lucide-react'
+import { Loader2, Plus, Settings } from 'lucide-react'
 import type { Feed, Folder } from '@/types'
 import { FeedsContext, useFeedActions, useFolderActions } from '@/context'
 
@@ -33,9 +33,11 @@ export function FolderSidebar(props: FolderSidebarProps) {
   // Get modal setters from contexts (with safe fallback)
   let setShowAddFeedModal: ((show: boolean) => void) | undefined
   let setShowCreateFolderModal: ((show: boolean) => void) | undefined
+  let refreshingFeeds: Set<string> = new Set()
   try {
     const feedActions = useFeedActions()
     setShowAddFeedModal = feedActions.setShowAddFeedModal
+    refreshingFeeds = feedActions.refreshingFeeds
   } catch {
     // Context not available, will use props
   }
@@ -219,7 +221,9 @@ export function FolderSidebar(props: FolderSidebarProps) {
                     params={{ feedId: feed.id }}
                     className="flex-1 flex items-center gap-2 text-left text-sm truncate"
                   >
-                    {feed.favicon ? (
+                    {refreshingFeeds.has(feed.id) ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-sky-500 shrink-0" />
+                    ) : feed.favicon ? (
                       <img
                         src={feed.favicon}
                         alt=""
@@ -276,7 +280,9 @@ export function FolderSidebar(props: FolderSidebarProps) {
                   params={{ feedId: feed.id }}
                   className="flex-1 flex items-center gap-2 text-left text-sm"
                 >
-                  {feed.favicon ? (
+                  {refreshingFeeds.has(feed.id) ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-sky-500 shrink-0" />
+                  ) : feed.favicon ? (
                     <img
                       src={feed.favicon}
                       alt=""

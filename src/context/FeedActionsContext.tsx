@@ -14,12 +14,14 @@ interface FeedActionsContextValue {
   showAddFeedModal: boolean
   setShowAddFeedModal: (show: boolean) => void
   importStatus: ImportStatus
+  refreshingFeeds: Set<string>
   addFeed: (
     url: string,
     folderId?: string,
   ) => Promise<{ success: boolean; error?: string }>
   removeFeed: (feedId: string) => Promise<void>
   moveFeed: (feedId: string, folderId: string | null) => Promise<void>
+  refreshFeed: (feedId: string) => Promise<void>
   importOPML: (
     file: File,
   ) => Promise<{ success: boolean; imported?: number; error?: string }>
@@ -38,6 +40,7 @@ interface FeedActionsProviderProps {
   ) => Promise<{ success: boolean; error?: string }>
   onRemoveFeed?: (feedId: string) => Promise<void>
   onMoveFeed?: (feedId: string, folderId: string | null) => Promise<void>
+  onRefreshFeed?: (feedId: string) => Promise<Feed | null>
   onImportOPML?: (
     file: File,
   ) => Promise<{ success: boolean; imported?: number; error?: string }>
@@ -51,6 +54,7 @@ export function FeedActionsProvider({
   onAddFeed,
   onRemoveFeed,
   onMoveFeed,
+  onRefreshFeed,
   onImportOPML,
   onExportOPML,
 }: FeedActionsProviderProps) {
@@ -58,6 +62,9 @@ export function FeedActionsProvider({
   const [importStatus, setImportStatus] = useState<ImportStatus>({
     loading: false,
   })
+  const [refreshingFeeds, setRefreshingFeeds] = useState<Set<string>>(
+    new Set(),
+  )
 
   const addFeed = useCallback(
     async (url: string, folderId?: string) => {
@@ -79,6 +86,24 @@ export function FeedActionsProvider({
       await onMoveFeed?.(feedId, folderId)
     },
     [onMoveFeed],
+  )
+
+  const refreshFeed = useCallback(
+    async (feedId: string) => {
+      if (!onRefreshFeed) return
+
+      setRefreshingFeeds((prev) => new Set(prev).add(feedId))
+      try {
+        await onRefreshFeed(feedId)
+      } finally {
+        setRefreshingFeeds((prev) => {
+          const next = new Set(prev)
+          next.delete(feedId)
+          return next
+        })
+      }
+    },
+    [onRefreshFeed],
   )
 
   const importOPML = useCallback(
@@ -120,9 +145,11 @@ export function FeedActionsProvider({
         showAddFeedModal,
         setShowAddFeedModal,
         importStatus,
+        refreshingFeeds,
         addFeed,
         removeFeed,
         moveFeed,
+        refreshFeed,
         importOPML,
         exportOPML,
       }}

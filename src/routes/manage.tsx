@@ -12,6 +12,7 @@ import {
   fetchFeedManagementData,
   importOPMLFn,
   moveFeedFn,
+  refreshFeedFn,
   renameFolderFn,
   subscribeFeedFn,
   unsubscribeFeedFn,
@@ -59,6 +60,14 @@ function ManagePage() {
     router.invalidate()
   }
 
+  const handleRefreshFeed = async (feedId: string) => {
+    const result = await refreshFeedFn({ data: { feedId } })
+    if (result.success) {
+      router.invalidate()
+    }
+    return result.feed || null
+  }
+
   const handleImportOPML = async (file: File) => {
     const content = await file.text()
     const result = await importOPMLFn({ data: { content } })
@@ -96,6 +105,7 @@ function ManagePage() {
         onAddFeed={handleAddFeed}
         onRemoveFeed={handleRemoveFeed}
         onMoveFeed={handleMoveFeed}
+        onRefreshFeed={handleRefreshFeed}
         onImportOPML={handleImportOPML}
         onExportOPML={handleExportOPML}
       >

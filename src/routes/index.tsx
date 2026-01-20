@@ -18,6 +18,7 @@ import {
 } from '@/server/reading'
 import {
   createFolderFn,
+  refreshFeedFn,
   subscribeFeedFn,
 } from '@/server/feeds'
 
@@ -48,6 +49,14 @@ function ReadPage() {
       router.invalidate()
     }
     return result
+  }
+
+  const handleRefreshFeed = async (feedId: string) => {
+    const result = await refreshFeedFn({ data: { feedId } })
+    if (result.success) {
+      router.invalidate()
+    }
+    return result.feed || null
   }
 
   // Calculate stats from current articles
@@ -149,6 +158,7 @@ function ReadPage() {
           folders={initialData.folders}
           feeds={initialData.feeds}
           onAddFeed={handleAddFeed}
+          onRefreshFeed={handleRefreshFeed}
         >
           <FeedsProvider
             folders={initialData.folders}

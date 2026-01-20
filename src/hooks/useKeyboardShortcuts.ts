@@ -12,6 +12,7 @@ interface KeyboardActions {
   toggleViewMode: () => void
   toggleKeyboardHelp: () => void
   goToAllArticles: () => void
+  toggleIframeView: () => void
 }
 
 interface KeyboardState {
@@ -118,6 +119,12 @@ export function useKeyboardShortcuts(
         case 'v':
           actions.toggleViewMode()
           e.preventDefault()
+          break
+        case 'i':
+          if (state.selectedArticleId) {
+            actions.toggleIframeView()
+            e.preventDefault()
+          }
           break
         case '?':
           actions.toggleKeyboardHelp()

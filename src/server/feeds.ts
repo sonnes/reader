@@ -9,6 +9,7 @@ import {
   deleteFolder,
   getAllFeeds,
   getAllFolders,
+  getFeedById,
   getFeedByUrl,
   getStats,
   renameFolder,
@@ -312,6 +313,51 @@ export const updateFeedIframeFn = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     updateFeedIframePreference(data.feedId, data.preferIframe)
     return { success: true }
+  })
+
+const RefreshFeedSchema = z.object({
+  feedId: z.string(),
+})
+
+export const refreshFeedFn = createServerFn({ method: 'POST' })
+  .inputValidator(RefreshFeedSchema)
+  .handler(async ({ data }) => {
+    const feed = getFeedById(data.feedId)
+    if (!feed) {
+      return { success: false, error: 'Feed not found' }
+    }
+
+    try {
+      const parsedFeed = await fetchAndParseFeed(feed.url)
+
+      // Import new articles (skip duplicates via ON CONFLICT)
+      let newArticles = 0
+      for (const item of parsedFeed.items.slice(0, 50)) {
+        const articleId = `article-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+        createArticle({
+          id: articleId,
+          feedId: feed.id,
+          title: item.title,
+          url: item.url,
+          publishedAt: item.publishedAt,
+          preview: item.preview,
+          content: item.content,
+          isRead: false,
+          isStarred: false,
+        })
+        newArticles++
+      }
+
+      updateFeedLastFetched(feed.id)
+
+      // Return updated feed with new unread count
+      const updatedFeed = getFeedById(feed.id)
+      return { success: true, feed: updatedFeed, newArticles }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to refresh feed'
+      return { success: false, error: message }
+    }
   })
 
 // ============================================================================

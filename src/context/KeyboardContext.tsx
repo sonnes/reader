@@ -26,6 +26,7 @@ export function KeyboardProvider({ children }: KeyboardProviderProps) {
     toggleViewMode,
     toggleFocusMode,
     exitFocusMode,
+    toggleIframeView,
   } = useArticleList()
   const { toggleRead, toggleStar, openInBrowser, refresh } = useArticleActions()
   const { toggleSidebar, selectFolder, setFilterMode } = useFeedsContext()
@@ -52,6 +53,7 @@ export function KeyboardProvider({ children }: KeyboardProviderProps) {
       toggleViewMode,
       toggleKeyboardHelp,
       goToAllArticles,
+      toggleIframeView,
     },
     {
       selectedArticleId,

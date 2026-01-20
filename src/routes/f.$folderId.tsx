@@ -16,7 +16,7 @@ import {
   toggleArticleRead,
   toggleArticleStar,
 } from '@/server/reading'
-import { createFolderFn, subscribeFeedFn } from '@/server/feeds'
+import { createFolderFn, refreshFeedFn, subscribeFeedFn } from '@/server/feeds'
 
 export const Route = createFileRoute('/f/$folderId')({
   loader: async () => {
@@ -46,6 +46,14 @@ function FolderPage() {
       router.invalidate()
     }
     return result
+  }
+
+  const handleRefreshFeed = async (feedId: string) => {
+    const result = await refreshFeedFn({ data: { feedId } })
+    if (result.success) {
+      router.invalidate()
+    }
+    return result.feed || null
   }
 
   // Calculate stats from current articles
@@ -147,6 +155,7 @@ function FolderPage() {
           folders={initialData.folders}
           feeds={initialData.feeds}
           onAddFeed={handleAddFeed}
+          onRefreshFeed={handleRefreshFeed}
         >
           <FeedsProvider
             folders={initialData.folders}

@@ -4,7 +4,9 @@ import {
   ExternalLink,
   FolderOpen,
   GripVertical,
+  Loader2,
   MoreHorizontal,
+  RefreshCw,
   Rss,
   Trash2,
 } from 'lucide-react'
@@ -16,9 +18,11 @@ interface FeedRowProps {
 }
 
 export function FeedRow({ feed }: FeedRowProps) {
-  const { folders, removeFeed, moveFeed } = useFeedActions()
+  const { folders, removeFeed, moveFeed, refreshFeed, refreshingFeeds } =
+    useFeedActions()
   const [showMenu, setShowMenu] = useState(false)
   const [showMoveMenu, setShowMoveMenu] = useState(false)
+  const isRefreshing = refreshingFeeds.has(feed.id)
 
   return (
     <div className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -29,7 +33,9 @@ export function FeedRow({ feed }: FeedRowProps) {
 
       {/* Favicon */}
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800">
-        {feed.favicon ? (
+        {isRefreshing ? (
+          <Loader2 className="h-5 w-5 animate-spin text-sky-500" />
+        ) : feed.favicon ? (
           <img
             src={feed.favicon}
             alt=""
@@ -40,9 +46,11 @@ export function FeedRow({ feed }: FeedRowProps) {
             }}
           />
         ) : null}
-        <Rss
-          className={`h-4 w-4 text-slate-400 ${feed.favicon ? 'hidden' : ''}`}
-        />
+        {!isRefreshing && (
+          <Rss
+            className={`h-4 w-4 text-slate-400 ${feed.favicon ? 'hidden' : ''}`}
+          />
+        )}
       </div>
 
       {/* Feed Info */}
@@ -63,6 +71,16 @@ export function FeedRow({ feed }: FeedRowProps) {
           </span>
         </div>
       </div>
+
+      {/* Refresh Button */}
+      <button
+        onClick={() => refreshFeed(feed.id)}
+        disabled={isRefreshing}
+        className="rounded p-1.5 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+        title="Refresh feed"
+      >
+        <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+      </button>
 
       {/* External Link */}
       <a

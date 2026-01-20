@@ -209,6 +209,40 @@ export function getFeedByUrl(url: string): Feed | null {
   }
 }
 
+export function getFeedById(id: string): Feed | null {
+  const db = getDb()
+  const row = db
+    .query(
+      `
+    SELECT id, title, url, site_url, favicon, folder_id, prefer_iframe, last_fetched
+    FROM feeds WHERE id = ?
+  `,
+    )
+    .get(id) as FeedRow | undefined
+
+  if (!row) return null
+
+  const unreadResult = db
+    .query(
+      `
+    SELECT COUNT(*) as count FROM articles WHERE feed_id = ? AND is_read = 0 AND is_deleted = 0
+  `,
+    )
+    .get(row.id) as { count: number }
+
+  return {
+    id: row.id,
+    title: row.title,
+    url: row.url,
+    siteUrl: row.site_url,
+    favicon: row.favicon || '',
+    folderId: row.folder_id,
+    preferIframe: row.prefer_iframe === 1,
+    unreadCount: unreadResult.count,
+    lastFetched: row.last_fetched || '',
+  }
+}
+
 export function deleteFeed(id: string): void {
   const db = getDb()
   // Articles are deleted via CASCADE
