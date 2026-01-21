@@ -1,118 +1,24 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { FeedManagement } from '@/components/feeds'
-import {
-  FeedActionsProvider,
-  FeedsProvider,
-  FolderActionsProvider,
-} from '@/context'
-import {
-  createFolderFn,
-  deleteFolderFn,
-  exportOPMLFn,
-  fetchFeedManagementData,
-  importOPMLFn,
-  moveFeedFn,
-  refreshFeedFn,
-  renameFolderFn,
-  subscribeFeedFn,
-  unsubscribeFeedFn,
-} from '@/server/feeds'
+import { createFileRoute } from '@tanstack/react-router'
+import { FeedSidebar } from '~/components/FeedSidebar'
 
 export const Route = createFileRoute('/manage')({
-  loader: async () => await fetchFeedManagementData(),
   component: ManagePage,
 })
 
 function ManagePage() {
-  const { folders, feeds } = Route.useLoaderData()
-  const router = useRouter()
-
-  const handleCreateFolder = async (name: string) => {
-    await createFolderFn({ data: { name } })
-    router.invalidate()
-  }
-
-  const handleRenameFolder = async (folderId: string, name: string) => {
-    await renameFolderFn({ data: { folderId, name } })
-    router.invalidate()
-  }
-
-  const handleDeleteFolder = async (folderId: string) => {
-    await deleteFolderFn({ data: { folderId } })
-    router.invalidate()
-  }
-
-  const handleAddFeed = async (url: string, folderId?: string) => {
-    const result = await subscribeFeedFn({ data: { url, folderId } })
-    if (result.success) {
-      router.invalidate()
-    }
-    return result
-  }
-
-  const handleRemoveFeed = async (feedId: string) => {
-    await unsubscribeFeedFn({ data: { feedId } })
-    router.invalidate()
-  }
-
-  const handleMoveFeed = async (feedId: string, folderId: string | null) => {
-    await moveFeedFn({ data: { feedId, folderId } })
-    router.invalidate()
-  }
-
-  const handleRefreshFeed = async (feedId: string) => {
-    const result = await refreshFeedFn({ data: { feedId } })
-    if (result.success) {
-      router.invalidate()
-    }
-    return result.feed || null
-  }
-
-  const handleImportOPML = async (file: File) => {
-    const content = await file.text()
-    const result = await importOPMLFn({ data: { content } })
-    if (result.success) {
-      router.invalidate()
-    }
-    return result
-  }
-
-  const handleExportOPML = async () => {
-    const result = await exportOPMLFn()
-    if (result.success) {
-      // Create and download the file
-      const blob = new Blob([result.opml], { type: 'application/xml' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'reader-subscriptions.opml'
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }
-  }
-
   return (
-    <FolderActionsProvider
-      onCreateFolder={handleCreateFolder}
-      onRenameFolder={handleRenameFolder}
-      onDeleteFolder={handleDeleteFolder}
-    >
-      <FeedActionsProvider
-        folders={folders}
-        feeds={feeds}
-        onAddFeed={handleAddFeed}
-        onRemoveFeed={handleRemoveFeed}
-        onMoveFeed={handleMoveFeed}
-        onRefreshFeed={handleRefreshFeed}
-        onImportOPML={handleImportOPML}
-        onExportOPML={handleExportOPML}
-      >
-        <FeedsProvider folders={folders} feeds={feeds}>
-          <FeedManagement />
-        </FeedsProvider>
-      </FeedActionsProvider>
-    </FolderActionsProvider>
+    <div className="h-full flex">
+      <div className="w-56 flex-shrink-0">
+        <FeedSidebar view="manage" />
+      </div>
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+          Manage Subscriptions
+        </h1>
+        <p className="text-slate-600 dark:text-slate-400">
+          Subscription management coming soon.
+        </p>
+      </div>
+    </div>
   )
 }

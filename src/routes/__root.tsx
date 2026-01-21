@@ -1,14 +1,17 @@
+/// <reference types="vite/client" />
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
-import appCss from '../styles.css?url'
-import { AppShell } from '@/components/shell'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Rss } from 'lucide-react'
+import * as React from 'react'
+import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
+import { NotFound } from '~/components/NotFound'
+import appCss from '~/styles/app.css?url'
+import { seo } from '~/utils/seo'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -20,61 +23,89 @@ export const Route = createRootRoute({
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
       },
-      {
-        title: 'Reader',
-      },
+      ...seo({
+        title:
+          'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
+        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+      }),
     ],
     links: [
+      { rel: 'stylesheet', href: appCss },
       {
-        rel: 'stylesheet',
-        href: appCss,
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: '/apple-touch-icon.png',
       },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        href: '/favicon-32x32.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicon-16x16.png',
+      },
+      { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
+      { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
-
-  shellComponent: RootDocument,
-  component: RootLayout,
+  errorComponent: (props) => {
+    return (
+      <RootDocument>
+        <Layout>
+          <DefaultCatchBoundary {...props} />
+        </Layout>
+      </RootDocument>
+    )
+  },
+  notFoundComponent: () => <NotFound />,
+  component: RootComponent,
 })
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </RootDocument>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html>
       <head>
         <HeadContent />
       </head>
       <body>
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>
     </html>
   )
 }
 
-function RootLayout() {
-  // TODO: Replace with actual user data from auth
-  const mockUser = {
-    name: 'User',
-  }
-
-  const handleLogout = () => {
-    // TODO: Implement logout
-    console.log('Logout clicked')
-  }
-
+function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell user={mockUser} onLogout={handleLogout}>
-      <Outlet />
-    </AppShell>
+    <div className="flex h-screen flex-col bg-white dark:bg-slate-900">
+      {/* Minimal Header - 56px height per spec */}
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-4 dark:border-slate-700 dark:bg-slate-900">
+        {/* Left: Logo/Wordmark */}
+        <div className="flex items-center gap-2">
+          <Rss className="h-5 w-5 text-sky-500" />
+          <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Reader
+          </span>
+        </div>
+      </header>
+
+      {/* Content Area - fills remaining viewport height */}
+      <main className="flex-1 overflow-hidden">{children}</main>
+    </div>
   )
 }

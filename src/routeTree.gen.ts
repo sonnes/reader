@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StarredRouteImport } from './routes/starred'
 import { Route as ManageRouteImport } from './routes/manage'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SFeedIdRouteImport } from './routes/s.$feedId'
-import { Route as FFolderIdRouteImport } from './routes/f.$folderId'
+import { Route as FolderFolderIdRouteImport } from './routes/folder.$folderId'
+import { Route as FeedFeedIdRouteImport } from './routes/feed.$feedId'
 
 const StarredRoute = StarredRouteImport.update({
   id: '/starred',
@@ -30,14 +30,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SFeedIdRoute = SFeedIdRouteImport.update({
-  id: '/s/$feedId',
-  path: '/s/$feedId',
+const FolderFolderIdRoute = FolderFolderIdRouteImport.update({
+  id: '/folder/$folderId',
+  path: '/folder/$folderId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FFolderIdRoute = FFolderIdRouteImport.update({
-  id: '/f/$folderId',
-  path: '/f/$folderId',
+const FeedFeedIdRoute = FeedFeedIdRouteImport.update({
+  id: '/feed/$feedId',
+  path: '/feed/$feedId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -45,38 +45,49 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
-  '/f/$folderId': typeof FFolderIdRoute
-  '/s/$feedId': typeof SFeedIdRoute
+  '/feed/$feedId': typeof FeedFeedIdRoute
+  '/folder/$folderId': typeof FolderFolderIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
-  '/f/$folderId': typeof FFolderIdRoute
-  '/s/$feedId': typeof SFeedIdRoute
+  '/feed/$feedId': typeof FeedFeedIdRoute
+  '/folder/$folderId': typeof FolderFolderIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
-  '/f/$folderId': typeof FFolderIdRoute
-  '/s/$feedId': typeof SFeedIdRoute
+  '/feed/$feedId': typeof FeedFeedIdRoute
+  '/folder/$folderId': typeof FolderFolderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
+  fullPaths:
+    | '/'
+    | '/manage'
+    | '/starred'
+    | '/feed/$feedId'
+    | '/folder/$folderId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
-  id: '__root__' | '/' | '/manage' | '/starred' | '/f/$folderId' | '/s/$feedId'
+  to: '/' | '/manage' | '/starred' | '/feed/$feedId' | '/folder/$folderId'
+  id:
+    | '__root__'
+    | '/'
+    | '/manage'
+    | '/starred'
+    | '/feed/$feedId'
+    | '/folder/$folderId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManageRoute: typeof ManageRoute
   StarredRoute: typeof StarredRoute
-  FFolderIdRoute: typeof FFolderIdRoute
-  SFeedIdRoute: typeof SFeedIdRoute
+  FeedFeedIdRoute: typeof FeedFeedIdRoute
+  FolderFolderIdRoute: typeof FolderFolderIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,18 +113,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/s/$feedId': {
-      id: '/s/$feedId'
-      path: '/s/$feedId'
-      fullPath: '/s/$feedId'
-      preLoaderRoute: typeof SFeedIdRouteImport
+    '/folder/$folderId': {
+      id: '/folder/$folderId'
+      path: '/folder/$folderId'
+      fullPath: '/folder/$folderId'
+      preLoaderRoute: typeof FolderFolderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/f/$folderId': {
-      id: '/f/$folderId'
-      path: '/f/$folderId'
-      fullPath: '/f/$folderId'
-      preLoaderRoute: typeof FFolderIdRouteImport
+    '/feed/$feedId': {
+      id: '/feed/$feedId'
+      path: '/feed/$feedId'
+      fullPath: '/feed/$feedId'
+      preLoaderRoute: typeof FeedFeedIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -123,8 +134,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManageRoute: ManageRoute,
   StarredRoute: StarredRoute,
-  FFolderIdRoute: FFolderIdRoute,
-  SFeedIdRoute: SFeedIdRoute,
+  FeedFeedIdRoute: FeedFeedIdRoute,
+  FolderFolderIdRoute: FolderFolderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

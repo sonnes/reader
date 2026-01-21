@@ -2,15 +2,17 @@ import { createFileRoute } from '@tanstack/react-router'
 import { ThreePanelLayout } from '~/components/layout/ThreePanelLayout'
 import { FeedSidebar } from '~/components/FeedSidebar'
 
-export const Route = createFileRoute('/')({
-  component: Home,
+export const Route = createFileRoute('/feed/$feedId')({
+  component: FeedPage,
 })
 
-function Home() {
+function FeedPage() {
+  const { feedId } = Route.useParams()
+
   return (
     <ThreePanelLayout
-      left={<FeedSidebar view="home" />}
-      middle={<div className="p-4">Unread Articles</div>}
+      left={<FeedSidebar activeFeedId={feedId} />}
+      middle={<div className="p-4">Feed: {feedId}</div>}
       right={<div className="p-4">Reading Pane</div>}
     />
   )
