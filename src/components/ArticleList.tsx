@@ -5,6 +5,7 @@ import {
   foldersCollection,
   type Article,
 } from '~/db'
+import { useArticleList } from '~/context'
 import { ArticleListItem } from './ArticleListItem'
 
 type ArticleFilter =
@@ -15,8 +16,6 @@ type ArticleFilter =
 
 interface ArticleListProps {
   filter: ArticleFilter
-  selectedArticleId?: string
-  onSelectArticle?: (id: string) => void
 }
 
 function useArticleQuery(filter: ArticleFilter) {
@@ -115,11 +114,8 @@ function useArticleQuery(filter: ArticleFilter) {
   return { articles: sortedArticles, feeds, title }
 }
 
-export function ArticleList({
-  filter,
-  selectedArticleId,
-  onSelectArticle,
-}: ArticleListProps) {
+export function ArticleList({ filter }: ArticleListProps) {
+  const { selectedArticleId } = useArticleList()
   const { articles, feeds, title } = useArticleQuery(filter)
   const getFeed = (feedId: string) => feeds.find((f) => f.id === feedId)
   const unreadCount = articles.filter((a: Article) => !a.isRead).length
@@ -178,7 +174,6 @@ export function ArticleList({
               article={article}
               feed={getFeed(article.feedId)}
               isSelected={article.id === selectedArticleId}
-              onSelect={() => onSelectArticle?.(article.id)}
             />
           ))}
         </div>

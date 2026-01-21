@@ -1,10 +1,10 @@
+import { useArticleList } from '~/context'
 import type { Article, Feed } from '~/db'
 
 interface ArticleListItemProps {
   article: Article
   feed?: Feed
   isSelected: boolean
-  onSelect?: () => void
 }
 
 function formatDate(dateStr: string) {
@@ -30,11 +30,12 @@ export function ArticleListItem({
   article,
   feed,
   isSelected,
-  onSelect,
 }: ArticleListItemProps) {
+  const { selectArticle } = useArticleList()
+
   return (
     <article
-      onClick={onSelect}
+      onClick={() => selectArticle(article.id)}
       className={`group relative flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors ${
         isSelected
           ? 'bg-sky-50 dark:bg-sky-900/20'

@@ -11,6 +11,7 @@ import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { RefreshButton } from '~/components/RefreshButton'
+import { ArticleListProvider } from '~/context'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
@@ -76,7 +77,9 @@ function RootComponent() {
   return (
     <RootDocument>
       <Layout>
-        <Outlet />
+        <ArticleListProvider>
+          <Outlet />
+        </ArticleListProvider>
       </Layout>
     </RootDocument>
   )
