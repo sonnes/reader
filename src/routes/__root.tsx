@@ -11,7 +11,8 @@ import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { RefreshButton } from '~/components/RefreshButton'
-import { ArticleListProvider } from '~/context'
+import { KeyboardShortcutsHandler } from '~/components/KeyboardShortcutsHandler'
+import { ArticleListProvider, KeyboardProvider, AppStateProvider } from '~/context'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
@@ -76,11 +77,16 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <Layout>
-        <ArticleListProvider>
-          <Outlet />
-        </ArticleListProvider>
-      </Layout>
+      <AppStateProvider>
+        <KeyboardProvider>
+          <Layout>
+            <ArticleListProvider>
+              <KeyboardShortcutsHandler />
+              <Outlet />
+            </ArticleListProvider>
+          </Layout>
+        </KeyboardProvider>
+      </AppStateProvider>
     </RootDocument>
   )
 }

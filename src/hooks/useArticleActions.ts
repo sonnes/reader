@@ -1,0 +1,38 @@
+import { useCallback } from 'react'
+import { articlesCollection, timestamp } from '~/db'
+import { refreshScheduler } from '~/lib/refresh-scheduler'
+
+export function useArticleActions() {
+  const toggleRead = useCallback((articleId: string) => {
+    articlesCollection.update(articleId, (draft) => {
+      draft.isRead = !draft.isRead
+      draft.updatedAt = timestamp()
+    })
+  }, [])
+
+  const toggleStar = useCallback((articleId: string) => {
+    articlesCollection.update(articleId, (draft) => {
+      draft.isStarred = !draft.isStarred
+      draft.updatedAt = timestamp()
+    })
+  }, [])
+
+  const openInBrowser = useCallback((articleId: string) => {
+    // Need to get the article URL to open
+    const article = articlesCollection.state.get(articleId)
+    if (article?.url) {
+      window.open(article.url, '_blank', 'noopener,noreferrer')
+    }
+  }, [])
+
+  const refresh = useCallback(() => {
+    refreshScheduler.refreshAll()
+  }, [])
+
+  return {
+    toggleRead,
+    toggleStar,
+    openInBrowser,
+    refresh,
+  }
+}
