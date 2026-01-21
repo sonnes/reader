@@ -4,7 +4,8 @@ import {
   feedsCollection,
   articlesCollection,
   feedIdFromUrl,
-  generateArticleId,
+  articleIdFromUrl,
+  articleExists,
   timestamp,
   type Feed,
   type Article,
@@ -90,10 +91,13 @@ export function useFeedWorker(): UseFeedWorkerReturn {
 
         feedsCollection.insert(feed)
 
-        // Insert articles
+        // Insert articles (skip if already exists)
         for (const parsedArticle of result.articles) {
+          const articleId = articleIdFromUrl(parsedArticle.url)
+          if (articleExists(articleId)) continue
+
           const article: Article = {
-            id: generateArticleId(),
+            id: articleId,
             feedId: id,
             title: parsedArticle.title,
             url: parsedArticle.url,
@@ -141,29 +145,28 @@ export function useFeedWorker(): UseFeedWorkerReturn {
         draft.updatedAt = now
       })
 
-      // Insert new articles (skip duplicates by checking URL)
+      // Insert only new articles (skip if already exists)
       let newCount = 0
       for (const parsedArticle of result.articles) {
-        try {
-          const article: Article = {
-            id: generateArticleId(),
-            feedId: feed.id,
-            title: parsedArticle.title,
-            url: parsedArticle.url,
-            publishedAt: parsedArticle.publishedAt,
-            preview: parsedArticle.preview,
-            content: parsedArticle.content,
-            isRead: false,
-            isStarred: false,
-            isDeleted: false,
-            createdAt: now,
-            updatedAt: now,
-          }
-          articlesCollection.insert(article)
-          newCount++
-        } catch {
-          // Skip duplicates or errors
+        const articleId = articleIdFromUrl(parsedArticle.url)
+        if (articleExists(articleId)) continue
+
+        const article: Article = {
+          id: articleId,
+          feedId: feed.id,
+          title: parsedArticle.title,
+          url: parsedArticle.url,
+          publishedAt: parsedArticle.publishedAt,
+          preview: parsedArticle.preview,
+          content: parsedArticle.content,
+          isRead: false,
+          isStarred: false,
+          isDeleted: false,
+          createdAt: now,
+          updatedAt: now,
         }
+        articlesCollection.insert(article)
+        newCount++
       }
 
       return newCount

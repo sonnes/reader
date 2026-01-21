@@ -15,7 +15,7 @@ vi.mock('~/db', () => ({
     insert: vi.fn(),
   },
   timestamp: () => '2024-01-01T00:00:00.000Z',
-  generateArticleId: () => `article-${Date.now()}`,
+  articleIdFromUrl: (url: string) => `article-${url.replace(/[^a-z0-9]/gi, '-')}`,
 }))
 
 // Import after mocks are defined

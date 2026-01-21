@@ -32,6 +32,16 @@ export const articlesCollection = db
     )
   : (null as unknown as Collection<Article>)
 
-export function generateArticleId(): string {
-  return `article-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+export function articleIdFromUrl(url: string): string {
+  const urlObj = new URL(url)
+  const slug = (urlObj.hostname + urlObj.pathname)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return slug
+}
+
+export function articleExists(id: string): boolean {
+  if (!articlesCollection) return false
+  return articlesCollection.state.has(id)
 }

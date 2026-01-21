@@ -241,7 +241,7 @@ function extractArticles(result: ReturnType<typeof parseFeed>): ParsedArticle[] 
   return items.slice(0, MAX_ARTICLES_PER_FEED).map((item) => {
     const content = getItemContent(item)
     return {
-      id: getItemId(item) || generateArticleId(),
+      id: getItemId(item) || articleIdFromUrl(getItemLink(item) || ''),
       title: getItemTitle(item) || 'Untitled',
       url: getItemLink(item) || '',
       publishedAt: parseDate(getItemPublished(item)),
@@ -468,8 +468,13 @@ export function parseDate(dateStr?: string): string {
   }
 }
 
-function generateArticleId(): string {
-  return `article-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+function articleIdFromUrl(url: string): string {
+  const urlObj = new URL(url)
+  const slug = (urlObj.hostname + urlObj.pathname)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return `article-${slug}`
 }
 
 function classifyError(message: string): FeedErrorType {

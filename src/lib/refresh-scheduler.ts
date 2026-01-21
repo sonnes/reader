@@ -3,7 +3,7 @@ import {
   feedsCollection,
   articlesCollection,
   timestamp,
-  generateArticleId,
+  articleIdFromUrl,
   type Feed,
   type Article,
 } from '~/db'
@@ -160,7 +160,7 @@ class RefreshScheduler {
       for (const parsedArticle of result.articles) {
         try {
           const article: Article = {
-            id: generateArticleId(),
+            id: articleIdFromUrl(parsedArticle.url),
             feedId: feed.id,
             title: parsedArticle.title,
             url: parsedArticle.url,
