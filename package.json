@@ -10,6 +10,8 @@
     "start": "pnpx srvx --prod -s ../client dist/server/server.js"
   },
   "dependencies": {
+    "@tanstack/db": "^0.5.22",
+    "@tanstack/indexeddb-db-collection": "file:/Users/raviatluri/work/tanstack-db/packages/indexeddb-db-collection",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-scroll-area": "^1.2.10",
@@ -33,6 +35,11 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
     "zod": "^4.3.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "@tanstack/db": "^0.5.22"
+    }
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.18",

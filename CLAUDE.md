@@ -11,6 +11,14 @@ RSS feed reader inspired by Google Reader. 3-pane interface with keyboard naviga
 - **Routing**: TanStack Router (file-based routes in `src/routes/`)
 - **Testing**: Vitest + React Testing Library
 
+## Commands
+
+```bash
+pnpm dev      # Start dev server
+pnpm build    # Production build
+pnpm test     # Run tests
+```
+
 ## TanStack DB Usage
 
 Use `useLiveQuery` to fetch data from collections. Live queries automatically update when data changes.
@@ -41,7 +49,7 @@ const { data: articles } = useLiveQuery((q) =>
 
 ### Mutations
 
-Mutate collections directly - changes persist to localStorage automatically:
+Mutate collections directly - changes persist to IndexedDB automatically:
 
 ```typescript
 import { foldersCollection, folderIdFromName, timestamp } from '~/db'

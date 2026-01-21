@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { createCollection, localStorageCollectionOptions } from '@tanstack/react-db'
+import { createCollection } from '@tanstack/react-db'
+import { indexedDBCollectionOptions } from '@tanstack/indexeddb-db-collection'
 
 export const FeedSchema = z.object({
   id: z.string(),
@@ -16,14 +17,15 @@ export const FeedSchema = z.object({
 
 export type Feed = z.infer<typeof FeedSchema>
 
-export const feedsCollection = createCollection(
-  localStorageCollectionOptions({
-    id: 'feeds',
-    storageKey: 'reader-feeds',
+export const feedsCollection = createCollection({
+  id: 'feeds',
+  ...indexedDBCollectionOptions({
+    database: 'reader',
+    name: 'feeds',
     getKey: (item) => item.id,
     schema: FeedSchema,
-  })
-)
+  }),
+})
 
 export function feedIdFromUrl(url: string): string {
   const urlObj = new URL(url)
