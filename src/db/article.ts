@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { createCollection } from '@tanstack/react-db'
+import { createCollection, type Collection } from '@tanstack/react-db'
 import { indexedDBCollectionOptions } from '@tanstack/indexeddb-db-collection'
+import { db } from './db'
 
 export const ArticleSchema = z.object({
   id: z.string(),
@@ -19,15 +20,17 @@ export const ArticleSchema = z.object({
 
 export type Article = z.infer<typeof ArticleSchema>
 
-export const articlesCollection = createCollection({
-  id: 'articles',
-  ...indexedDBCollectionOptions({
-    database: 'reader',
-    name: 'articles',
-    getKey: (item) => item.id,
-    schema: ArticleSchema,
-  }),
-})
+// SSR guard - only create collection in browser
+export const articlesCollection = db
+  ? createCollection(
+      indexedDBCollectionOptions({
+        db,
+        name: 'articles',
+        getKey: (item) => item.id,
+        schema: ArticleSchema,
+      })
+    )
+  : (null as unknown as Collection<Article>)
 
 export function generateArticleId(): string {
   return `article-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`

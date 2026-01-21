@@ -10,6 +10,8 @@ import { Rss } from 'lucide-react'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
+import { RefreshButton } from '~/components/RefreshButton'
+import { refreshScheduler } from '~/lib/refresh-scheduler'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
 
@@ -66,6 +68,11 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  React.useEffect(() => {
+    refreshScheduler.start()
+    return () => refreshScheduler.stop()
+  }, [])
+
   return (
     <RootDocument>
       <Layout>
@@ -101,6 +108,11 @@ function Layout({ children }: { children: React.ReactNode }) {
           <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Reader
           </span>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2">
+          <RefreshButton />
         </div>
       </header>
 

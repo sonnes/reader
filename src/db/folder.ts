@@ -1,6 +1,7 @@
 import { z } from 'zod'
-import { createCollection } from '@tanstack/react-db'
+import { createCollection, type Collection } from '@tanstack/react-db'
 import { indexedDBCollectionOptions } from '@tanstack/indexeddb-db-collection'
+import { db } from './db'
 
 export const FolderSchema = z.object({
   id: z.string(),
@@ -11,15 +12,17 @@ export const FolderSchema = z.object({
 
 export type Folder = z.infer<typeof FolderSchema>
 
-export const foldersCollection = createCollection({
-  id: 'folders',
-  ...indexedDBCollectionOptions({
-    database: 'reader',
-    name: 'folders',
-    getKey: (item) => item.id,
-    schema: FolderSchema,
-  }),
-})
+// SSR guard - only create collection in browser
+export const foldersCollection = db
+  ? createCollection(
+      indexedDBCollectionOptions({
+        db,
+        name: 'folders',
+        getKey: (item) => item.id,
+        schema: FolderSchema,
+      })
+    )
+  : (null as unknown as Collection<Folder>)
 
 export function folderIdFromName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')

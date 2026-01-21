@@ -1,44 +1,41 @@
-# TanStack Start - Static Example
+# Reader
 
-This site is built with TanStack Router!
+Do you remember Google Reader?
 
-- [TanStack Router Docs](https://tanstack.com/router)
+I do.
 
-## Start a new project based on this example
+I miss it.
 
-To start a new project based on this example, run:
+I miss the simplicity of it.
 
-```sh
-npx gitpick TanStack/router/tree/main/examples/react/start-basic-static start-basic-static
-```
+I miss sharing articles & comments with my friends.
 
-## Deployment
+This is an attempt to bring back the simplicity of Google Reader using Claude & Friends.
 
-It's deployed automagically with Vercel!
+![Reader - 3-pane RSS reader](docs/images/reader-article.png)
 
-- [Vercel](https://vercel.com/)
+## Features
+
+- 3-pane layout (folders | article list | reading pane)
+- Subscribe to RSS/Atom feeds
+- Read/unread article tracking
+- Folder organization for feeds
+- Keyboard navigation (j/k/o shortcuts)
+- List and card view toggle for article list
 
 ## Getting Started
 
-From your terminal:
-
-```sh
+```bash
+# Install dependencies
 pnpm install
+
+# Start dev server
 pnpm dev
+
+# Run tests
+pnpm test
 ```
 
-## Build
+## License
 
-Build for production:
-
-```sh
-pnpm build
-```
-
-## About This Example
-
-This example demonstrates:
-
-- Static Site Generation (SSG) with TanStack Start
-- Prerendering routes
-- Static export
+MIT
