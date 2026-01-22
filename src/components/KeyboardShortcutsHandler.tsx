@@ -1,11 +1,12 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLiveQuery, eq, and } from '@tanstack/react-db'
 import { useKeyboard, useAppState, useArticleList } from '~/context'
 import { useKeyboardShortcuts } from '~/hooks/useKeyboardShortcuts'
 import { useArticleActions } from '~/hooks/useArticleActions'
 import { articlesCollection } from '~/db'
 
-export function KeyboardShortcutsHandler() {
+// Inner component that uses client-only hooks
+function KeyboardShortcutsHandlerInner() {
   const { showKeyboardHelp, toggleKeyboardHelp } = useKeyboard()
   const {
     focusMode,
@@ -87,6 +88,20 @@ export function KeyboardShortcutsHandler() {
     }
   )
 
-  // This component doesn't render anything
   return null
+}
+
+// SSR-safe wrapper - only renders on client
+export function KeyboardShortcutsHandler() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
+  return <KeyboardShortcutsHandlerInner />
 }

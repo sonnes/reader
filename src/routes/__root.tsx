@@ -12,6 +12,8 @@ import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { RefreshButton } from '~/components/RefreshButton'
 import { KeyboardShortcutsHandler } from '~/components/KeyboardShortcutsHandler'
+import { KeyboardHelpModal } from '~/components/KeyboardHelpModal'
+import { HelpButton } from '~/components/HelpButton'
 import { ArticleListProvider, KeyboardProvider, AppStateProvider } from '~/context'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
 import appCss from '~/styles/app.css?url'
@@ -85,6 +87,7 @@ function RootComponent() {
               <Outlet />
             </ArticleListProvider>
           </Layout>
+          <KeyboardHelpModal />
         </KeyboardProvider>
       </AppStateProvider>
     </RootDocument>
@@ -121,6 +124,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
+          <HelpButton />
           <RefreshButton />
         </div>
       </header>
