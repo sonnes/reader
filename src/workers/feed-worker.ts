@@ -301,10 +301,12 @@ function getItemPublished(item: unknown): string | undefined {
 function getItemContent(item: unknown): string {
   const i = item as Record<string, unknown>
 
+  console.log(`[FeedWorker] Item content:`, i)
   // Try various content fields
   if (i.content) {
     const content = i.content as Record<string, unknown>
     if (typeof content === 'string') return content
+   if (content.encoded) return content.encoded as string
     if (content.text) return content.text as string
     if (content.html) return content.html as string
   }

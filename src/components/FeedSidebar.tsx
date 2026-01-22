@@ -250,7 +250,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
         >
           <Settings className="w-4 h-4" />
           Manage Subscriptions
-        </Link>
+         </Link>
       </div>
     </div>
   )
