@@ -17,11 +17,8 @@ const activeRequests = new Map<string, AbortController>()
 // Message Handler
 // ============================================================================
 
-console.log('[FeedWorker] Worker initialized')
-
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
   const request = event.data
-  console.log(`[FeedWorker] Received ${request.type}`, request.id, 'payload' in request ? request.payload : '')
 
   try {
     switch (request.type) {
@@ -52,7 +49,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 }
 
 function sendResponse(response: WorkerResponse): void {
-  console.log(`[FeedWorker] Sending ${response.type}`, response.id, response.payload)
   self.postMessage(response)
 }
 
@@ -66,17 +62,13 @@ async function handleParseFeed(
 ): Promise<void> {
   const controller = new AbortController()
   activeRequests.set(requestId, controller)
-  console.log(`[FeedWorker] Parsing feed: ${payload.url}`)
 
   try {
     const content = await fetchWithProxy(payload.url, controller.signal)
-    console.log(`[FeedWorker] Fetched ${content.length} bytes`)
     const result = parseFeed(content)
-    console.log(`[FeedWorker] Parsed feed format: ${result.format}`)
 
     const feed = extractFeedMetadata(result, payload.url)
     const articles = extractArticles(result)
-    console.log(`[FeedWorker] Extracted ${articles.length} articles`)
 
     sendResponse({
       type: 'PARSE_FEED_RESULT',
@@ -84,7 +76,6 @@ async function handleParseFeed(
       payload: { success: true, feed, articles },
     })
   } catch (error) {
-    console.error(`[FeedWorker] Parse error:`, error)
     sendResponse({
       type: 'PARSE_FEED_RESULT',
       id: requestId,
@@ -104,7 +95,6 @@ async function handleValidateFeed(
 ): Promise<void> {
   const controller = new AbortController()
   activeRequests.set(requestId, controller)
-  console.log(`[FeedWorker] Validating feed: ${payload.url}`)
 
   try {
     let feedUrl = payload.url
@@ -113,13 +103,10 @@ async function handleValidateFeed(
 
     // First, try fetching as a feed directly
     try {
-      console.log(`[FeedWorker] Trying direct fetch...`)
       content = await fetchWithProxy(feedUrl, controller.signal)
       result = parseFeed(content)
-      console.log(`[FeedWorker] Direct fetch succeeded, format: ${result.format}`)
-    } catch (directError) {
+    } catch {
       // If direct fetch fails, try discovering feed from HTML page
-      console.log(`[FeedWorker] Direct fetch failed, trying discovery...`, directError)
       const html = await fetchWithProxy(feedUrl, controller.signal)
       const discoveredUrl = discoverFeedUrl(html, feedUrl)
 
@@ -127,7 +114,6 @@ async function handleValidateFeed(
         throw new Error('No feed found at this URL')
       }
 
-      console.log(`[FeedWorker] Discovered feed URL: ${discoveredUrl}`)
       feedUrl = discoveredUrl
       content = await fetchWithProxy(feedUrl, controller.signal)
       result = parseFeed(content)
@@ -136,7 +122,6 @@ async function handleValidateFeed(
     const siteUrl = getFeedLink(result) || new URL(feedUrl).origin
     const favicon = extractFavicon(siteUrl)
     const articleCount = getFeedItems(result)?.length || 0
-    console.log(`[FeedWorker] Validation success: ${getFeedTitle(result)}, ${articleCount} articles`)
 
     sendResponse({
       type: 'VALIDATE_FEED_RESULT',
@@ -156,7 +141,6 @@ async function handleValidateFeed(
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Validation failed'
     const errorType = classifyError(message)
-    console.error(`[FeedWorker] Validation error (${errorType}):`, message)
 
     sendResponse({
       type: 'VALIDATE_FEED_RESULT',
@@ -174,7 +158,6 @@ async function handleRefreshFeed(
 ): Promise<void> {
   const controller = new AbortController()
   activeRequests.set(requestId, controller)
-  console.log(`[FeedWorker] Refreshing feed: ${payload.feedId} (${payload.feedUrl})`)
 
   try {
     const content = await fetchWithProxy(payload.feedUrl, controller.signal)
@@ -182,7 +165,6 @@ async function handleRefreshFeed(
 
     const feed = extractFeedMetadata(result, payload.feedUrl)
     const articles = extractArticles(result)
-    console.log(`[FeedWorker] Refresh success: ${articles.length} articles`)
 
     sendResponse({
       type: 'REFRESH_FEED_RESULT',
@@ -190,7 +172,6 @@ async function handleRefreshFeed(
       payload: { success: true, feed, articles },
     })
   } catch (error) {
-    console.error(`[FeedWorker] Refresh error:`, error)
     sendResponse({
       type: 'REFRESH_FEED_RESULT',
       id: requestId,
@@ -207,11 +188,8 @@ async function handleRefreshFeed(
 function handleCancel(requestId: string): void {
   const controller = activeRequests.get(requestId)
   if (controller) {
-    console.log(`[FeedWorker] Cancelling request: ${requestId}`)
     controller.abort()
     activeRequests.delete(requestId)
-  } else {
-    console.log(`[FeedWorker] Cancel requested but no active request: ${requestId}`)
   }
 }
 
@@ -301,7 +279,6 @@ function getItemPublished(item: unknown): string | undefined {
 function getItemContent(item: unknown): string {
   const i = item as Record<string, unknown>
 
-  console.log(`[FeedWorker] Item content:`, i)
   // Try various content fields
   if (i.content) {
     const content = i.content as Record<string, unknown>
@@ -339,28 +316,22 @@ function getItemContent(item: unknown): string {
 async function fetchWithProxy(url: string, signal: AbortSignal): Promise<string> {
   // Try direct fetch first
   try {
-    console.log(`[FeedWorker] Direct fetch: ${url}`)
     const response = await fetchWithTimeout(url, signal)
     if (response.ok) {
-      console.log(`[FeedWorker] Direct fetch OK: ${response.status}`)
       return await response.text()
     }
-    console.log(`[FeedWorker] Direct fetch not OK: ${response.status}`)
-  } catch (err) {
-    console.log(`[FeedWorker] Direct fetch failed:`, err)
+  } catch {
     // Fall through to proxy
   }
 
   // Use CORS proxy as fallback
   const proxyUrl = `${CORS_PROXY}${encodeURIComponent(url)}`
-  console.log(`[FeedWorker] Proxy fetch: ${proxyUrl}`)
   const response = await fetchWithTimeout(proxyUrl, signal)
 
   if (!response.ok) {
     throw new Error(`Fetch failed: ${response.status} ${response.statusText}`)
   }
 
-  console.log(`[FeedWorker] Proxy fetch OK: ${response.status}`)
   return await response.text()
 }
 

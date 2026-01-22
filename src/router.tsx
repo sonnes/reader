@@ -6,7 +6,7 @@ import { NotFound } from './components/NotFound'
 export function getRouter() {
   const router = createRouter({
     routeTree,
-    basepath: '/test/',
+    basepath: import.meta.env.VITE_BASE_PATH || '/',
     defaultPreload: 'intent',
     defaultErrorComponent: DefaultCatchBoundary,
     defaultNotFoundComponent: () => <NotFound />,

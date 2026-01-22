@@ -1,4 +1,4 @@
-import { createIndexedDB } from '@tanstack/indexeddb-db-collection'
+import { createIndexedDB } from '~/lib/indexeddb-collection'
 
 // Only create the database in browser environment (SSR guard)
 export const db =

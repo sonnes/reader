@@ -45,8 +45,6 @@ class RefreshScheduler {
     this.intervalId = setInterval(() => {
       this.refreshAll()
     }, REFRESH_INTERVAL_MS)
-
-    console.log('[RefreshScheduler] Started')
   }
 
   /**
@@ -64,7 +62,6 @@ class RefreshScheduler {
     }
 
     this.onRefreshComplete = null
-    console.log('[RefreshScheduler] Stopped')
   }
 
   /**
@@ -93,13 +90,11 @@ class RefreshScheduler {
    */
   async refreshAll(): Promise<RefreshResult[]> {
     if (this.isRefreshing) {
-      console.log('[RefreshScheduler] Refresh already in progress, skipping')
       return []
     }
 
     const now = Date.now()
     if (now - this.lastRefreshTime < MIN_REFRESH_INTERVAL_MS) {
-      console.log('[RefreshScheduler] Too soon since last refresh, skipping')
       return []
     }
 
@@ -109,22 +104,18 @@ class RefreshScheduler {
 
     try {
       const feeds = await this.getAllFeeds()
-      console.log(`[RefreshScheduler] Refreshing ${feeds.length} feeds`)
 
       for (const feed of feeds) {
         const result = await this.refreshSingleFeed(feed)
         results.push(result)
       }
 
-      console.log('[RefreshScheduler] Refresh complete')
-
       if (this.onRefreshComplete) {
         this.onRefreshComplete(results)
       }
 
       return results
-    } catch (error) {
-      console.error('[RefreshScheduler] Refresh failed:', error)
+    } catch {
       return results
     } finally {
       this.isRefreshing = false
@@ -180,10 +171,6 @@ class RefreshScheduler {
         }
       }
 
-      if (newCount > 0) {
-        console.log(`[RefreshScheduler] ${feed.title}: +${newCount} articles`)
-      }
-
       return {
         feedId: feed.id,
         feedTitle: feed.title,
@@ -191,7 +178,6 @@ class RefreshScheduler {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      console.error(`[RefreshScheduler] Failed to refresh ${feed.title}:`, error)
 
       return {
         feedId: feed.id,

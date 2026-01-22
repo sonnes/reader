@@ -79,12 +79,12 @@ describe('Feed Parsing', () => {
 
       expect(result.format).toBe('rss')
       expect(result.feed.title).toBe('Test Blog')
-      expect(result.feed.items).toHaveLength(2)
+      expect((result.feed as { items: unknown[] }).items).toHaveLength(2)
     })
 
     it('extracts article fields correctly', () => {
       const result = parseFeed(RSS_FEED)
-      const items = result.feed.items as Array<{
+      const items = (result.feed as { items: unknown[] }).items as Array<{
         title: string
         link: string
         guid: { value: string } | string
@@ -107,12 +107,12 @@ describe('Feed Parsing', () => {
 
       expect(result.format).toBe('atom')
       expect(result.feed.title).toBe('Atom Blog')
-      expect(result.feed.entries).toHaveLength(1)
+      expect((result.feed as { entries: unknown[] }).entries).toHaveLength(1)
     })
 
     it('extracts Atom entry fields correctly', () => {
       const result = parseFeed(ATOM_FEED)
-      const entries = result.feed.entries as Array<{
+      const entries = (result.feed as { entries: unknown[] }).entries as Array<{
         title: string
         link: { href: string }
         id: string
@@ -130,12 +130,12 @@ describe('Feed Parsing', () => {
 
       expect(result.format).toBe('json')
       expect(result.feed.title).toBe('JSON Feed Blog')
-      expect(result.feed.items).toHaveLength(1)
+      expect((result.feed as { items: unknown[] }).items).toHaveLength(1)
     })
 
     it('extracts JSON Feed item fields correctly', () => {
       const result = parseFeed(JSON_FEED)
-      const items = result.feed.items as Array<{
+      const items = (result.feed as { items: unknown[] }).items as Array<{
         id: string
         url: string
         title: string
@@ -192,7 +192,7 @@ describe('Feed Parsing', () => {
 
       const result = parseFeed(feedWithoutDesc)
       expect(result.feed.title).toBe('No Description Feed')
-      expect(result.feed.description).toBeUndefined()
+      expect((result.feed as { description?: string }).description).toBeUndefined()
     })
 
     it('handles item without pubDate', () => {
@@ -209,7 +209,7 @@ describe('Feed Parsing', () => {
         </rss>`
 
       const result = parseFeed(feedWithoutDate)
-      const items = result.feed.items as Array<{ pubDate?: string }>
+      const items = (result.feed as { items: unknown[] }).items as Array<{ pubDate?: string }>
       expect(items[0].pubDate).toBeUndefined()
     })
   })

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { createCollection, type Collection } from '@tanstack/react-db'
-import { indexedDBCollectionOptions } from '@tanstack/indexeddb-db-collection'
+import { indexedDBCollectionOptions } from '~/lib/indexeddb-collection'
 import { db } from './db'
 
 export const ArticleSchema = z.object({

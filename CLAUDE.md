@@ -1,15 +1,15 @@
 # Reader
 
-RSS feed reader inspired by Google Reader. 3-pane interface with keyboard navigation.
+RSS feed reader SPA inspired by Google Reader. 3-pane interface with keyboard navigation. All data stored client-side in IndexedDB.
 
 ## Tech Stack
 
 - **Framework**: TanStack Start (React 19 + Vite 7)
-- **Styling**: Tailwind CSS v4 with `@tailwindcss/typography`
-- **Components**: shadcn/ui
-- **Database**: TanStack DB `src/db/`
+- **Styling**: Tailwind CSS v4
+- **Components**: shadcn/ui (Radix primitives)
+- **Database**: TanStack DB with IndexedDB persistence (`src/db/`)
 - **Routing**: TanStack Router (file-based routes in `src/routes/`)
-- **Testing**: Vitest + React Testing Library
+- **Feed Parsing**: Web Worker (`src/workers/`) using feedsmith
 
 ## Commands
 
@@ -19,55 +19,51 @@ pnpm build    # Production build
 pnpm test     # Run tests
 ```
 
-## TanStack DB Usage
+## Project Structure
 
-Use `useLiveQuery` to fetch data from collections. Live queries automatically update when data changes.
+```
+src/
+├── components/       # React components (flat structure + ui/ for shadcn)
+├── context/          # React contexts (AppState, ArticleList)
+├── db/               # TanStack DB collections (folders, feeds, articles)
+├── hooks/            # Custom hooks (useArticleActions, useFeedWorker)
+├── routes/           # File-based routes
+└── workers/          # Web worker for feed fetching/parsing
+```
 
-**Colocate data fetching**: Fetch data in the component where it's used, not at the top and passed down via props. Each component should own its data requirements.
+## TanStack DB
+
+Data lives in three collections: `foldersCollection`, `feedsCollection`, `articlesCollection`.
+
+**Colocate data fetching**: Use `useLiveQuery` in the component that needs the data, not at the top.
 
 ```typescript
 import { useLiveQuery, eq } from '@tanstack/react-db'
-import { foldersCollection, feedsCollection, articlesCollection } from '~/db'
+import { feedsCollection } from '~/db'
 
-// Fetch all folders
-const { data: folders } = useLiveQuery((q) =>
-  q.from({ folder: foldersCollection })
-)
-
-// Fetch feeds in a folder
 const { data: feeds } = useLiveQuery((q) =>
   q.from({ feed: feedsCollection })
     .where(({ feed }) => eq(feed.folderId, folderId))
 )
-
-// Fetch unread articles
-const { data: articles } = useLiveQuery((q) =>
-  q.from({ article: articlesCollection })
-    .where(({ article }) => eq(article.isRead, false))
-)
 ```
 
-### Mutations
-
-Mutate collections directly - changes persist to IndexedDB automatically:
+**Mutations** persist to IndexedDB automatically:
 
 ```typescript
 import { foldersCollection, folderIdFromName, timestamp } from '~/db'
 
-// Insert
-foldersCollection.insert({
-  id: folderIdFromName('Tech'),
-  name: 'Tech',
-  createdAt: timestamp(),
-  updatedAt: timestamp(),
-})
-
-// Update
-foldersCollection.update(folderId, (draft) => {
-  draft.name = 'New Name'
-  draft.updatedAt = timestamp()
-})
-
-// Delete
+foldersCollection.insert({ id: folderIdFromName('Tech'), name: 'Tech', createdAt: timestamp(), updatedAt: timestamp() })
+foldersCollection.update(folderId, (draft) => { draft.name = 'New Name' })
 foldersCollection.delete(folderId)
+```
+
+## Feed Worker
+
+Feed fetching runs in a web worker to avoid blocking the UI. Use `useFeedWorker` hook or import `feedWorkerClient` directly:
+
+```typescript
+import { feedWorkerClient } from '~/workers/feed-worker-client'
+
+const result = await feedWorkerClient.validateFeed(url)
+const parsed = await feedWorkerClient.parseFeed(url)
 ```

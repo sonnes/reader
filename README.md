@@ -2,39 +2,30 @@
 
 Do you remember Google Reader?
 
-I do.
+I do. I miss it. I miss the simplicity of it.
 
-I miss it.
-
-I miss the simplicity of it.
-
-I miss sharing articles & comments with my friends.
-
-This is an attempt to bring back the simplicity of Google Reader using Claude & Friends.
-
-![Reader - 3-pane RSS reader](docs/images/reader-article.png)
+This is an attempt to bring back that simplicity.
 
 ## Features
 
-- 3-pane layout (folders | article list | reading pane)
+- 3-pane layout (folders | feeds | reading pane)
 - Subscribe to RSS/Atom feeds
-- Read/unread article tracking
-- Folder organization for feeds
-- Keyboard navigation (j/k/o shortcuts)
-- List and card view toggle for article list
+- Keyboard navigation (j/k for articles, o to open)
+- Folder organization
+- Read/unread tracking with unread counts
+- Star articles for later
+- OPML import/export
 
 ## Getting Started
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Start dev server
 pnpm dev
-
-# Run tests
-pnpm test
 ```
+
+## Tech
+
+Client-side SPA built with TanStack Start (React 19). All data stored locally in IndexedDB via TanStack DB. Feed parsing runs in a web worker.
 
 ## License
 
