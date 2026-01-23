@@ -6,7 +6,7 @@ import {
   createRootRoute,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Menu, Rss } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
@@ -137,7 +137,7 @@ function Layout({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
           )}
-          <Rss className="h-5 w-5 text-sky-500" />
+          <img src="/reader-logo.png" alt="Reader" className="h-6 w-auto" />
           <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Reader
           </span>

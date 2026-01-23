@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Reader Blog</title>
+    <link>https://readerapp.in</link>
+    <description>Updates and guides for Reader, a privacy-first RSS feed reader</description>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Jan 2025 12:00:00 GMT</lastBuildDate>
+    <atom:link href="https://readerapp.in/rss.xml" rel="self" type="application/rss+xml"/>
+    <dc:creator>Ravi Atluri (https://raviatluri.in/)</dc:creator>
+    <item>
+      <title>Why I Built Reader</title>
+      <link>https://readerapp.in/blog/introduction</link>
+      <guid isPermaLink="true">https://readerapp.in/blog/introduction</guid>
+      <pubDate>Thu, 23 Jan 2025 12:00:00 GMT</pubDate>
+      <dc:creator>Ravi Atluri</dc:creator>
+      <description>Google Reader shut down in 2013. I've been looking for a replacement ever since.</description>
+      <content:encoded><![CDATA[<p>Google Reader shut down in 2013. I've been looking for a replacement ever since.</p>
+<p>The alternatives never felt right. Most required accounts, subscriptions and didn't have the simple three-pane layout that made Google Reader so efficient.</p>
+<p>So I got Claude &amp; Friends to build Reader.</p>
+<h2>What It Does</h2>
+<p>Reader is an RSS feed reader that runs entirely in your browser. No accounts. No servers storing your data. Your subscriptions live on your device, in IndexedDB.</p>
+<p>The interface should feel familiar: folders and feeds on the left, article list in the middle, reading pane on the right. Navigate with your keyboard. Press <code>j</code> and <code>k</code> to move between articles. Press <code>?</code> to see all shortcuts.</p>
+<h2>Getting Started</h2>
+<p>Click the <strong>+ Add Feed</strong> button in the sidebar. Paste a URL. Reader figures out the rest.</p>
+<p>Organize your feeds into folders. Star articles you want to revisit. Everything stays local, loads fast, works offline.</p>
+<p>That's it. No onboarding flow. No feature tour. Just an RSS reader that gets out of your way.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>How to Use Reader</title>
+      <link>https://readerapp.in/blog/how-to-use</link>
+      <guid isPermaLink="true">https://readerapp.in/blog/how-to-use</guid>
+      <pubDate>Thu, 23 Jan 2025 11:00:00 GMT</pubDate>
+      <dc:creator>Ravi Atluri</dc:creator>
+      <description>Reader is designed for keyboard-first navigation. Learn these shortcuts to read efficiently.</description>
+      <content:encoded><![CDATA[<p>Reader is designed for keyboard-first navigation. Learn these shortcuts to read efficiently.</p>
+<h2>Navigation</h2>
+<table>
+<thead><tr><th>Key</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>j</code></td><td>Next article</td></tr>
+<tr><td><code>k</code></td><td>Previous article</td></tr>
+<tr><td><code>g a</code></td><td>Go to all articles</td></tr>
+</tbody>
+</table>
+<h2>Article Actions</h2>
+<table>
+<thead><tr><th>Key</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>m</code></td><td>Toggle read/unread</td></tr>
+<tr><td><code>s</code></td><td>Toggle star</td></tr>
+<tr><td><code>o</code></td><td>Open article in browser</td></tr>
+</tbody>
+</table>
+<h2>View Controls</h2>
+<table>
+<thead><tr><th>Key</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>[</code></td><td>Toggle sidebar</td></tr>
+<tr><td><code>f</code></td><td>Toggle focus mode</td></tr>
+<tr><td><code>v</code></td><td>Toggle view mode</td></tr>
+<tr><td><code>i</code></td><td>Toggle iframe view</td></tr>
+</tbody>
+</table>
+<h2>Other</h2>
+<table>
+<thead><tr><th>Key</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><code>r</code></td><td>Refresh all feeds</td></tr>
+<tr><td><code>?</code></td><td>Show keyboard shortcuts</td></tr>
+<tr><td><code>Esc</code></td><td>Close dialogs / exit focus mode</td></tr>
+</tbody>
+</table>
+<h2>Managing Feeds</h2>
+<h3>Adding Feeds</h3>
+<p>Click the <strong>+ Add Feed</strong> button in the sidebar or use the feed management dialog. Paste any website URL - Reader will automatically find the RSS feed.</p>
+<h3>Organizing with Folders</h3>
+<p>Create folders to group related feeds. Drag and drop feeds between folders, or assign them when subscribing.</p>
+<h3>Import/Export</h3>
+<p>Use <strong>OPML import</strong> to bring in subscriptions from other readers. Export your subscriptions anytime to back them up or move to another app. <strong>OPML export</strong> is available in the feed management dialog.</p>
+<h2>Tips</h2>
+<ul>
+<li>Use <strong>focus mode</strong> (<code>f</code>) for distraction-free reading</li>
+<li><strong>Star</strong> important articles to find them later</li>
+<li>The <strong>iframe view</strong> (<code>i</code>) shows the original website when article content is truncated</li>
+</ul>]]></content:encoded>
+    </item>
+  </channel>
+</rss>
