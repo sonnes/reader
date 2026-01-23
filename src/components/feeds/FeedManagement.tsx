@@ -213,7 +213,7 @@ export function FeedManagement() {
               ) : (
                 <Upload className="h-4 w-4" />
               )}
-              <span className="hidden sm:inline">Import OPML</span>
+              <span className="hidden sm:inline">Import Subscriptions</span>
               <span className="sm:hidden">Import</span>
             </button>
             <button
@@ -221,7 +221,7 @@ export function FeedManagement() {
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Export OPML</span>
+              <span className="hidden sm:inline">Export Subscriptions</span>
               <span className="sm:hidden">Export</span>
             </button>
           </div>
@@ -246,7 +246,7 @@ export function FeedManagement() {
             <div className="mt-4">
               <div className="mb-2 px-2">
                 <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-                  Uncategorized
+                  Other Feeds
                 </span>
                 <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">
                   {uncategorizedFeeds.length}{' '}
@@ -276,8 +276,8 @@ export function FeedManagement() {
               </h3>
               <p className="mb-6 max-w-sm text-sm text-slate-500 dark:text-slate-400">
                 Subscribe to your favorite blogs and news sites to start
-                reading. You can also import your existing subscriptions from an
-                OPML file.
+                reading. You can also import your subscriptions from another
+                reader app.
               </p>
               <div className="flex gap-3">
                 <button
@@ -285,7 +285,7 @@ export function FeedManagement() {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <Upload className="h-4 w-4" />
-                  Import OPML
+                  Import Subscriptions
                 </button>
                 <AddFeedButton />
               </div>

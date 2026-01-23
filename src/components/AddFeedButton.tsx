@@ -111,19 +111,19 @@ export function AddFeedButton() {
                   htmlFor="feed-url"
                   className="text-sm font-medium text-slate-700 dark:text-slate-300"
                 >
-                  Feed or Website URL
+                  Website Address
                 </label>
                 <Input
                   id="feed-url"
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://example.com/feed.xml"
+                  placeholder="https://example.com"
                   disabled={isValidating}
                   autoFocus
                 />
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Enter a feed URL or website URL. We'll find the feed automatically.
+                  Paste a website address. We'll find the content automatically.
                 </p>
               </div>
 
@@ -199,7 +199,7 @@ export function AddFeedButton() {
                     <SelectValue placeholder="Select a folder" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">No folder</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {folders.map((folder) => (
                       <SelectItem key={folder.id} value={folder.id}>
                         {folder.name}

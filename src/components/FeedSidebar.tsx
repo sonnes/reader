@@ -199,7 +199,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
             <div className="my-2 mx-4 border-t border-slate-200 dark:border-slate-700" />
             <div className="px-4 py-1">
               <span className="text-xs font-medium text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                Uncategorized
+                Other Feeds
               </span>
             </div>
             {uncategorizedFeeds.map((feed) => (
@@ -249,7 +249,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
           }`}
         >
           <Settings className="w-4 h-4" />
-          Manage Subscriptions
+          Manage Feeds
          </Link>
       </div>
     </div>
