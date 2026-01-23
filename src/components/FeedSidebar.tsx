@@ -7,6 +7,8 @@ import {
   Star,
 } from 'lucide-react'
 import { useFeedsWithCounts } from '~/hooks/useFeedsWithCounts'
+import { useAppState } from '~/context'
+import { useMobileLayout } from '~/hooks/useMobileLayout'
 import { AddFeedButton } from './AddFeedButton'
 import { CreateFolderButton } from './CreateFolderButton'
 
@@ -14,12 +16,20 @@ interface FeedSidebarProps {
   activeFeedId?: string
   activeFolderId?: string
   view?: 'home' | 'starred' | 'manage'
-  onCollapse?: () => void
 }
 
 export function FeedSidebar(props: FeedSidebarProps) {
   const { folders, feeds, unreadArticles, unreadCounts, folderUnreadCounts } = useFeedsWithCounts()
+  const { setSidebarCollapsed } = useAppState()
+  const { isMobile, isTablet } = useMobileLayout()
   const totalUnreadCount = unreadArticles.length
+
+  // Close sidebar on mobile when navigating
+  const handleNavClick = () => {
+    if (isMobile || isTablet) {
+      setSidebarCollapsed(true)
+    }
+  }
 
   // Get feeds that don't belong to any folder
   const uncategorizedFeeds = feeds.filter((f) => f.folderId === null)
@@ -49,6 +59,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
         {/* Unread (Home) */}
         <Link
           to="/"
+          onClick={handleNavClick}
           className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
             props.view === 'home' ? activeClass : inactiveClass
           }`}
@@ -63,6 +74,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
         {/* Starred */}
         <Link
           to="/starred"
+          onClick={handleNavClick}
           className={`w-full flex items-center justify-between px-4 py-2 text-left text-sm font-medium transition-colors ${
             props.view === 'starred' ? activeClass : inactiveClass
           }`}
@@ -100,6 +112,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
             <Link
               to="/folder/$folderId"
               params={{ folderId: folder.id }}
+              onClick={handleNavClick}
               className={`w-full flex items-center justify-between px-4 py-2 text-left transition-colors ${
                 props.activeFolderId === folder.id ? activeClass : inactiveClass
               }`}
@@ -130,6 +143,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
                   <Link
                     to="/feed/$feedId"
                     params={{ feedId: feed.id }}
+                    onClick={handleNavClick}
                     className="flex-1 flex items-center gap-2 text-left text-sm truncate group"
                   >
                     {feed.favicon ? (
@@ -169,6 +183,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
                 <Link
                   to="/feed/$feedId"
                   params={{ feedId: feed.id }}
+                  onClick={handleNavClick}
                   className="flex-1 flex items-center gap-2 text-left text-sm"
                 >
                   {feed.favicon ? (
@@ -199,6 +214,7 @@ export function FeedSidebar(props: FeedSidebarProps) {
       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
         <Link
           to="/manage"
+          onClick={handleNavClick}
           className={`flex items-center gap-2 text-sm transition-colors ${
             props.view === 'manage'
               ? 'text-sky-600 dark:text-sky-400'

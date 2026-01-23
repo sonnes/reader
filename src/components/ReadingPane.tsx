@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { useArticleList } from '~/context'
+import { ArrowLeft } from 'lucide-react'
+import { useArticleList, useAppState } from '~/context'
 import { useArticleActions } from '~/hooks/useArticleActions'
+import { useMobileLayout } from '~/hooks/useMobileLayout'
 
 export function ReadingPane() {
   const {
@@ -8,7 +10,11 @@ export function ReadingPane() {
     selectedFeed: feed,
     iframeView,
     toggleIframeView,
+    clearSelection,
   } = useArticleList()
+
+  const { setMobileReadingPaneOpen } = useAppState()
+  const { isMobile } = useMobileLayout()
 
   const {
     toggleRead: toggleReadAction,
@@ -19,6 +25,11 @@ export function ReadingPane() {
 
   // Track animation states for micro-interactions
   const [starAnimating, setStarAnimating] = useState(false)
+
+  const handleBack = () => {
+    setMobileReadingPaneOpen(false)
+    clearSelection()
+  }
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -104,6 +115,16 @@ export function ReadingPane() {
       {/* Toolbar with gradient background */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-header-gradient">
         <div className="flex items-center gap-1">
+          {/* Back button - mobile only */}
+          {isMobile && (
+            <button
+              onClick={handleBack}
+              className="p-2 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all duration-200 mr-1"
+              aria-label="Back to list"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
           {/* Toggle read - with scale interaction */}
           <button
             onClick={handleToggleRead}

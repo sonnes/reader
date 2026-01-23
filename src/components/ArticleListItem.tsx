@@ -1,4 +1,5 @@
-import { useArticleList } from '~/context'
+import { useArticleList, useAppState } from '~/context'
+import { useMobileLayout } from '~/hooks/useMobileLayout'
 import type { Article, Feed } from '~/db'
 
 interface ArticleListItemProps {
@@ -34,13 +35,22 @@ export function ArticleListItem({
   index = 0,
 }: ArticleListItemProps) {
   const { selectArticle } = useArticleList()
+  const { setMobileReadingPaneOpen } = useAppState()
+  const { isMobile } = useMobileLayout()
 
   // Calculate stagger class (cap at 10 for performance)
   const staggerClass = index < 10 ? `stagger-${index + 1}` : ''
 
+  const handleClick = () => {
+    selectArticle(article.id)
+    if (isMobile) {
+      setMobileReadingPaneOpen(true)
+    }
+  }
+
   return (
     <article
-      onClick={() => selectArticle(article.id)}
+      onClick={handleClick}
       style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
       className={`
         group relative flex items-start gap-3 px-4 py-3 cursor-pointer

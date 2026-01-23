@@ -6,7 +6,7 @@ import {
   createRootRoute,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Rss } from 'lucide-react'
+import { Menu, Rss } from 'lucide-react'
 import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
@@ -14,8 +14,10 @@ import { RefreshButton } from '~/components/RefreshButton'
 import { KeyboardShortcutsHandler } from '~/components/KeyboardShortcutsHandler'
 import { KeyboardHelpModal } from '~/components/KeyboardHelpModal'
 import { HelpButton } from '~/components/HelpButton'
-import { ArticleListProvider, KeyboardProvider, AppStateProvider } from '~/context'
+import { ArticleListProvider, KeyboardProvider, AppStateProvider, useAppState } from '~/context'
+import { useMobileLayout } from '~/hooks/useMobileLayout'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
+import { seedDefaultFeed } from '~/db/seed'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
 
@@ -72,6 +74,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   React.useEffect(() => {
+    seedDefaultFeed()
     refreshScheduler.start()
     return () => refreshScheduler.stop()
   }, [])
@@ -111,12 +114,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
+  const { sidebarCollapsed, setSidebarCollapsed } = useAppState()
+  const { isMobile, isTablet } = useMobileLayout()
+  const showMenuButton = isMobile || isTablet
+
   return (
     <div className="flex h-screen flex-col bg-white dark:bg-slate-900">
       {/* Minimal Header - 56px height per spec */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-4 dark:border-slate-700 dark:bg-slate-900">
-        {/* Left: Logo/Wordmark */}
+        {/* Left: Menu button + Logo/Wordmark */}
         <div className="flex items-center gap-2">
+          {showMenuButton && (
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"
+              aria-label="Toggle menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          )}
           <Rss className="h-5 w-5 text-sky-500" />
           <span className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Reader
