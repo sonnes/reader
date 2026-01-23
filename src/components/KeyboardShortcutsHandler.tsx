@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLiveQuery, eq, and } from '@tanstack/react-db'
-import { useKeyboard, useAppState, useArticleList } from '~/context'
+import { useKeyboard, useAppState, useArticleList, useAddFeed } from '~/context'
 import { useKeyboardShortcuts } from '~/hooks/useKeyboardShortcuts'
 import { useArticleActions } from '~/hooks/useArticleActions'
+import { usePasteUrlDetection } from '~/hooks/usePasteUrlDetection'
 import { articlesCollection } from '~/db'
 
 // Inner component that uses client-only hooks
@@ -17,7 +18,20 @@ function KeyboardShortcutsHandlerInner() {
   } = useAppState()
   const { selectedArticleId, selectArticle, clearSelection, toggleIframeView } =
     useArticleList()
-  const { toggleRead, toggleStar, openInBrowser, refresh } = useArticleActions()
+  const { toggleRead, toggleStar, openInBrowser, copyArticleUrl, refresh } = useArticleActions()
+  const { isOpen: isAddFeedOpen, openAddFeed } = useAddFeed()
+
+  const handlePasteUrl = useCallback(
+    (url: string) => {
+      if (!isAddFeedOpen) {
+        openAddFeed(url)
+      }
+    },
+    [isAddFeedOpen, openAddFeed]
+  )
+
+  // Handle paste URL detection
+  usePasteUrlDetection({ onUrlPasted: handlePasteUrl })
 
   // Get all unread articles for navigation
   const { data: articles = [] } = useLiveQuery(
@@ -72,6 +86,7 @@ function KeyboardShortcutsHandlerInner() {
       toggleRead,
       toggleStar,
       openInBrowser,
+      copyArticleUrl,
       refresh,
       toggleSidebar,
       toggleFocusMode,

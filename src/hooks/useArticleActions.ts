@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { toast } from 'sonner'
 import { articlesCollection, timestamp } from '~/db'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
 
@@ -25,6 +26,14 @@ export function useArticleActions() {
     }
   }, [])
 
+  const copyArticleUrl = useCallback(async (articleId: string) => {
+    const article = articlesCollection.state.get(articleId)
+    if (article?.url) {
+      await navigator.clipboard.writeText(article.url)
+      toast.success('Link copied')
+    }
+  }, [])
+
   const refresh = useCallback(() => {
     refreshScheduler.refreshAll()
   }, [])
@@ -40,6 +49,7 @@ export function useArticleActions() {
     toggleRead,
     toggleStar,
     openInBrowser,
+    copyArticleUrl,
     refresh,
     deleteArticle,
   }

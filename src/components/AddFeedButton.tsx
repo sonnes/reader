@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLiveQuery } from '@tanstack/react-db'
 import { Plus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { useAddFeed } from '~/context'
 import {
   Dialog,
   DialogContent,
@@ -24,7 +25,7 @@ import type { ValidateFeedResult } from '~/workers/feed-worker-client'
 type Step = 'input' | 'validating' | 'preview' | 'subscribing'
 
 export function AddFeedButton() {
-  const [open, setOpen] = useState(false)
+  const { isOpen, initialUrl, openAddFeed, closeAddFeed } = useAddFeed()
   const [url, setUrl] = useState('')
   const [folderId, setFolderId] = useState<string | null>(null)
   const [step, setStep] = useState<Step>('input')
@@ -36,6 +37,13 @@ export function AddFeedButton() {
 
   const { isValidating, isParsing, error, validateFeed, subscribeFeed } =
     useFeedWorker()
+
+  // Sync URL from context when dialog opens with a pre-filled URL
+  useEffect(() => {
+    if (isOpen && initialUrl) {
+      setUrl(initialUrl)
+    }
+  }, [isOpen, initialUrl])
 
   const handleValidate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +74,7 @@ export function AddFeedButton() {
   }
 
   const handleClose = () => {
-    setOpen(false)
+    closeAddFeed()
     setUrl('')
     setFolderId(null)
     setStep('input')
@@ -77,7 +85,7 @@ export function AddFeedButton() {
     if (!newOpen) {
       handleClose()
     } else {
-      setOpen(true)
+      openAddFeed()
     }
   }
 
@@ -89,14 +97,14 @@ export function AddFeedButton() {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => openAddFeed()}
         className="flex items-center gap-2 px-2 py-1.5 text-sm text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-md transition-colors"
       >
         <Plus className="w-4 h-4" />
         Add Feed
       </button>
 
-      <Dialog open={open} onOpenChange={handleOpenChange}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>

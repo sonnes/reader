@@ -5,6 +5,7 @@ interface KeyboardActions {
   toggleRead: (articleId: string) => void
   toggleStar: (articleId: string) => void
   openInBrowser: (articleId: string) => void
+  copyArticleUrl: (articleId: string) => void
   refresh: () => void
   toggleSidebar: () => void
   toggleFocusMode: () => void
@@ -89,6 +90,12 @@ export function useKeyboardShortcuts(
         case 'o':
           if (state.selectedArticleId) {
             actions.openInBrowser(state.selectedArticleId)
+            e.preventDefault()
+          }
+          break
+        case 'c':
+          if (state.selectedArticleId) {
+            actions.copyArticleUrl(state.selectedArticleId)
             e.preventDefault()
           }
           break

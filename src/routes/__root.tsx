@@ -14,7 +14,8 @@ import { RefreshButton } from '~/components/RefreshButton'
 import { KeyboardShortcutsHandler } from '~/components/KeyboardShortcutsHandler'
 import { KeyboardHelpModal } from '~/components/KeyboardHelpModal'
 import { HelpButton } from '~/components/HelpButton'
-import { ArticleListProvider, KeyboardProvider, AppStateProvider, useAppState } from '~/context'
+import { ArticleListProvider, KeyboardProvider, AppStateProvider, useAppState, AddFeedProvider } from '~/context'
+import { Toaster } from '~/components/ui/sonner'
 import { useMobileLayout } from '~/hooks/useMobileLayout'
 import { refreshScheduler } from '~/lib/refresh-scheduler'
 import { seedDefaultFeed } from '~/db/seed'
@@ -83,13 +84,15 @@ function RootComponent() {
     <RootDocument>
       <AppStateProvider>
         <KeyboardProvider>
-          <Layout>
-            <ArticleListProvider>
-              <KeyboardShortcutsHandler />
-              <Outlet />
-            </ArticleListProvider>
-          </Layout>
-          <KeyboardHelpModal />
+          <AddFeedProvider>
+            <Layout>
+              <ArticleListProvider>
+                <KeyboardShortcutsHandler />
+                <Outlet />
+              </ArticleListProvider>
+            </Layout>
+            <KeyboardHelpModal />
+          </AddFeedProvider>
         </KeyboardProvider>
       </AppStateProvider>
     </RootDocument>
@@ -104,6 +107,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster />
         {import.meta.env.DEV && (
           <TanStackRouterDevtools position="bottom-right" />
         )}
