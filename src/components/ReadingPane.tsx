@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useArticleList } from '~/context'
-import { articlesCollection } from '~/db'
+import { useArticleActions } from '~/hooks/useArticleActions'
 
 export function ReadingPane() {
   const {
@@ -9,6 +9,13 @@ export function ReadingPane() {
     iframeView,
     toggleIframeView,
   } = useArticleList()
+
+  const {
+    toggleRead: toggleReadAction,
+    toggleStar: toggleStarAction,
+    openInBrowser: openInBrowserAction,
+    deleteArticle: deleteArticleAction,
+  } = useArticleActions()
 
   // Track animation states for micro-interactions
   const [starAnimating, setStarAnimating] = useState(false)
@@ -23,38 +30,29 @@ export function ReadingPane() {
     })
   }
 
-  const toggleRead = () => {
+  const handleToggleRead = () => {
     if (!article) return
-    articlesCollection.update(article.id, (draft) => {
-      draft.isRead = !draft.isRead
-      draft.updatedAt = new Date().toISOString()
-    })
+    toggleReadAction(article.id)
   }
 
-  const toggleStar = () => {
+  const handleToggleStar = () => {
     if (!article) return
     // Trigger star animation
     if (!article.isStarred) {
       setStarAnimating(true)
       setTimeout(() => setStarAnimating(false), 400)
     }
-    articlesCollection.update(article.id, (draft) => {
-      draft.isStarred = !draft.isStarred
-      draft.updatedAt = new Date().toISOString()
-    })
+    toggleStarAction(article.id)
   }
 
-  const openInBrowser = () => {
+  const handleOpenInBrowser = () => {
     if (!article) return
-    window.open(article.url, '_blank')
+    openInBrowserAction(article.id)
   }
 
-  const deleteArticle = () => {
+  const handleDeleteArticle = () => {
     if (!article) return
-    articlesCollection.update(article.id, (draft) => {
-      draft.isDeleted = true
-      draft.updatedAt = new Date().toISOString()
-    })
+    deleteArticleAction(article.id)
   }
 
   // Empty state with more character
@@ -108,7 +106,7 @@ export function ReadingPane() {
         <div className="flex items-center gap-1">
           {/* Toggle read - with scale interaction */}
           <button
-            onClick={toggleRead}
+            onClick={handleToggleRead}
             className={`
               p-2 rounded-md transition-all duration-200
               hover:scale-110 active:scale-95
@@ -138,7 +136,7 @@ export function ReadingPane() {
 
           {/* Star - with shimmer animation */}
           <button
-            onClick={toggleStar}
+            onClick={handleToggleStar}
             className={`
               p-2 rounded-md transition-all duration-200
               hover:scale-110 active:scale-95
@@ -169,7 +167,7 @@ export function ReadingPane() {
 
           {/* Open in browser */}
           <button
-            onClick={openInBrowser}
+            onClick={handleOpenInBrowser}
             className="p-2 rounded-md text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all duration-200 hover:scale-110 active:scale-95"
             title="Open in browser"
           >
@@ -190,7 +188,7 @@ export function ReadingPane() {
 
           {/* Delete */}
           <button
-            onClick={deleteArticle}
+            onClick={handleDeleteArticle}
             className="p-2 rounded-md text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 hover:scale-110 active:scale-95"
             title="Delete article"
           >

@@ -29,10 +29,18 @@ export function useArticleActions() {
     refreshScheduler.refreshAll()
   }, [])
 
+  const deleteArticle = useCallback((articleId: string) => {
+    articlesCollection.update(articleId, (draft) => {
+      draft.isDeleted = true
+      draft.updatedAt = timestamp()
+    })
+  }, [])
+
   return {
     toggleRead,
     toggleStar,
     openInBrowser,
     refresh,
+    deleteArticle,
   }
 }

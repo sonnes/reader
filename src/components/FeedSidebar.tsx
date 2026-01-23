@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-import { useLiveQuery, eq } from '@tanstack/react-db'
 import { Link } from '@tanstack/react-router'
 import {
   Folder,
@@ -8,7 +6,7 @@ import {
   Settings,
   Star,
 } from 'lucide-react'
-import { foldersCollection, feedsCollection, articlesCollection } from '~/db'
+import { useFeedsWithCounts } from '~/hooks/useFeedsWithCounts'
 import { AddFeedButton } from './AddFeedButton'
 import { CreateFolderButton } from './CreateFolderButton'
 
@@ -20,49 +18,8 @@ interface FeedSidebarProps {
 }
 
 export function FeedSidebar(props: FeedSidebarProps) {
-  // Fetch data from TanStack DB
-  const { data: folders = [] } = useLiveQuery((q) =>
-    q.from({ folder: foldersCollection })
-  )
-  const { data: feeds = [] } = useLiveQuery((q) =>
-    q.from({ feed: feedsCollection })
-  )
-
-  // Fetch unread articles for count calculation
-  const { data: unreadArticles = [] } = useLiveQuery((q) =>
-    q
-      .from({ article: articlesCollection })
-      .where(({ article }) => eq(article.isRead, false))
-  )
-
-  // Compute unread counts per feed
-  const unreadCounts = useMemo(() => {
-    return unreadArticles.reduce(
-      (acc, article) => {
-        acc[article.feedId] = (acc[article.feedId] || 0) + 1
-        return acc
-      },
-      {} as Record<string, number>
-    )
-  }, [unreadArticles])
-
-  // Compute total unread count
+  const { folders, feeds, unreadArticles, unreadCounts, folderUnreadCounts } = useFeedsWithCounts()
   const totalUnreadCount = unreadArticles.length
-
-  // Compute unread counts per folder
-  const folderUnreadCounts = useMemo(() => {
-    return folders.reduce(
-      (acc, folder) => {
-        const folderFeeds = feeds.filter((f) => f.folderId === folder.id)
-        acc[folder.id] = folderFeeds.reduce(
-          (sum, feed) => sum + (unreadCounts[feed.id] || 0),
-          0
-        )
-        return acc
-      },
-      {} as Record<string, number>
-    )
-  }, [folders, feeds, unreadCounts])
 
   // Get feeds that don't belong to any folder
   const uncategorizedFeeds = feeds.filter((f) => f.folderId === null)

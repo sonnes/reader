@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react'
-import { useLiveQuery } from '@tanstack/react-db'
-import { eq } from '@tanstack/react-db'
 import {
   Download,
-  FolderPlus,
   Loader2,
-  Plus,
   Rss,
   Upload,
 } from 'lucide-react'
@@ -13,28 +9,16 @@ import { FolderGroup } from './FolderGroup'
 import { FeedRow } from './FeedRow'
 import {
   foldersCollection,
-  feedsCollection,
-  articlesCollection,
   folderIdFromName,
   timestamp,
 } from '~/db'
 import { parseOPML, generateOPML } from '~/lib/opml'
 import { useFeedWorker } from '~/hooks/useFeedWorker'
+import { useFeedsWithCounts } from '~/hooks/useFeedsWithCounts'
 import { AddFeedButton } from '~/components/AddFeedButton'
 
 export function FeedManagement() {
-  const { data: folders = [] } = useLiveQuery((q) =>
-    q.from({ folder: foldersCollection })
-  )
-  const { data: feeds = [] } = useLiveQuery((q) =>
-    q.from({ feed: feedsCollection })
-  )
-  const { data: unreadArticles = [] } = useLiveQuery((q) =>
-    q
-      .from({ article: articlesCollection })
-      .where(({ article }) => eq(article.isRead, false))
-  )
-
+  const { folders, feeds, unreadArticles, unreadCounts } = useFeedsWithCounts()
   const { validateFeed, subscribeFeed } = useFeedWorker()
 
   const [importStatus, setImportStatus] = useState<{
@@ -42,17 +26,6 @@ export function FeedManagement() {
     message: string
     error: boolean
   }>({ loading: false, message: '', error: false })
-
-  // Compute unread counts per feed
-  const unreadCounts = useMemo(() => {
-    return unreadArticles.reduce(
-      (acc, article) => {
-        acc[article.feedId] = (acc[article.feedId] || 0) + 1
-        return acc
-      },
-      {} as Record<string, number>
-    )
-  }, [unreadArticles])
 
   // Group feeds by folder
   const feedsByFolder = useMemo(() => {

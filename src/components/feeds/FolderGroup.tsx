@@ -9,6 +9,12 @@ import {
 import { FeedRow } from './FeedRow'
 import { type Feed, type Folder } from '~/db'
 import { useFolderManagement } from '~/hooks/useFolderManagement'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 
 interface FolderGroupProps {
   folder: Folder
@@ -21,7 +27,6 @@ export function FolderGroup({ folder, feeds, unreadCounts }: FolderGroupProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(folder.name)
-  const [showMenu, setShowMenu] = useState(false)
 
   const folderUnreadCount = feeds.reduce(
     (sum, feed) => sum + (unreadCounts[feed.id] || 0),
@@ -83,45 +88,26 @@ export function FolderGroup({ folder, feeds, unreadCounts }: FolderGroupProps) {
         )}
 
         {/* Folder Actions */}
-        <div className="relative">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-300"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-
-          {showMenu && (
-            <>
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setShowMenu(false)}
-              />
-              <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                <button
-                  onClick={() => {
-                    setIsEditing(true)
-                    setShowMenu(false)
-                  }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Rename
-                </button>
-                <button
-                  onClick={() => {
-                    deleteFolder(folder.id)
-                    setShowMenu(false)
-                  }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-300">
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+              <Pencil className="h-4 w-4" />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => deleteFolder(folder.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Feeds in Folder */}

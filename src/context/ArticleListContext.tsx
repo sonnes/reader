@@ -10,6 +10,7 @@ import { useLiveQuery, eq } from '@tanstack/react-db'
 import {
   articlesCollection,
   feedsCollection,
+  timestamp,
   type Article,
   type Feed,
 } from '~/db'
@@ -68,7 +69,7 @@ function ArticleListProviderInner({ children }: ArticleListProviderProps) {
       if (article && !article.isRead) {
         articlesCollection.update(articleId, (draft) => {
           draft.isRead = true
-          draft.updatedAt = new Date().toISOString()
+          draft.updatedAt = timestamp()
         })
       }
 
@@ -92,7 +93,7 @@ function ArticleListProviderInner({ children }: ArticleListProviderProps) {
       if (selectedArticle) {
         feedsCollection.update(selectedArticle.feedId, (draft) => {
           draft.preferIframe = newValue
-          draft.updatedAt = new Date().toISOString()
+          draft.updatedAt = timestamp()
         })
       }
       return newValue

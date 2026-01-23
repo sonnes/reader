@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useLiveQuery } from '@tanstack/react-db'
 import {
-  ChevronRight,
   ExternalLink,
   FolderOpen,
   GripVertical,
@@ -14,6 +13,15 @@ import {
 import { foldersCollection, type Feed } from '~/db'
 import { useFeedManagement } from '~/hooks/useFeedManagement'
 import { useFeedWorker } from '~/hooks/useFeedWorker'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
 
 interface FeedRowProps {
   feed: Feed
@@ -25,10 +33,8 @@ export function FeedRow({ feed, unreadCount }: FeedRowProps) {
     q.from({ folder: foldersCollection })
   )
   const { unsubscribeFeed, moveFeed } = useFeedManagement()
-  const { refreshFeed, isRefreshing } = useFeedWorker()
+  const { refreshFeed } = useFeedWorker()
 
-  const [showMenu, setShowMenu] = useState(false)
-  const [showMoveMenu, setShowMoveMenu] = useState(false)
   const [refreshingThis, setRefreshingThis] = useState(false)
 
   const handleRefresh = async () => {
@@ -37,7 +43,7 @@ export function FeedRow({ feed, unreadCount }: FeedRowProps) {
     setRefreshingThis(false)
   }
 
-  const isCurrentlyRefreshing = refreshingThis || isRefreshing
+  const isCurrentlyRefreshing = refreshingThis
 
   return (
     <div className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -117,83 +123,45 @@ export function FeedRow({ feed, unreadCount }: FeedRowProps) {
       </a>
 
       {/* Actions Menu */}
-      <div className="relative">
-        <button
-          onClick={() => setShowMenu(!showMenu)}
-          className="rounded p-1.5 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-300"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </button>
-
-        {showMenu && (
-          <>
-            <div
-              className="fixed inset-0 z-10"
-              onClick={() => setShowMenu(false)}
-            />
-            <div className="absolute right-0 top-full z-20 mt-1 w-48 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-              <div className="relative">
-                <button
-                  onClick={() => setShowMoveMenu(!showMoveMenu)}
-                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
-                >
-                  <span className="flex items-center gap-2">
-                    <FolderOpen className="h-4 w-4" />
-                    Move to folder
-                  </span>
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-
-                {showMoveMenu && (
-                  <div className="absolute left-full top-0 ml-1 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                    <button
-                      onClick={() => {
-                        moveFeed(feed.id, null)
-                        setShowMenu(false)
-                        setShowMoveMenu(false)
-                      }}
-                      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 ${
-                        feed.folderId === null
-                          ? 'text-sky-600 dark:text-sky-400'
-                          : 'text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <span className="italic">No folder</span>
-                    </button>
-                    {folders.map((folder) => (
-                      <button
-                        key={folder.id}
-                        onClick={() => {
-                          moveFeed(feed.id, folder.id)
-                          setShowMenu(false)
-                          setShowMoveMenu(false)
-                        }}
-                        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700 ${
-                          feed.folderId === folder.id
-                            ? 'text-sky-600 dark:text-sky-400'
-                            : 'text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        {folder.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  unsubscribeFeed(feed.id)
-                  setShowMenu(false)
-                }}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="rounded p-1.5 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-300">
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <FolderOpen className="h-4 w-4" />
+              Move to folder
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                onClick={() => moveFeed(feed.id, null)}
+                className={feed.folderId === null ? 'text-sky-600 dark:text-sky-400' : ''}
               >
-                <Trash2 className="h-4 w-4" />
-                Unsubscribe
-              </button>
-            </div>
-          </>
-        )}
-      </div>
+                <span className="italic">No folder</span>
+              </DropdownMenuItem>
+              {folders.map((folder) => (
+                <DropdownMenuItem
+                  key={folder.id}
+                  onClick={() => moveFeed(feed.id, folder.id)}
+                  className={feed.folderId === folder.id ? 'text-sky-600 dark:text-sky-400' : ''}
+                >
+                  {folder.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => unsubscribeFeed(feed.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+            Unsubscribe
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
