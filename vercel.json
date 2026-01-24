@@ -1,7 +1,10 @@
 {
   "buildCommand": "pnpm build",
   "outputDirectory": "dist/client",
-  "rewrites": [{ "source": "/(.*)", "destination": "/_shell.html" }],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/_shell.html" }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

@@ -7,7 +7,8 @@ import type {
   FeedErrorType,
 } from './types'
 
-const CORS_PROXY = 'https://api.allorigins.win/raw?url='
+const CORS_PROXY =
+  import.meta.env.VITE_CORS_PROXY_URL || 'https://api.allorigins.win/raw?url='
 const MAX_ARTICLES_PER_FEED = 50
 const FETCH_TIMEOUT_MS = 30000
 
