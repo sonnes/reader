@@ -14,6 +14,8 @@ import { Route as ManageRouteImport } from './routes/manage'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FolderFolderIdRouteImport } from './routes/folder.$folderId'
 import { Route as FeedFeedIdRouteImport } from './routes/feed.$feedId'
+import { Route as BlogIntroductionRouteImport } from './routes/blog.introduction'
+import { Route as BlogHowToUseRouteImport } from './routes/blog.how-to-use'
 
 const StarredRoute = StarredRouteImport.update({
   id: '/starred',
@@ -40,11 +42,23 @@ const FeedFeedIdRoute = FeedFeedIdRouteImport.update({
   path: '/feed/$feedId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIntroductionRoute = BlogIntroductionRouteImport.update({
+  id: '/blog/introduction',
+  path: '/blog/introduction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogHowToUseRoute = BlogHowToUseRouteImport.update({
+  id: '/blog/how-to-use',
+  path: '/blog/how-to-use',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
+  '/blog/how-to-use': typeof BlogHowToUseRoute
+  '/blog/introduction': typeof BlogIntroductionRoute
   '/feed/$feedId': typeof FeedFeedIdRoute
   '/folder/$folderId': typeof FolderFolderIdRoute
 }
@@ -52,6 +66,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
+  '/blog/how-to-use': typeof BlogHowToUseRoute
+  '/blog/introduction': typeof BlogIntroductionRoute
   '/feed/$feedId': typeof FeedFeedIdRoute
   '/folder/$folderId': typeof FolderFolderIdRoute
 }
@@ -60,6 +76,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/manage': typeof ManageRoute
   '/starred': typeof StarredRoute
+  '/blog/how-to-use': typeof BlogHowToUseRoute
+  '/blog/introduction': typeof BlogIntroductionRoute
   '/feed/$feedId': typeof FeedFeedIdRoute
   '/folder/$folderId': typeof FolderFolderIdRoute
 }
@@ -69,15 +87,26 @@ export interface FileRouteTypes {
     | '/'
     | '/manage'
     | '/starred'
+    | '/blog/how-to-use'
+    | '/blog/introduction'
     | '/feed/$feedId'
     | '/folder/$folderId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/manage' | '/starred' | '/feed/$feedId' | '/folder/$folderId'
+  to:
+    | '/'
+    | '/manage'
+    | '/starred'
+    | '/blog/how-to-use'
+    | '/blog/introduction'
+    | '/feed/$feedId'
+    | '/folder/$folderId'
   id:
     | '__root__'
     | '/'
     | '/manage'
     | '/starred'
+    | '/blog/how-to-use'
+    | '/blog/introduction'
     | '/feed/$feedId'
     | '/folder/$folderId'
   fileRoutesById: FileRoutesById
@@ -86,6 +115,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManageRoute: typeof ManageRoute
   StarredRoute: typeof StarredRoute
+  BlogHowToUseRoute: typeof BlogHowToUseRoute
+  BlogIntroductionRoute: typeof BlogIntroductionRoute
   FeedFeedIdRoute: typeof FeedFeedIdRoute
   FolderFolderIdRoute: typeof FolderFolderIdRoute
 }
@@ -127,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedFeedIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/introduction': {
+      id: '/blog/introduction'
+      path: '/blog/introduction'
+      fullPath: '/blog/introduction'
+      preLoaderRoute: typeof BlogIntroductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/how-to-use': {
+      id: '/blog/how-to-use'
+      path: '/blog/how-to-use'
+      fullPath: '/blog/how-to-use'
+      preLoaderRoute: typeof BlogHowToUseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -134,6 +179,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManageRoute: ManageRoute,
   StarredRoute: StarredRoute,
+  BlogHowToUseRoute: BlogHowToUseRoute,
+  BlogIntroductionRoute: BlogIntroductionRoute,
   FeedFeedIdRoute: FeedFeedIdRoute,
   FolderFolderIdRoute: FolderFolderIdRoute,
 }
