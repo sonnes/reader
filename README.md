@@ -1,4 +1,6 @@
-# Reader
+<img src="public/reader-logo.png" alt="Reader" height="48">
+
+![Reader](public/reader.jpeg)
 
 Do you remember Google Reader?
 
